@@ -30,6 +30,7 @@ dev = [
   "pytest",
   "pytest-cov",
   "pytest_regressions",
+  'jsondiff',
   "pytest-github-actions-annotate-failures",
   "pre-commit"
 ]
