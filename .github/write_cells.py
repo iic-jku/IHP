@@ -3,7 +3,7 @@ import inspect
 from ihp import PDK
 from ihp.config import PATH
 
-filepath = PATH.repo / "docs" / "components_plot.rst"
+filepath = PATH.repo / "docs" / "cells.rst"
 
 skip = {
     "LIBRARY",
