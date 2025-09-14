@@ -22,7 +22,7 @@ from ihp.tech import (
 
 components = cells
 
-__version__ = "0.0.0"
+__version__ = "0.0.1"
 __all__ = [
     "PATH",
     "components",
