@@ -20,7 +20,7 @@ dependencies = [
 description = "IHP pdk"
 keywords = ["python"]
 license = {file = "LICENSE"}
-name = "IHP"
+name = "ihp"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 version = "0.0.2"
@@ -63,6 +63,8 @@ testpaths = ["tests"]
 
 [tool.ruff]
 fix = true
+
+[tool.ruff.lint]
 ignore = [
   "E501",  # line too long, handled by black
   "B008",  # do not perform function calls in argument defaults
@@ -80,7 +82,7 @@ select = [
   "UP"
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "ihp/cells/__init__.py" = ["F403"]  # allowing star imports to aggregate cells
 "ihp/models/__init__.py" = ["F403"]  # allowing star imports to aggregate cells
 

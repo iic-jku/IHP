@@ -489,7 +489,7 @@ route_bundle_metal_corner = partial(
 
 route_astar = partial(
     add_bundle_astar,
-    layers=["WG"],
+    layers=["TOPMETAL2"],
     bend="bend_euler",
     straight="straight",
     grid_unit=500,
@@ -498,7 +498,7 @@ route_astar = partial(
 
 route_astar_metal = partial(
     add_bundle_astar,
-    layers=["M2_ROUTER"],
+    layers=["TOPMETAL2"],
     bend="wire_corner",
     straight="straight_metal",
     grid_unit=500,
