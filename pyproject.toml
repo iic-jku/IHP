@@ -1,6 +1,7 @@
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
 
 [build-system]
+build-backend = "setuptools.build_meta"
 requires = ["setuptools", "wheel", "ruff"]
 
 [project]
@@ -92,8 +93,7 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 include = ["ihp"]
-namespaces = true
-where = ['ihp']
+where = ["."]
 
 [tool.tbump]
 
