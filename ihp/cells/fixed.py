@@ -1,15 +1,9 @@
 """Bipolar transistor components for IHP PDK."""
 
-from typing import Literal, Optional
-from toolz import compose
-
-import gdsfactory as gf
-from gdsfactory import Component
-
-
-from pathlib import Path
 from functools import partial
+
 import gdsfactory as gf
+
 from ihp.config import PATH
 
 add_ports_metal1 = partial(
@@ -898,5 +892,5 @@ def sealring_corner_CDNS_675179387641() -> gf.Component:
 
 if __name__ == "__main__":
     # c = sealring_corner_CDNS_675179387641()
-    c=  schottky_nbl1()
+    c = schottky_nbl1()
     c.show()

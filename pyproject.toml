@@ -36,7 +36,7 @@ dev = [
 docs = ["autodoc_pydantic", "jupytext", "jupyter-book==1.0.3"]
 
 [tool.codespell]
-ignore-words-list = "te, te/tm, te, ba, fpr, fpr_spacing, ro, nd, donot, schem"
+ignore-words-list = "te,fpr,nd,donot,schem"
 
 [tool.mypy]
 python_version = "3.11"
