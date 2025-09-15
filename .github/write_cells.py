@@ -77,7 +77,8 @@ Cells
 
   PDK.activate()
 
-  c = cells.{name}({kwargs})
+  c = cells.{name}({kwargs}).copy()
+  c.draw_ports()
   c.plot()
 
 """
