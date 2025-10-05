@@ -8,11 +8,19 @@
 
 import sys
 from functools import partial
+from typing import Any
 
 import gdsfactory as gf
 from doroutes.bundles import add_bundle_astar
+from gdsfactory import typings
 from gdsfactory.component import Component
-from gdsfactory.cross_section import get_cross_sections
+from gdsfactory.cross_section import (
+    CrossSection,
+    get_cross_sections,
+    port_names_electrical,
+    port_types_electrical,
+    xsection,
+)
 from gdsfactory.technology import LayerLevel, LayerMap, LayerStack
 from gdsfactory.typings import Layer, LayerSpec
 from pydantic import BaseModel
@@ -407,12 +415,33 @@ LAYER_VIEWS = gf.technology.LayerViews(PATH.lyp)
 ############################
 # Cross-sections functions
 ############################
-cross_section = gf.cross_section.cross_section
+cross_section = gf.cross_section.metal1
+
+
+@xsection
+def metal_routing(
+    width: float = 1,
+    layer: typings.LayerSpec = "M3",
+    radius: float | None = None,
+    port_names: typings.IOPorts = port_names_electrical,
+    port_types: typings.IOPorts = port_types_electrical,
+    **kwargs: Any,
+) -> CrossSection:
+    """Return Metal Strip cross_section."""
+    radius = radius or width
+    return cross_section(
+        width=width,
+        layer=layer,
+        radius=radius,
+        port_names=port_names,
+        port_types=port_types,
+        **kwargs,
+    )
 
 
 # Metal routing cross-sections
 metal1_routing = partial(
-    cross_section,
+    metal_routing,
     layer=LAYER.METAL1,
     width=TECH.metal1_width * 2,
     port_names=gf.cross_section.port_names_electrical,
@@ -421,7 +450,7 @@ metal1_routing = partial(
 )
 
 metal2_routing = partial(
-    cross_section,
+    metal_routing,
     layer=LAYER.METAL2,
     width=TECH.metal2_width * 2,
     port_names=gf.cross_section.port_names_electrical,
@@ -430,7 +459,7 @@ metal2_routing = partial(
 )
 
 metal3_routing = partial(
-    cross_section,
+    metal_routing,
     layer=LAYER.METAL3,
     width=TECH.metal3_width * 2,
     port_names=gf.cross_section.port_names_electrical,
@@ -439,7 +468,7 @@ metal3_routing = partial(
 )
 
 topmetal1_routing = partial(
-    cross_section,
+    metal_routing,
     layer=LAYER.TOPMETAL1,
     width=TECH.topmetal1_width,
     port_names=gf.cross_section.port_names_electrical,
@@ -448,7 +477,7 @@ topmetal1_routing = partial(
 )
 
 topmetal2_routing = partial(
-    cross_section,
+    metal_routing,
     layer=LAYER.TOPMETAL2,
     width=TECH.topmetal2_width,
     port_names=gf.cross_section.port_names_electrical,

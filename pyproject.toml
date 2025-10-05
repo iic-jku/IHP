@@ -8,10 +8,11 @@ requires = ["setuptools", "wheel", "ruff"]
 authors = [{name = "gdsfactory", email = "contact@gdsfactory.com"}]
 classifiers = [
   "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12"
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13"
 ]
 dependencies = [
-  "gdsfactory~=9.15.0",
+  "gdsfactory~=9.18.1",
   "gplugins[sax]~=1.4.2",
   "doroutes>=0.2.0"
 ]
@@ -20,7 +21,7 @@ keywords = ["python"]
 license = {file = "LICENSE"}
 name = "ihp-gdsfactory"
 readme = "README.md"
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.11,<3.14"
 version = "0.0.6"
 
 [project.optional-dependencies]
@@ -37,8 +38,11 @@ docs = ["autodoc_pydantic", "jupytext", "jupyter-book==1.0.3"]
 [tool.codespell]
 ignore-words-list = "te,fpr,nd,donot,schem"
 
+[tool.gdsfactoryplus.pdk]
+name = "ihp"
+
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 strict = true
 
 [tool.pydocstyle]

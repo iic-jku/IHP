@@ -11,7 +11,7 @@ gds_diff/
 gds_run/
 .dvc/
 .virtual_documents
-tests/ref/*.oas
+tests/gds_ref/*.oas
 
 docs/components.rst
 docs/components_plot.rst
