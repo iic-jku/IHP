@@ -39,7 +39,7 @@ skip_test = {
 
 cell_names = cells.keys() - skip_test
 cell_names = [name for name in cell_names if not name.startswith("_")]
-dirpath = pathlib.Path(__file__).absolute().with_suffix(".gds").parent / "gds_ref_si220"
+dirpath = pathlib.Path(__file__).absolute().with_suffix(".gds").parent / "gds_ref"
 dirpath.mkdir(exist_ok=True, parents=True)
 
 
