@@ -60,8 +60,8 @@ class LayerMapIHP(LayerMap):
     VIA2: Layer = (29, 0)
     VIA3: Layer = (49, 0)
     VIA4: Layer = (66, 0)
-    TOPVIA1: Layer = (125, 5)
-    TOPVIA2: Layer = (133, 5)
+    TOPVIA1: Layer = (125, 0)
+    TOPVIA2: Layer = (133, 0)
 
     # Metal layers
     METAL1: Layer = (8, 0)
@@ -69,8 +69,8 @@ class LayerMapIHP(LayerMap):
     METAL3: Layer = (30, 0)
     METAL4: Layer = (50, 0)
     METAL5: Layer = (67, 0)
-    TOPMETAL1: Layer = (126, 5)
-    TOPMETAL2: Layer = (134, 5)
+    TOPMETAL1: Layer = (126, 0)
+    TOPMETAL2: Layer = (134, 0)
 
     # MIM Capacitor
     MIM: Layer = (36, 0)
