@@ -5,6 +5,9 @@
 - Cross-sections for routing
 - Technology parameters
 """
+import os
+import json
+
 
 import sys
 from functools import partial
@@ -355,6 +358,18 @@ def get_layer_stack(
         )
     )
 
+techParams: dict = {}
+dataBaseUnits: float = 0.001
+
+techName: str = "sg13g2"
+techNameParam: str = "techName"
+jsonTechFile: str = techName + "_tech.json"
+
+techFilePath: str = os.path.join("/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/", jsonTechFile) #TODO hardcoded path, böse
+
+with open(techFilePath, "r") as tech_file:
+    jsData = json.load(tech_file)
+    techParams = jsData["techParams"]
 
 class TechIHP(BaseModel):
     """IHP PDK Technology parameters."""
@@ -426,6 +441,7 @@ class TechIHP(BaseModel):
     inductor_min_spacing: float = 2.1
     inductor_min_diameter: float = 15.0
 
+    techParams: dict = techParams
 
 TECH = TechIHP()
 LAYER_STACK = get_layer_stack()
