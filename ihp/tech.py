@@ -379,6 +379,14 @@ class TechIHP(BaseModel):
     via1_size: float = 0.26
     via1_spacing: float = 0.36
     via1_enc_metal: float = 0.06
+    
+    topvia1_size: float = 0.9
+    topvia1_spacing: float = 0.9
+    topvia1_enc_metal: float = 0.3
+    
+    topvia2_size: float = 5.0
+    topvia2_spacing: float = 5.0
+    topvia2_enc_metal: float = 0.3
 
     # Design rules - metal
     metal1_width: float = 0.14

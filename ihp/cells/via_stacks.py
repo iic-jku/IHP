@@ -2,58 +2,59 @@
 
 import gdsfactory as gf
 from gdsfactory import Component
+from .. import tech
 
 # Define metal and via layers for IHP PDK
 METAL_LAYERS = {
-    "Metal1": (8, 0),
-    "Metal2": (10, 0),
-    "Metal3": (30, 0),
-    "Metal4": (50, 0),
-    "Metal5": (67, 0),
-    "TopMetal1": (126, 5),
-    "TopMetal2": (134, 5),
+    "Metal1": tech.LAYER.METAL1,
+    "Metal2": tech.LAYER.METAL2,
+    "Metal3": tech.LAYER.METAL3,
+    "Metal4": tech.LAYER.METAL4,
+    "Metal5": tech.LAYER.METAL5,
+    "TopMetal1": tech.LAYER.TOPMETAL1,
+    "TopMetal2": tech.LAYER.TOPMETAL2,
 }
 
 VIA_LAYERS = {
-    "Via1": (19, 0),
-    "Via2": (29, 0),
-    "Via3": (49, 0),
-    "Via4": (66, 0),
-    "TopVia1": (125, 5),
-    "TopVia2": (133, 5),
+    "Via1": tech.LAYER.VIA1,
+    "Via2": tech.LAYER.VIA2,
+    "Via3": tech.LAYER.VIA3,
+    "Via4": tech.LAYER.VIA4,
+    "TopVia1": tech.LAYER.TOPVIA1,
+    "TopVia2": tech.LAYER.TOPVIA2,
 }
 
 # Via design rules (in micrometers)
 VIA_RULES = {
     "Via1": {
-        "size": 0.26,
-        "spacing": 0.36,
-        "enclosure": 0.06,
+        "size": tech.TECH.via1_size,
+        "spacing": tech.TECH.via1_spacing,
+        "enclosure": tech.TECH.via1_enc_metal,
     },
     "Via2": {
-        "size": 0.26,
-        "spacing": 0.36,
-        "enclosure": 0.06,
+        "size": tech.TECH.via1_size,
+        "spacing": tech.TECH.via1_spacing,
+        "enclosure": tech.TECH.via1_enc_metal,
     },
     "Via3": {
-        "size": 0.26,
-        "spacing": 0.36,
-        "enclosure": 0.06,
+        "size": tech.TECH.via1_size,
+        "spacing": tech.TECH.via1_spacing,
+        "enclosure": tech.TECH.via1_enc_metal,
     },
     "Via4": {
-        "size": 0.26,
-        "spacing": 0.36,
-        "enclosure": 0.06,
+        "size": tech.TECH.via1_size,
+        "spacing": tech.TECH.via1_spacing,
+        "enclosure": tech.TECH.via1_enc_metal,
     },
     "TopVia1": {
-        "size": 0.9,
-        "spacing": 0.9,
-        "enclosure": 0.3,
+        "size": tech.TECH.topvia1_size,
+        "spacing": tech.TECH.topvia1_spacing,
+        "enclosure": tech.TECH.topvia1_enc_metal,
     },
     "TopVia2": {
-        "size": 5.0,
-        "spacing": 5.0,
-        "enclosure": 1.0,
+        "size": tech.TECH.topvia2_size,
+        "spacing": tech.TECH.topvia2_spacing,
+        "enclosure": tech.TECH.topvia2_enc_metal,
     },
 }
 
