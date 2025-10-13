@@ -467,6 +467,24 @@ metal3_routing = partial(
     radius=None,
 )
 
+metal4_routing = partial(
+    metal_routing,
+    layer=LAYER.METAL4,
+    width=TECH.metal4_width * 2,
+    port_names=gf.cross_section.port_names_electrical,
+    port_types=gf.cross_section.port_types_electrical,
+    radius=None,
+)
+
+metal5_routing = partial(
+    metal_routing,
+    layer=LAYER.METAL5,
+    width=TECH.metal5_width * 2,
+    port_names=gf.cross_section.port_names_electrical,
+    port_types=gf.cross_section.port_types_electrical,
+    radius=None,
+)
+
 topmetal1_routing = partial(
     metal_routing,
     layer=LAYER.TOPMETAL1,
