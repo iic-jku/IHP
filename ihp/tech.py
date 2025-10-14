@@ -27,7 +27,7 @@ from gdsfactory.cross_section import (
 from gdsfactory.technology import LayerLevel, LayerMap, LayerStack
 from gdsfactory.typings import Layer, LayerSpec
 from pydantic import BaseModel
-
+from gdsfactory.technology import lyp_to_dataclass
 from ihp.config import PATH
 
 nm = 1e-3
@@ -35,143 +35,11 @@ pin_length = 10 * nm
 heater_width = 4
 
 
-class LayerMapIHP(LayerMap):
-    """IHP PDK Layer Map based on SG13G2 technology."""
+ihp_filepath = "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/sg13g2.lyp"
+lyp_to_dataclass(ihp_filepath, overwrite=True, output_filepath="ihp/layer_map_ihp.py", map_name="LayerMapIHP")
 
-    # Substrate and Wells drawing
-    SUBSTRATE: Layer = (40, 0)
-    NWELL: Layer = (31, 0)
-    PWELL: Layer = (46, 0)
-
-    # Active and Poly
-    ACTIV: Layer = (1, 0)
-    GATPOLY: Layer = (5, 0)
-    POLYRES: Layer = (128, 0)  # Poly resistor marker
-
-    # Implants
-    PSD: Layer = (14, 0)  # P+ implant
-    NSD: Layer = (7, 0)  # N+ implant
-    NBULAY: Layer = (32, 0)  # N-buried layer
-    SALBLOCK: Layer = (28, 0)  # Salicide block
-
-    # Gate oxide
-    THICKGATEOX: Layer = (44, 0)  # Thick gate oxide for HV devices
-
-    # Contacts and Vias
-    CONT: Layer = (6, 0)
-    VIA1: Layer = (19, 0)
-    VIA2: Layer = (29, 0)
-    VIA3: Layer = (49, 0)
-    VIA4: Layer = (66, 0)
-    TOPVIA1: Layer = (125, 0)
-    TOPVIA2: Layer = (133, 0)
-
-    # Metal layers
-    METAL1: Layer = (8, 0)
-    METAL2: Layer = (10, 0)
-    METAL3: Layer = (30, 0)
-    METAL4: Layer = (50, 0)
-    METAL5: Layer = (67, 0)
-    TOPMETAL1: Layer = (126, 0)
-    TOPMETAL2: Layer = (134, 0)
-
-    # MIM Capacitor
-    MIM: Layer = (36, 0)
-    VMIM: Layer = (129, 0)  # Via for MIM
-
-    # Special layers for markers and devices
-    NPN: Layer = (82, 0)  # NPN marker #TODO
-    PNP: Layer = (83, 0)  # PNP marker #TODO
-    TRANS: Layer = (26, 0)  # Transistor marker
-    VARICAP: Layer = (70, 0)  # Varicap marker
-    ESD: Layer = (88, 0)  # ESD marker #TODO
-
-    # Resistor markers
-    RSIL: Layer = (6, 10)  # Silicide resistor marker #TODO
-    RPPD: Layer = (31, 10)  # P+ poly resistor marker #TODO
-    RHIGH: Layer = (85, 0)  # High resistance marker #TODO
-
-    # Tap markers
-    PTAP: Layer = (13, 0)  # P-tap marker
-    NTAP: Layer = (26, 0)  # N-tap marker
-
-    # Inductor and RF
-    IND: Layer = (27, 0)  # Inductor marker
-    RFPAD: Layer = (81, 0)  # RF pad marker #TODO
-
-    # Passivation and protection #TODO
-    PASSIV: Layer = (6, 0)  # Passivation
-    PASSIV_OPEN: Layer = (33, 0)  # Passivation opening
-    SIPROTECTION: Layer = (2, 6)  # Silicon protection
-
-    # Seal ring and die protection
-    SEALRING: Layer = (167, 5)  # Seal ring marker
-
-    # Substrate etch
-    LBE: Layer = (24, 0)  # Local back etch (substrate etch)
-
-    # Filler and fill exclusion layers
-    METAL1_FILLER: Layer = (8, 22)
-    METAL1_NOFILL: Layer = (8, 23)
-    METAL2_FILLER: Layer = (10, 22)
-    METAL2_NOFILL: Layer = (10, 23)
-    METAL3_FILLER: Layer = (30, 22)
-    METAL3_NOFILL: Layer = (30, 23)
-    METAL4_FILLER: Layer = (50, 22)
-    METAL4_NOFILL: Layer = (50, 23)
-    ACTIV_FILLER: Layer = (1, 22)
-    ACTIV_NOFILL: Layer = (1, 23)
-    GATPOLY_FILLER: Layer = (5, 22)
-    GATPOLY_NOFILL: Layer = (5, 23)
-
-    # QRC and extraction control
-    NOQRC: Layer = (15, 5)  # No QRC extraction #TODO
-    METAL1_NOQRC: Layer = (8, 28)
-    METAL2_NOQRC: Layer = (10, 28)
-    METAL3_NOQRC: Layer = (30, 28)
-    METAL4_NOQRC: Layer = (50, 28)
-    METAL5_NOQRC: Layer = (67, 28)
-    TOPMETAL1_NOQRC: Layer = (126, 28)
-    TOPMETAL2_NOQRC: Layer = (134, 28)
-    GATPOLY_NOQRC: Layer = (5, 28)
-    ACTIV_NOQRC: Layer = (1, 28)
-
-    # Text and labels
-    TEXT: Layer = (63, 63)
-    METAL1_TEXT: Layer = (8, 25)
-    METAL2_TEXT: Layer = (10, 25)
-    METAL3_TEXT: Layer = (30, 25)
-    METAL4_TEXT: Layer = (50, 25)
-    METAL5_TEXT: Layer = (67, 25)
-    TOPMETAL1_TEXT: Layer = (126, 25)
-    TOPMETAL2_TEXT: Layer = (134, 25)
-
-    # Device recognition and boundary
-    DEVREC: Layer = (68, 0) #TODO (99, 0)?
-    FLOORPLAN: Layer = (99, 0) #TODO
-    SHOW_PORTS: Layer = (1, 13) #TODO
-
-    # Probe layers
-    METAL1_IPROBE: Layer = (8, 33)
-    METAL1_DIFFPRB: Layer = (8, 34)
-    METAL2_IPROBE: Layer = (10, 33)
-    METAL2_DIFFPRB: Layer = (10, 34)
-    METAL3_IPROBE: Layer = (30, 33)
-    METAL3_DIFFPRB: Layer = (30, 34)
-    METAL4_IPROBE: Layer = (50, 33)
-    METAL4_DIFFPRB: Layer = (50, 34)
-    METAL5_IPROBE: Layer = (67, 33)
-    METAL5_DIFFPRB: Layer = (67, 34)
-    TOPMETAL1_IPROBE: Layer = (126, 33)
-    TOPMETAL1_DIFFPRB: Layer = (126, 34)
-    TOPMETAL2_IPROBE: Layer = (134, 33)
-    TOPMETAL2_DIFFPRB: Layer = (134, 34)
-
-    # Legacy compatibility layers
-    WAFER: Layer = (40, 0)  # Same as SUBSTRATE
-
-
-LAYER = LayerMapIHP
+# import after generation
+from layer_map_ihp import LAYER 
 
 
 def add_labels_to_ports_optical(
