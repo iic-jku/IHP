@@ -39,7 +39,26 @@ ihp_filepath = "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/sg13g2.lyp"
 lyp_to_dataclass(ihp_filepath, overwrite=True, output_filepath="ihp/layer_map_ihp.py", map_name="LayerMapIHP")
 
 # import after generation
-from layer_map_ihp import LAYER 
+from layer_map_ihp import LAYER
+
+# Add aliases
+LAYER.TEXT = LAYER.TEXTdrawing
+LAYER.METAL1 = LAYER.Metal1drawing
+LAYER.METAL2 = LAYER.Metal2drawing
+LAYER.METAL3 = LAYER.Metal3drawing
+LAYER.METAL4 = LAYER.Metal4drawing
+LAYER.METAL5 = LAYER.Metal5drawing
+LAYER.TOPMETAL1 = LAYER.TopMetal1drawing
+LAYER.TOPMETAL2 = LAYER.TopMetal2drawing
+LAYER.SUBSTRATE = LAYER.Substratedrawing
+LAYER.ACTIV = LAYER.Activdrawing
+LAYER.GATPOLY = LAYER.GatPolydrawing
+LAYER.VIA1 = LAYER.Via1drawing
+LAYER.VIA2 = LAYER.Via2drawing
+LAYER.VIA3 = LAYER.Via3drawing
+LAYER.VIA4 = LAYER.Via4drawing
+LAYER.TOPVIA1 = LAYER.TopVia1drawing
+LAYER.TOPVIA2 = LAYER.TopVia2drawing
 
 
 def add_labels_to_ports_optical(
