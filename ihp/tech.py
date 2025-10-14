@@ -39,7 +39,7 @@ ihp_filepath = "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/sg13g2.lyp"
 lyp_to_dataclass(ihp_filepath, overwrite=True, output_filepath="ihp/layer_map_ihp.py", map_name="LayerMapIHP")
 
 # import after generation
-from layer_map_ihp import LAYER
+from ihp.layer_map_ihp import LAYER
 
 # Add aliases
 LAYER.TEXT = LAYER.TEXTdrawing
