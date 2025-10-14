@@ -44,7 +44,7 @@ from layer_map_ihp import LAYER
 
 def add_labels_to_ports_optical(
     component: Component,
-    label_layer: LayerSpec = LAYER.TEXT,
+    label_layer: LayerSpec = LAYER.TEXTdrawing,
     port_type: str | None = "optical",
     **kwargs,
 ) -> Component:
@@ -76,6 +76,7 @@ margin = 0.5
 
 
 def get_layer_stack(
+    # TODO verify thicknesses with IHP
     thickness_si: float = 10.0,  # Silicon substrate
     thickness_metal: float = 0.5,  # Metal thickness
     thickness_via: float = 0.3,  # Via thickness
@@ -97,7 +98,7 @@ def get_layer_stack(
         layers=dict(
             # Substrate
             substrate=LayerLevel(
-                layer=LAYER.SUBSTRATE,
+                layer=LAYER.Substratedrawing,
                 thickness=substrate_thickness,
                 zmin=-substrate_thickness,
                 material="si",
@@ -105,7 +106,7 @@ def get_layer_stack(
             ),
             # Active silicon
             active=LayerLevel(
-                layer=LAYER.ACTIV,
+                layer=LAYER.Activdrawing,
                 thickness=0.2,
                 zmin=0.0,
                 material="si",
@@ -113,7 +114,7 @@ def get_layer_stack(
             ),
             # Poly gate
             poly=LayerLevel(
-                layer=LAYER.GATPOLY,
+                layer=LAYER.GatPolydrawing,
                 thickness=0.18,
                 zmin=0.0,
                 material="poly_si",
@@ -121,7 +122,7 @@ def get_layer_stack(
             ),
             # Metal 1
             metal1=LayerLevel(
-                layer=LAYER.METAL1,
+                layer=LAYER.Metal1drawing,
                 thickness=thickness_metal,
                 zmin=1.0,
                 material="aluminum",
@@ -129,7 +130,7 @@ def get_layer_stack(
             ),
             # Via 1
             via1=LayerLevel(
-                layer=LAYER.VIA1,
+                layer=LAYER.Via1drawing,
                 thickness=thickness_via,
                 zmin=1.0 + thickness_metal,
                 material="tungsten",
@@ -137,7 +138,7 @@ def get_layer_stack(
             ),
             # Metal 2
             metal2=LayerLevel(
-                layer=LAYER.METAL2,
+                layer=LAYER.Metal2drawing,
                 thickness=thickness_metal,
                 zmin=1.0 + thickness_metal + thickness_via,
                 material="aluminum",
@@ -145,7 +146,7 @@ def get_layer_stack(
             ),
             # Via 2
             via2=LayerLevel(
-                layer=LAYER.VIA2,
+                layer=LAYER.Via2drawing,
                 thickness=thickness_via,
                 zmin=1.0 + 2 * (thickness_metal + thickness_via),
                 material="tungsten",
@@ -153,7 +154,7 @@ def get_layer_stack(
             ),
             # Metal 3
             metal3=LayerLevel(
-                layer=LAYER.METAL3,
+                layer=LAYER.Metal3drawing,
                 thickness=thickness_metal,
                 zmin=1.0 + 2 * (thickness_metal + thickness_via),
                 material="aluminum",
@@ -161,7 +162,7 @@ def get_layer_stack(
             ),
             # Via 3
             via3=LayerLevel(
-                layer=LAYER.VIA3,
+                layer=LAYER.Via3drawing,
                 thickness=thickness_via,
                 zmin=1.0 + 3 * (thickness_metal + thickness_via),
                 material="tungsten",
@@ -169,7 +170,7 @@ def get_layer_stack(
             ),
             # Metal 4
             metal4=LayerLevel(
-                layer=LAYER.METAL4,
+                layer=LAYER.Metal4drawing,
                 thickness=thickness_metal,
                 zmin=1.0 + 3 * (thickness_metal + thickness_via),
                 material="aluminum",
@@ -177,7 +178,7 @@ def get_layer_stack(
             ),
             # Via 4
             via4=LayerLevel(
-                layer=LAYER.VIA4,
+                layer=LAYER.Via4drawing,
                 thickness=thickness_via,
                 zmin=1.0 + 4 * (thickness_metal + thickness_via),
                 material="tungsten",
@@ -185,7 +186,7 @@ def get_layer_stack(
             ),
             # Metal 5
             metal5=LayerLevel(
-                layer=LAYER.METAL5,
+                layer=LAYER.Metal5drawing,
                 thickness=thickness_metal,
                 zmin=1.0 + 4 * (thickness_metal + thickness_via),
                 material="aluminum",
@@ -193,7 +194,7 @@ def get_layer_stack(
             ),
             # Top Via 1
             topvia1=LayerLevel(
-                layer=LAYER.TOPVIA1,
+                layer=LAYER.TopVia1drawing,
                 thickness=thickness_via * 2,
                 zmin=1.0 + 5 * (thickness_metal + thickness_via),
                 material="tungsten",
@@ -201,7 +202,7 @@ def get_layer_stack(
             ),
             # Top Metal 1
             topmetal1=LayerLevel(
-                layer=LAYER.TOPMETAL1,
+                layer=LAYER.TopMetal1drawing,
                 thickness=thickness_metal * 2,
                 zmin=1.0 + 5 * (thickness_metal + thickness_via) + thickness_via,
                 material="aluminum",
@@ -209,7 +210,7 @@ def get_layer_stack(
             ),
             # Top Via 2
             topvia2=LayerLevel(
-                layer=LAYER.TOPVIA2,
+                layer=LAYER.TopVia2drawing,
                 thickness=thickness_via * 3,
                 zmin=1.0 + 6 * (thickness_metal + thickness_via),
                 material="tungsten",
@@ -217,7 +218,7 @@ def get_layer_stack(
             ),
             # Top Metal 2
             topmetal2=LayerLevel(
-                layer=LAYER.TOPMETAL2,
+                layer=LAYER.TopMetal2drawing,
                 thickness=thickness_metal * 3,
                 zmin=1.0 + 6 * (thickness_metal + thickness_via) + thickness_via,
                 material="aluminum",
@@ -346,7 +347,7 @@ def metal_routing(
 # Metal routing cross-sections
 metal1_routing = partial(
     metal_routing,
-    layer=LAYER.METAL1,
+    layer=LAYER.Metal1drawing,
     width=TECH.metal1_width * 2,
     port_names=gf.cross_section.port_names_electrical,
     port_types=gf.cross_section.port_types_electrical,
@@ -355,7 +356,7 @@ metal1_routing = partial(
 
 metal2_routing = partial(
     metal_routing,
-    layer=LAYER.METAL2,
+    layer=LAYER.Metal2drawing,
     width=TECH.metal2_width * 2,
     port_names=gf.cross_section.port_names_electrical,
     port_types=gf.cross_section.port_types_electrical,
@@ -364,7 +365,7 @@ metal2_routing = partial(
 
 metal3_routing = partial(
     metal_routing,
-    layer=LAYER.METAL3,
+    layer=LAYER.Metal3drawing,
     width=TECH.metal3_width * 2,
     port_names=gf.cross_section.port_names_electrical,
     port_types=gf.cross_section.port_types_electrical,
@@ -373,7 +374,7 @@ metal3_routing = partial(
 
 metal4_routing = partial(
     metal_routing,
-    layer=LAYER.METAL4,
+    layer=LAYER.Metal4drawing,
     width=TECH.metal4_width * 2,
     port_names=gf.cross_section.port_names_electrical,
     port_types=gf.cross_section.port_types_electrical,
@@ -382,7 +383,7 @@ metal4_routing = partial(
 
 metal5_routing = partial(
     metal_routing,
-    layer=LAYER.METAL5,
+    layer=LAYER.Metal5drawing,
     width=TECH.metal5_width * 2,
     port_names=gf.cross_section.port_names_electrical,
     port_types=gf.cross_section.port_types_electrical,
@@ -391,7 +392,7 @@ metal5_routing = partial(
 
 topmetal1_routing = partial(
     metal_routing,
-    layer=LAYER.TOPMETAL1,
+    layer=LAYER.TopMetal1drawing,
     width=TECH.topmetal1_width,
     port_names=gf.cross_section.port_names_electrical,
     port_types=gf.cross_section.port_types_electrical,
@@ -400,7 +401,7 @@ topmetal1_routing = partial(
 
 topmetal2_routing = partial(
     metal_routing,
-    layer=LAYER.TOPMETAL2,
+    layer=LAYER.TopMetal2drawing,
     width=TECH.topmetal2_width,
     port_names=gf.cross_section.port_names_electrical,
     port_types=gf.cross_section.port_types_electrical,
