@@ -428,6 +428,27 @@ def via_stack_test(
             via_layer = via_layers[metal_layers.index(layer)-1]
             c << via_array(via_type=via_layer, columns=columns, rows=rows, via_size=via_size, via_spacing=via_sep, via_enclosure=via_enc)               
 
+        #port draw
+        if layer == bottom_layer:
+            c.add_port(
+                name="bottom",
+                center=(0, 0),
+                width=min(w_x+2*via_enc, w_y+2*via_enc),
+                orientation=0,
+                layer=METAL_LAYERS[bottom_layer],
+                port_type="electrical",
+            )       
+        
+        if layer == top_layer:
+            c.add_port(
+                name="top",
+                center=(0, 0),
+                width=min(w_x+2*via_enc, w_y+2*via_enc),
+                orientation=0,
+                layer=METAL_LAYERS[top_layer],
+                port_type="electrical",
+            )
+    
     return c
 
 @gf.cell
