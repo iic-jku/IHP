@@ -115,10 +115,12 @@ def via_array(
     rules = VIA_RULES[via_type]
 
     # Use provided values or defaults
-    size = via_size if via_size is not None else rules["size"]
-    spacing = via_spacing if via_spacing is not None else rules["spacing"]
-    enclosure = via_enclosure if via_enclosure is not None else rules["enclosure"]
-
+    # size = via_size if via_size is not None else rules["size"]
+    # spacing = via_spacing if via_spacing is not None else rules["spacing"]
+    # enclosure = via_enclosure if via_enclosure is not None else rules["enclosure"]
+    size = via_size 
+    spacing = via_spacing 
+    enclosure = via_enclosure 
     # Create via array
     for col in range(columns):
         for row in range(rows):
@@ -130,12 +132,15 @@ def via_array(
                 layer=via_layer,
             )
             via_ref = c.add_ref(via)
-            via_ref.move((x, y))
+            via_ref.move((x + col * size, y + row * size))
 
     # Calculate total dimensions
-    array_width = size if columns == 1 else (columns - 1) * spacing + size
-    array_height = size if rows == 1 else (rows - 1) * spacing + size
-
+    array_width = size if columns == 1 else (columns - 1) * spacing + size * columns
+    array_height = size if rows == 1 else (rows - 1) * spacing + size * rows
+    # Center the array
+    c.move((-array_width / 2, -array_height / 2))
+    
+    #c.move((-array_width / 2, -array_height / 2))
     # Add metadata
     c.info["via_type"] = via_type
     c.info["columns"] = columns
@@ -292,6 +297,138 @@ def via_stack(
 
     return c
 
+@gf.cell
+def via_stack_test(
+    bottom_layer: str = "Metal1",
+    top_layer: str = "Metal2",
+    vn_columns: int = 2,
+    vn_rows: int = 2,
+    vt1_columns: int = 1,
+    vt1_rows: int = 1,
+    vt2_columns: int = 1,
+    vt2_rows: int = 1,
+) -> Component:
+    """Create a via stack test component.
+
+    Args:
+        bottom_layer: Bottom metal layer name.
+        top_layer: Top metal layer name.
+        vn_columns: Number of columns for normal vias (Via1-Via4).
+        vn_rows: Number of rows for normal vias.
+        vt1_columns: Number of columns for TopVia1.
+        vt1_rows: Number of rows for TopVia1.
+        vt2_columns: Number of columns for TopVia2.
+        vt2_rows: Number of rows for TopVia2.
+
+    Returns:
+        Component with via stack test.
+    """
+    c = Component()
+
+    #*************************************************************************
+    #*
+    #* Generic Design Rule Definitions
+    #*
+    #************************************************************************
+    epsilon = tech.TECH.techParams['epsilon1']
+    v1_size = tech.TECH.techParams['V1_a']
+    v1_sep1 = tech.TECH.techParams['V1_b']
+    v1_sep2 = tech.TECH.techParams['V1_b1']
+    v1_enc = tech.TECH.techParams['V1_c1']
+    vn_size = tech.TECH.techParams['Vn_a']
+    vn_sep1 = tech.TECH.techParams['Vn_b']
+    vn_sep2 = tech.TECH.techParams['Vn_b1']
+    vn_enc = tech.TECH.techParams['Vn_c1']
+    Topvia1_size = tech.TECH.techParams['TV1_a']
+    TopVia1_sep = tech.TECH.techParams['TV1_b']
+    Topvia1_enc_met5 = tech.TECH.techParams['TV1_c']
+    Topvia1_enc_top1 = tech.TECH.techParams['TV1_d']
+    Topvia2_size = tech.TECH.techParams['TV2_a']
+    TopVia2_sep = tech.TECH.techParams['TV2_b']
+    Topvia2_enc_top1 = tech.TECH.techParams['TV2_c']
+    Topvia2_enc_top2 = tech.TECH.techParams['TV2_d']
+    TopMetal1_min = tech.TECH.techParams['TM1_a']
+    TopMetal2_min = tech.TECH.techParams['TM2_a']
+    
+    #*************************************************************************
+    #*
+    #* Device Specific Design Rule Definitions
+    #*
+    #************************************************************************
+    
+    metal_layers = ['Metal1', 'Metal2', 'Metal3', 'Metal4', 'Metal5', 'TopMetal1', 'TopMetal2']
+    via_layers = ['Via1', 'Via2', 'Via3', 'Via4', 'TopVia1', 'TopVia2']
+    
+    #*************************************************************************
+    #*
+    #* Main body of code
+    #*
+    #************************************************************************
+    idx_b = metal_layers.index(bottom_layer)
+    idx_t = metal_layers.index(top_layer)
+    
+    if idx_b > idx_t:
+        idx_b, idx_t = idx_t, idx_b
+    stack_layers = metal_layers[idx_b:idx_t+1]
+    
+    for layer in stack_layers:
+        #pre-procesing
+        if layer == 'Metal1':
+            columns = vn_columns
+            rows = vn_rows
+            via_size = v1_size
+            via_sep = v1_sep1 if (columns<4 and rows<4) else v1_sep2
+            via_enc = v1_enc
+            w_x = (columns * via_size + (columns - 1) * via_sep)
+            w_y = (rows * via_size + (rows - 1) * via_sep)
+            
+        elif layer == 'TopMetal1':
+            via_size = Topvia1_size
+            via_sep = TopVia1_sep
+            via_enc = Topvia1_enc_met5
+            columns = vt1_columns
+            rows = vt1_rows
+            w_x = (columns * via_size + (columns - 1) * via_sep)
+            w_y = (rows * via_size + (rows - 1) * via_sep)
+            if "Metal5" in stack_layers:
+                c << gf.components.rectangle(size = (w_x+2*via_enc, w_y+2*via_enc), layer = METAL_LAYERS["Metal5"], centered = True, port_type = "electrical")
+            via_enc = Topvia1_enc_top1
+            
+        elif layer == 'TopMetal2':
+            via_size = Topvia2_size
+            via_sep = TopVia2_sep
+            via_enc = Topvia2_enc_top1
+            columns = vt2_columns
+            rows = vt2_rows
+            w_x = (columns * via_size + (columns - 1) * via_sep)
+            w_y = (rows * via_size + (rows - 1) * via_sep)
+            c << gf.components.rectangle(size = (w_x+2*via_enc, w_y+2*via_enc), layer = METAL_LAYERS["TopMetal1"], centered = True, port_type = "electrical")
+            
+        else:
+            columns = vn_columns
+            rows = vn_rows
+            via_size = vn_size
+            via_sep = vn_sep1 if (columns<4 and rows<4) else vn_sep2
+            via_enc = vn_enc
+            w_x = (columns * via_size + (columns - 1) * via_sep)
+            w_y = (rows * via_size + (rows - 1) * via_sep)
+            
+        #metal draw
+        if layer == 'TopMetal1':
+            if columns * via_size + (columns - 1) * 2 * via_sep < TopMetal1_min:
+                via_enc = (TopMetal1_min - Topvia1_size)/2
+        elif layer == 'TopMetal2':
+            if columns * via_size + (columns - 1) * 2 * via_sep < TopMetal2_min:
+                via_enc = (TopMetal2_min - Topvia2_size) / 2
+        c << gf.components.rectangle(size = (w_x+2*via_enc, w_y+2*via_enc), layer = METAL_LAYERS[layer], centered = True, port_type = "electrical")
+        
+        #via draw
+        if layer != bottom_layer:
+            
+            via_layer = via_layers[metal_layers.index(layer)-1]
+            c << via_array(via_type=via_layer, columns=columns, rows=rows, via_size=via_size, via_spacing=via_sep, via_enclosure=via_enc)               
+
+    return c
 
 @gf.cell
 def via_stack_with_pads(
