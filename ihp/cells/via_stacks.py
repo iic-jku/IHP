@@ -369,6 +369,7 @@ def via_stack_test(
     
     if idx_b > idx_t:
         idx_b, idx_t = idx_t, idx_b
+        bottom_layer, top_layer = top_layer, bottom_layer
     stack_layers = metal_layers[idx_b:idx_t+1]
     
     for layer in stack_layers:
