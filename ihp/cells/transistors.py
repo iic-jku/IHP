@@ -2,21 +2,22 @@
 
 import gdsfactory as gf
 from gdsfactory import Component
+from .. import tech
 
 # Define layers for transistors
 LAYERS = {
-    "NWell": (31, 0),
-    "PWell": (29, 0),
-    "ThickGateOx": (44, 0),
-    "GatPoly": (5, 0),
-    "Activ": (1, 0),
-    "pSD": (14, 0),
-    "nSD": (16, 0),
-    "SiProtection": (2, 6),
-    "Cont": (6, 0),
-    "Metal1": (8, 0),
-    "Metal2": (10, 0),
-    "Via1": (19, 0),
+    "NWell": tech.LAYER.NWelldrawing,
+    "PWell": tech.LAYER.PWelldrawing,
+    "ThickGateOx": tech.LAYER.ThickGateOxdrawing,
+    "GatPoly": tech.LAYER.GatPolydrawing,
+    "Activ": tech.LAYER.Activdrawing,
+    "pSD": tech.LAYER.pSDdrawing,
+    "nSD": tech.LAYER.nSDdrawing,
+    "SiProtection": (2, 6), # TODO nicht vorhanden in IHP tech und auch nicht verwendet
+    "Cont": tech.LAYER.Contdrawing,
+    "Metal1": tech.LAYER.Metal1drawing,
+    "Metal2": tech.LAYER.Metal2drawing, # TODO nicht verwendet
+    "Via1": tech.LAYER.Via1drawing, # TODO nicht verwendet
     "Ptap": (13, 0),
     "Ntap": (26, 0),
     "TEXT": (63, 63),
@@ -25,7 +26,7 @@ LAYERS = {
 
 @gf.cell
 def nmos(
-    width: float = 1.0,
+    width: float = 0.15,
     length: float = 0.13,
     nf: int = 1,
     m: int = 1,
