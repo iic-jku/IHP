@@ -16,10 +16,10 @@ from .. import tech
 
 
 _add_ports_metal1 = partial(
-    gf.add_ports.add_ports_from_boxes, pin_layer=(tech.LAYER.Metal1drawing), port_type="electrical", port_name_prefix="DS", ports_on_short_side=True
+    gf.add_ports.add_ports_from_boxes, pin_layer=(tech.LAYER.Metal1drawing), port_type="electrical", port_name_prefix='DS_', ports_on_short_side=True, auto_rename_ports=False
 )
 _add_ports_poly = partial(
-    gf.add_ports.add_ports_from_boxes, pin_layer=(tech.LAYER.GatPolydrawing), port_type="electrical", port_name_prefix="G", ports_on_short_side=True
+    gf.add_ports.add_ports_from_boxes, pin_layer=(tech.LAYER.GatPolydrawing), port_type="electrical", port_name_prefix="G_", ports_on_short_side=True, auto_rename_ports=False
 )
 _add_ports = (_add_ports_metal1, _add_ports_poly)
 
@@ -108,9 +108,12 @@ def my_nmos(
     print("✅ NMOS PyCell placed successfully and GDS written.")
     # ----------------------------------------------------------------
     nm = gf.read.import_gds(gdspath="nmos_test.gds", post_process=_add_ports)
+    
+    # Adjust port orientations, for metal1 so every other port points in the opposite direction
+    for i, port in enumerate(nm.ports):
+        port.orientation = 90 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
     os.remove("nmos_test.gds")
     return nm
-
 
 @gf.cell
 def my_pmos(
@@ -197,5 +200,9 @@ def my_pmos(
     print("✅ PMOS PyCell placed successfully and GDS written.")
     # ----------------------------------------------------------------
     pm = gf.import_gds(gdspath="pmos_test.gds", post_process=_add_ports)
+    
+    # Adjust port orientations, for metal1 so every other port points in the opposite direction
+    for i, port in enumerate(pm.ports):
+        port.orientation = 270 if port.name.startswith("DS_") and i % 2 == 90 else port.orientation
     os.remove("pmos_test.gds")
     return pm
