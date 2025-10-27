@@ -415,7 +415,7 @@ def my_rfnmos(
     Wmin=0.15,
     Lmin=0.13
     ) -> Component:
-    """Create an PMOS transistor.
+    """Create an RF NMOS transistor.
 
     Args:
         cdf_version: CDF version.
@@ -428,6 +428,7 @@ def my_rfnmos(
         ng: Number of gates/fingers.
         m: Multiplier (number of parallel devices).
         trise: Temp rise from ambient
+        # TODO: complete other params
 
     Returns:
         Component with PMOS transistor layout.
@@ -462,7 +463,7 @@ def my_rfnmos(
         'w': w*1e-6,    # Width in μm
         'ws': ws*1e-6,   # Single Width in nm
         'l': l*1e-6,   # Length in μm
-        'ng': 1,
+        'ng': ng,     # Number of gates
         'calculate': calculate,
         'cnt_rows': cnt_rows,
         'Met2Cont': Met2Cont,
