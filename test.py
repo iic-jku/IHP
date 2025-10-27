@@ -122,12 +122,19 @@ ihp.PDK.activate()
 
 # ----------------------------------------------------------------
 
-c = ihp.cells.my_nmosHV(ng = 15).copy()
-c.pprint_ports()
-c.draw_ports()
-c.move((0,2))
-c.show()
+# c = ihp.cells.my_nmosHV(ng = 15).copy()
+# c.pprint_ports()
+# c.draw_ports()
+# c.move((0,2))
+# c.show()
 
-c.add_ref(ihp.cells.my_pmosHV(ng=15).copy())
+# c.add_ref(ihp.cells.my_pmosHV(ng=15).copy())
+# c.draw_ports()
+# c.show()
+
+# ----------------------------------------------------------------
+
+c = ihp.cells.my_rfnmos().copy()
+c.pprint_ports()
 c.draw_ports()
 c.show()
