@@ -1,14 +1,14 @@
 import sys
 sys.path.append("/foss/pdks/ihp-sg13g2/libs.tech/klayout/python")
 sys.path.append("/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
-from sg13g2_pycell_lib.ihp.nmos_code import nmos
-from sg13g2_pycell_lib.ihp.nmosHV_code import nmosHV
-from sg13g2_pycell_lib.ihp.pmos_code import pmos
-from sg13g2_pycell_lib.ihp.pmosHV_code import pmosHV
-from sg13g2_pycell_lib.ihp.rfnmos_code import rfnmos
-from sg13g2_pycell_lib.ihp.rfnmosHV_code import rfnmosHV
-from sg13g2_pycell_lib.ihp.rfpmos_code import rfpmos
-from sg13g2_pycell_lib.ihp.rfpmosHV_code import rfpmosHV
+from sg13g2_pycell_lib.ihp.nmos_code import nmos as nmosIHP
+from sg13g2_pycell_lib.ihp.nmosHV_code import nmosHV as nmosHVIHP
+from sg13g2_pycell_lib.ihp.pmos_code import pmos as pmosIHP
+from sg13g2_pycell_lib.ihp.pmosHV_code import pmosHV as pmosHVIHP
+from sg13g2_pycell_lib.ihp.rfnmos_code import rfnmos as rfnmosIHP
+from sg13g2_pycell_lib.ihp.rfnmosHV_code import rfnmosHV as rfnmosHVIHP
+from sg13g2_pycell_lib.ihp.rfpmos_code import rfpmos as rfpmosIHP
+from sg13g2_pycell_lib.ihp.rfpmosHV_code import rfpmosHV as rfpmosHVIHP
 
 from cni.tech import Tech
 
@@ -31,7 +31,7 @@ _add_ports_poly = partial(
 _add_ports = (_add_ports_metal1, _add_ports_poly)
 
 @gf.cell
-def my_nmos(
+def nmos(
     cdf_version = 8, 
     model = 'sg13_lv_nmos', 
     w = 0.15, 
@@ -78,7 +78,7 @@ def my_nmos(
     # ----------------------------------------------------------------
     # PCellWrapper acts like the 'specs' object in KLayout
     # It handles parameter declarations and calls defineParamSpecs internally
-    device = PCellWrapper(impl=nmos(), tech=tech)
+    device = PCellWrapper(impl=nmosIHP(), tech=tech)
 
     # ----------------------------------------------------------------
     # Step 4: Define parameters
@@ -123,7 +123,7 @@ def my_nmos(
     return nm
 
 @gf.cell
-def my_nmosHV(
+def nmosHV(
     cdf_version = 8, 
     model = 'sg13_hv_pmos', 
     w = 0.60, 
@@ -170,7 +170,7 @@ def my_nmosHV(
     # ----------------------------------------------------------------
     # PCellWrapper acts like the 'specs' object in KLayout
     # It handles parameter declarations and calls defineParamSpecs internally
-    device = PCellWrapper(impl=nmosHV(), tech=tech)
+    device = PCellWrapper(impl=nmosHVIHP(), tech=tech)
 
     # ----------------------------------------------------------------
     # Step 4: Define parameters
@@ -216,7 +216,7 @@ def my_nmosHV(
 
 
 @gf.cell
-def my_pmos(
+def pmos(
     cdf_version = 8, 
     model = 'sg13_lv_pmos', 
     w = 0.15, 
@@ -263,7 +263,7 @@ def my_pmos(
     # ----------------------------------------------------------------
     # PCellWrapper acts like the 'specs' object in KLayout
     # It handles parameter declarations and calls defineParamSpecs internally
-    device = PCellWrapper(impl=pmos(), tech=tech)
+    device = PCellWrapper(impl=pmosIHP(), tech=tech)
 
     # ----------------------------------------------------------------
     # Step 4: Define parameters
@@ -309,7 +309,7 @@ def my_pmos(
 
 
 @gf.cell
-def my_pmosHV(
+def pmosHV(
     cdf_version = 8, 
     model = 'sg13_hv_pmos', 
     w = 0.30, 
@@ -356,7 +356,7 @@ def my_pmosHV(
     # ----------------------------------------------------------------
     # PCellWrapper acts like the 'specs' object in KLayout
     # It handles parameter declarations and calls defineParamSpecs internally
-    device = PCellWrapper(impl=pmosHV(), tech=tech)
+    device = PCellWrapper(impl=pmosHVIHP(), tech=tech)
 
     # ----------------------------------------------------------------
     # Step 4: Define parameters
@@ -402,7 +402,7 @@ def my_pmosHV(
 
 
 @gf.cell
-def my_rfnmos(
+def rfnmos(
     cdf_version=8,
     rfmode=1,
     model='sg13_lv_nmos',
@@ -454,7 +454,7 @@ def my_rfnmos(
     # ----------------------------------------------------------------
     # PCellWrapper acts like the 'specs' object in KLayout
     # It handles parameter declarations and calls defineParamSpecs internally
-    device = PCellWrapper(impl=rfnmos(), tech=tech)
+    device = PCellWrapper(impl=rfnmosIHP(), tech=tech)
 
     # ----------------------------------------------------------------
     # Step 4: Define parameters
@@ -506,7 +506,7 @@ def my_rfnmos(
 
 
 @gf.cell
-def my_rfnmosHV(
+def rfnmosHV(
     cdf_version=8,
     rfmode=1,
     model='sg13_hv_nmos',
@@ -558,7 +558,7 @@ def my_rfnmosHV(
     # ----------------------------------------------------------------
     # PCellWrapper acts like the 'specs' object in KLayout
     # It handles parameter declarations and calls defineParamSpecs internally
-    device = PCellWrapper(impl=rfnmosHV(), tech=tech)
+    device = PCellWrapper(impl=rfnmosHVIHP(), tech=tech)
 
     # ----------------------------------------------------------------
     # Step 4: Define parameters
@@ -610,7 +610,7 @@ def my_rfnmosHV(
 
 
 @gf.cell
-def my_rfpmos(
+def rfpmos(
     cdf_version=8,
     rfmode=1,
     model='sg13_lv_pmos',
@@ -662,7 +662,7 @@ def my_rfpmos(
     # ----------------------------------------------------------------
     # PCellWrapper acts like the 'specs' object in KLayout
     # It handles parameter declarations and calls defineParamSpecs internally
-    device = PCellWrapper(impl=rfpmos(), tech=tech)
+    device = PCellWrapper(impl=rfpmosIHP(), tech=tech)
 
     # ----------------------------------------------------------------
     # Step 4: Define parameters
@@ -713,7 +713,7 @@ def my_rfpmos(
     return c
 
 @gf.cell
-def my_rfpmosHV(
+def rfpmosHV(
     cdf_version=8,
     rfmode=1,
     model='sg13_hv_pmos',
@@ -765,7 +765,7 @@ def my_rfpmosHV(
     # ----------------------------------------------------------------
     # PCellWrapper acts like the 'specs' object in KLayout
     # It handles parameter declarations and calls defineParamSpecs internally
-    device = PCellWrapper(impl=rfpmosHV(), tech=tech)
+    device = PCellWrapper(impl=rfpmosHVIHP(), tech=tech)
 
     # ----------------------------------------------------------------
     # Step 4: Define parameters
