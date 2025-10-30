@@ -133,28 +133,54 @@ ihp.PDK.activate()
 # c.show()
 
 # ----------------------------------------------------------------
+# rf transistors
 
-c = ihp.cells.my_rfnmos().copy()
-c.pprint_ports()
-c.draw_ports()
+
+# c = ihp.cells.rfnmos().copy()
+# c.pprint_ports()
+# c.draw_ports()
+# c.show()
+# c.move((1, -1.25 ))
+
+# nm = c.add_ref(ihp.cells.nmos(w=1, l=0.72).copy())
+# nm.rotate(90)
+# c. move((0,6))
+
+
+# c.add_ref(ihp.cells.rfnmosHV().copy())
+
+# c.pprint_ports()
+# c.draw_ports()
+# c.show()
+
+# c.move((0,5))
+
+# c.add_ref(ihp.cells.rfpmos().copy())
+# c.pprint_ports()
+# c.draw_ports()
+# c.show()
+
+# c.move((0,6))
+
+# c.add_ref(ihp.cells.rfpmosHV().copy())
+# c.pprint_ports()
+# c.draw_ports()
+# c.show()
+
+# ----------------------------------------------------------------
+c = gf.Component()
+
+c.add_ref(ihp.cells.npn13G2().copy())
 c.show()
-c.move((0,5))
+c.move((4,11))
 
-c.add_ref(ihp.cells.my_rfnmosHV().copy())
-c.pprint_ports()
-c.draw_ports()
+c.add_ref(ihp.cells.npn13G2L().copy())
 c.show()
+c.move((0,8))
 
-c.move((0,5))
-
-c.add_ref(ihp.cells.my_rfpmos().copy())
-c.pprint_ports()
-c.draw_ports()
+c.add_ref(ihp.cells.npn13G2V().copy())
 c.show()
+c.move((-3.5,4))
 
-c.move((0,6))
-
-c.add_ref(ihp.cells.my_rfpmosHV().copy())
-c.pprint_ports()
-c.draw_ports()
+c.add_ref(ihp.cells.pnpMPA().copy())
 c.show()
