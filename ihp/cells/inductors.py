@@ -1,208 +1,213 @@
-"""Inductor components for IHP PDK."""
+import sys
+sys.path.append("/foss/pdks/ihp-sg13g2/libs.tech/klayout/python")
+sys.path.append("/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
+from sg13g2_pycell_lib.ihp.inductor2_code import inductor2 as inductor2IHP
+from sg13g2_pycell_lib.ihp.inductor3_code import inductor3 as inductor3IHP
 
-import math
+from cni.tech import Tech
 
+from cni.dlo import PCellWrapper
+import pya
 import gdsfactory as gf
 from gdsfactory import Component
+import os
+
+from functools import partial
+from .. import tech
 
 
-def inductor_min_diameter(width: float, space: float, turns: int, grid: float) -> float:
-    """Calculate minimum diameter for inductor.
-
-    Args:
-        width: Width of the inductor trace in micrometers.
-        space: Space between turns in micrometers.
-        turns: Number of turns.
-        grid: Grid resolution.
-
-    Returns:
-        Minimum diameter in micrometers.
-    """
-    min_d = 2 * turns * (width + space) + 4 * width
-    return round(min_d / grid) * grid
-
-
-@gf.cell
 def inductor2(
-    width: float = 2.0,
-    space: float = 2.1,
-    diameter: float = 15.48,
-    resistance: float = 0.5777,
-    inductance: float = 33.303e-12,
-    turns: int = 1,
-    block_qrc: bool = True,
-    substrate_etch: bool = False,
-) -> Component:
-    """Create a 2-turn inductor.
-
-    Args:
-        width: Width of the inductor trace in micrometers.
-        space: Space between turns in micrometers.
-        diameter: Inner diameter in micrometers.
-        resistance: Resistance in ohms.
-        inductance: Inductance in henries.
-        turns: Number of turns (default 1 for inductor2).
-        block_qrc: Block QRC layer.
-        substrate_etch: Enable substrate etching.
-
-    Returns:
-        Component with inductor layout.
+    cdf_version = 8,
+    display = 'Selected',
+    model = "inductor2",
+    width = 2,
+    space = 2.1,
+    distance = 15.48,
+    resistance = 1,
+    inductance = 1,
+    num_turns = 1,
+    block_qrc = True,
+    subE = False,
+    L_estim = 33.303,
+    R_estim = 577.7,
+    Wmin = 2,
+    Smin = 2.1,
+    Dmin = 15.48,
+    min_num_turns = 1,
+    merge_Stat = 16
+    ) -> Component:
     """
-    c = Component()
+    Args:
+    
+    Returns:
+        gdsfactory Component
+    
+    
+    """
+    
+    # ----------------------------------------------------------------
+    # Step 1: Get the technology object
+    # ----------------------------------------------------------------
+    tech = Tech.get("SG13_dev")  # Must match the name registered in SG13_Tech
 
-    # Define layers
-    TM2 = (134, 5)  # TopMetal2
-    IND = (8, 5)  # IND layer
-    NoRCX = (15, 5)  # NoRCX layer
-    LBE = (24, 0)  # Substrate etch layer
+    # ----------------------------------------------------------------
+    # Step 2: Create a layout and a cell
+    # ----------------------------------------------------------------
+    layout = pya.Layout()                # new empty layout
+    cell = layout.create_cell("inductor2")  # new cell for your transistor
 
-    # Grid fixing for manufacturing constraints
-    grid = 0.01
-    w = round(width / (2 * grid)) * 2 * grid
-    s = round(space / grid) * grid
-    d = round(diameter / (2 * grid)) * 2 * grid
+    # ----------------------------------------------------------------
+    # Step 3: Wrap the PyCell
+    # ----------------------------------------------------------------
+    # PCellWrapper acts like the 'specs' object in KLayout
+    # It handles parameter declarations and calls defineParamSpecs internally
+    device = PCellWrapper(impl=inductor2IHP(), tech=tech)
 
-    # Check minimum diameter
-    min_d = inductor_min_diameter(w, s, turns, grid)
-    if d < min_d:
-        d = min_d
+    # ----------------------------------------------------------------
+    # Step 4: Define parameters
+    # ----------------------------------------------------------------
+    params = {
+        'cdf_version': 8,
+        'Display': 'Selected',
+        'model': model,
+        'w': width*1e-6,
+        's': space*1e-6,
+        'd': distance*1e-6,
+        'r': resistance*1e-3,
+        'l': inductance*1e-9,
+        'nr_r': num_turns,
+        'blockqrc': block_qrc,
+        'subE': subE,
+        'lEstim': L_estim*1e-9,
+        'rEstim': R_estim*1e-3,
+        'Wmin': Wmin*1e-6,
+        'Smin': Smin*1e-6,
+        'Dmin': Dmin*1e-6,
+        'minNr_t': min_num_turns,
+        'mergeStat': merge_Stat        
+    }
 
-    # Calculate geometry parameters
+    # Convert params into a list in the order of device.param_decls
+    param_values = [params[p.name] for p in device.param_decls]
 
-    # Create octagonal spiral inductor
-    # Center opening
-    octagon_points = []
-    angle_step = 45
-    for i in range(8):
-        angle = i * angle_step * math.pi / 180
-        if i % 2 == 0:  # Cardinal points
-            r = d / 2
-        else:  # Diagonal points
-            r = d / (2 * math.cos(math.pi / 8))
-        x = r * math.cos(angle)
-        y = r * math.sin(angle)
-        octagon_points.append((x, y))
+    # ----------------------------------------------------------------
+    # Step 5: Produce the layout
+    # ----------------------------------------------------------------
+    device.produce(layout=layout,
+                layers={},        # can pass layer map if needed
+                parameters=param_values,
+                cell=cell)
 
-    # Create spiral turns
-    for turn in range(turns):
-        turn_offset = turn * (w + s)
-
-        # Create path for this turn
-        path_points = []
-        for i in range(8):
-            angle = (i * 45 + 22.5) * math.pi / 180  # Offset by 22.5 degrees
-            if i % 2 == 0:
-                r = d / 2 + turn_offset + w / 2
-            else:
-                r = (d / 2 + turn_offset + w / 2) / math.cos(math.pi / 8)
-
-            x = r * math.cos(angle)
-            y = r * math.sin(angle)
-            path_points.append((x, y))
-
-        # Add opening for connection
-        if turn == 0:
-            # Create opening in first turn for connection
-            path_points = path_points[:-1]  # Remove last point to create opening
-
-        # Create the path
-        path = gf.Path(path_points)
-        c << gf.path.extrude(path, layer=TM2, width=w)
-
-    # Add connection traces and ports
-    # Port 1 - Inner connection
-    port1_trace = c << gf.components.rectangle(size=(w, d / 2 + w), layer=TM2)
-    port1_trace.move((-(d / 2 + w), -w / 2))
-    c.add_port(
-        name="P1", center=(-(d / 2 + w), 0.0), width=w, orientation=180, layer=TM2
-    )
-
-    # Port 2 - Outer connection
-    outer_radius = d / 2 + turns * (w + s)
-    port2_trace = c << gf.components.rectangle(size=(w, outer_radius + w), layer=TM2)
-    port2_trace.move((outer_radius, -w / 2))
-    c.add_port(
-        name="P2", center=(outer_radius + w, 0), width=w, orientation=0, layer=TM2
-    )
-
-    # Add IND marker layer
-    c << gf.components.rectangle(
-        size=(2 * outer_radius + 2 * w, 2 * outer_radius + 2 * w),
-        layer=IND,
-        centered=True,
-    )
-
-    # Add blocking layers if requested
-    if block_qrc:
-        c << gf.components.rectangle(
-            size=(2 * outer_radius + 3 * w, 2 * outer_radius + 3 * w),
-            layer=NoRCX,
-            centered=True,
-        )
-
-    # Add substrate etch if requested
-    if substrate_etch:
-        c << gf.components.rectangle(
-            size=(2 * outer_radius + 4 * w, 2 * outer_radius + 4 * w),
-            layer=LBE,
-            centered=True,
-        )
-
-    # Add metadata
-    c.info["resistance"] = resistance
-    c.info["inductance"] = inductance
-    c.info["model"] = "inductor2"
-    c.info["turns"] = turns
-    c.info["width"] = width
-    c.info["space"] = space
-    c.info["diameter"] = diameter
-
+    # ----------------------------------------------------------------
+    # Step 6: Save GDS
+    # ----------------------------------------------------------------
+    layout.write("temp.gds")
+    print("✅ inductor2 PyCell placed successfully and GDS written.")
+    # ----------------------------------------------------------------
+    c = gf.read.import_gds(gdspath="temp.gds")
+    
+    # TODO : add ports properly using post_process
+    # # Adjust port orientations, for metal1 so every other port points in the opposite direction
+    # for i, port in enumerate(c.ports):
+    #     port.orientation = 90 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
+    
+    os.remove("temp.gds")
     return c
 
-
-@gf.cell
 def inductor3(
-    width: float = 2.0,
-    space: float = 2.1,
-    diameter: float = 24.68,
-    resistance: float = 1.386,
-    inductance: float = 221.5e-12,
-    turns: int = 2,
-    block_qrc: bool = True,
-    substrate_etch: bool = False,
-) -> Component:
-    """Create a 3-turn inductor.
-
-    Args:
-        width: Width of the inductor trace in micrometers.
-        space: Space between turns in micrometers.
-        diameter: Inner diameter in micrometers.
-        resistance: Resistance in ohms.
-        inductance: Inductance in henries.
-        turns: Number of turns (default 2 for inductor3).
-        block_qrc: Block QRC layer.
-        substrate_etch: Enable substrate etching.
-
-    Returns:
-        Component with inductor layout.
+    cdf_version = 8,
+    display = 'Selected',
+    model = "inductor3",
+    width = 2,
+    space = 2.1,
+    distance = 25.84,
+    resistance = 1,
+    inductance = 1,
+    num_turns = 2,
+    block_qrc = True,
+    subE = False,
+    L_estim = 221.5,
+    R_estim = 1386,
+    Wmin = 2,
+    Smin = 2.1,
+    Dmin = 25.84,
+    min_num_turns = 2,
+    merge_Stat = 16
+    ) -> Component:
     """
-    # Use inductor2 as base with different default parameters
-    return inductor2(
-        width=width,
-        space=space,
-        diameter=diameter,
-        resistance=resistance,
-        inductance=inductance,
-        turns=turns,
-        block_qrc=block_qrc,
-        substrate_etch=substrate_etch,
-    )
+    Args:
+    
+    Returns:
+        gdsfactory Component
+    
+    
+    """
+    
+    # ----------------------------------------------------------------
+    # Step 1: Get the technology object
+    # ----------------------------------------------------------------
+    tech = Tech.get("SG13_dev")  # Must match the name registered in SG13_Tech
 
+    # ----------------------------------------------------------------
+    # Step 2: Create a layout and a cell
+    # ----------------------------------------------------------------
+    layout = pya.Layout()                # new empty layout
+    cell = layout.create_cell("inductor3")  # new cell for your transistor
 
-if __name__ == "__main__":
-    # Test the components
-    c1 = inductor2()
-    c1.show()
+    # ----------------------------------------------------------------
+    # Step 3: Wrap the PyCell
+    # ----------------------------------------------------------------
+    # PCellWrapper acts like the 'specs' object in KLayout
+    # It handles parameter declarations and calls defineParamSpecs internally
+    device = PCellWrapper(impl=inductor3IHP(), tech=tech)
 
-    c2 = inductor3()
-    c2.show()
+    # ----------------------------------------------------------------
+    # Step 4: Define parameters
+    # ----------------------------------------------------------------
+    params = {
+        'cdf_version': 8,
+        'Display': 'Selected',
+        'model': model,
+        'w': width*1e-6,
+        's': space*1e-6,
+        'd': distance*1e-6,
+        'r': resistance*1e-3,
+        'l': inductance*1e-9,
+        'nr_r': num_turns,
+        'blockqrc': block_qrc,
+        'subE': subE,
+        'lEstim': L_estim*1e-9,
+        'rEstim': R_estim*1e-3,
+        'Wmin': Wmin*1e-6,
+        'Smin': Smin*1e-6,
+        'Dmin': Dmin*1e-6,
+        'minNr_t': min_num_turns,
+        'mergeStat': merge_Stat        
+    }
+
+    # Convert params into a list in the order of device.param_decls
+    param_values = [params[p.name] for p in device.param_decls]
+
+    # ----------------------------------------------------------------
+    # Step 5: Produce the layout
+    # ----------------------------------------------------------------
+    device.produce(layout=layout,
+                layers={},        # can pass layer map if needed
+                parameters=param_values,
+                cell=cell)
+
+    # ----------------------------------------------------------------
+    # Step 6: Save GDS
+    # ----------------------------------------------------------------
+    layout.write("temp.gds")
+    print("✅ inductor3 PyCell placed successfully and GDS written.")
+    # ----------------------------------------------------------------
+    c = gf.read.import_gds(gdspath="temp.gds")
+    
+    # TODO : add ports properly using post_process
+    # # Adjust port orientations, for metal1 so every other port points in the opposite direction
+    # for i, port in enumerate(c.ports):
+    #     port.orientation = 90 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
+    
+    os.remove("temp.gds")
+    return c

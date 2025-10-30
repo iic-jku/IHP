@@ -168,19 +168,30 @@ ihp.PDK.activate()
 # c.show()
 
 # ----------------------------------------------------------------
+# c = gf.Component()
+
+# c.add_ref(ihp.cells.npn13G2().copy())
+# c.show()
+# c.move((4,11))
+
+# c.add_ref(ihp.cells.npn13G2L().copy())
+# c.show()
+# c.move((0,8))
+
+# c.add_ref(ihp.cells.npn13G2V().copy())
+# c.show()
+# c.move((-3.5,4))
+
+# c.add_ref(ihp.cells.pnpMPA().copy())
+# c.show()
+
+
+# ----------------------------------------------------------------
 c = gf.Component()
 
-c.add_ref(ihp.cells.npn13G2().copy())
+c.add_ref(ihp.cells.inductor2().copy())
 c.show()
-c.move((4,11))
+c.move((-100, 10))
 
-c.add_ref(ihp.cells.npn13G2L().copy())
-c.show()
-c.move((0,8))
-
-c.add_ref(ihp.cells.npn13G2V().copy())
-c.show()
-c.move((-3.5,4))
-
-c.add_ref(ihp.cells.pnpMPA().copy())
+c.add_ref(ihp.cells.inductor3().copy())
 c.show()
