@@ -17,8 +17,6 @@ from .. import tech
 
 
 def inductor2(
-    cdf_version = 8,
-    display = 'Selected',
     model = "inductor2",
     width = 2,
     space = 2.1,
@@ -115,8 +113,6 @@ def inductor2(
     return c
 
 def inductor3(
-    cdf_version = 8,
-    display = 'Selected',
     model = "inductor3",
     width = 2,
     space = 2.1,
