@@ -114,13 +114,13 @@ def nmos(
     layout.write("temp.gds")
     print("✅ NMOS PyCell placed successfully and GDS written.")
     # ----------------------------------------------------------------
-    nm = gf.read.import_gds(gdspath="temp.gds", post_process=_add_ports)
+    c = gf.read.import_gds(gdspath="temp.gds", post_process=_add_ports)
     
     # Adjust port orientations, for metal1 so every other port points in the opposite direction
-    for i, port in enumerate(nm.ports):
+    for i, port in enumerate(c.ports):
         port.orientation = 90 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
     os.remove("temp.gds")
-    return nm
+    return c
 
 @gf.cell
 def nmosHV(
