@@ -197,20 +197,43 @@ ihp.PDK.activate()
 # c.show()
 
 # -----------------------------------------------------------------
+# c = gf.Component()
+
+# c.add_ref(ihp.cells.resistors.rhigh(length=10))
+# c.move((5,0))
+# c.add_ref(ihp.cells.resistors.rhigh(length=20, width=1))
+
+# c.move((5,0))
+# c.add_ref(ihp.cells.resistors.rppd(length=10))
+# c.move((5,0))
+# c.add_ref(ihp.cells.resistors.rppd(length=20, width=1))
+# c.show()
+
+# c.move((5,0))
+# c.add_ref(ihp.cells.resistors.rsil(length=10))
+# c.move((5,0))
+# c.add_ref(ihp.cells.resistors.rsil(length=20, width=1))
+# c.show()
+
+
+# -----------------------------------------------------------------
 c = gf.Component()
-c.add_ref(ihp.cells.resistors.rhigh(length=10))
-c.move((5,0))
-c.add_ref(ihp.cells.resistors.rhigh(length=20, width=1))
 
-c.move((5,0))
-c.add_ref(ihp.cells.resistors.rppd(length=10))
-c.move((5,0))
-c.add_ref(ihp.cells.resistors.rppd(length=20, width=1))
+c.add_ref(ihp.cells.capacitors.cmim(width="10u", length="10u"))
+c.move((40,0))
+c.add_ref(ihp.cells.capacitors.cmim(width="20u", length="20u"))
+
+
+c.move((-40,35))
+c.add_ref(ihp.cells.capacitors.rfcmim(width="10u", length="10u"))
+c.move((40,0))
+c.add_ref(ihp.cells.capacitors.rfcmim(width="20u", length="20u"))
+
+c.move((-40,35))
+c.add_ref(ihp.cells.capacitors.svaricap(Nx=1))
+c.move((40,0))
+c.add_ref(ihp.cells.capacitors.svaricap(Nx=10))
 c.show()
 
 
-c.move((5,0))
-c.add_ref(ihp.cells.resistors.rsil(length=10))
-c.move((5,0))
-c.add_ref(ihp.cells.resistors.rsil(length=20, width=1))
-c.show()
+
