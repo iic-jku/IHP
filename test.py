@@ -187,11 +187,30 @@ ihp.PDK.activate()
 
 
 # ----------------------------------------------------------------
+# c = gf.Component()
+
+# c.add_ref(ihp.cells.inductor2().copy())
+# c.show()
+# c.move((-100, 10))
+
+# c.add_ref(ihp.cells.inductor3().copy())
+# c.show()
+
+# -----------------------------------------------------------------
 c = gf.Component()
+c.add_ref(ihp.cells.resistors.rhigh(length=10))
+c.move((5,0))
+c.add_ref(ihp.cells.resistors.rhigh(length=20, width=1))
 
-c.add_ref(ihp.cells.inductor2().copy())
+c.move((5,0))
+c.add_ref(ihp.cells.resistors.rppd(length=10))
+c.move((5,0))
+c.add_ref(ihp.cells.resistors.rppd(length=20, width=1))
 c.show()
-c.move((-100, 10))
 
-c.add_ref(ihp.cells.inductor3().copy())
+
+c.move((5,0))
+c.add_ref(ihp.cells.resistors.rsil(length=10))
+c.move((5,0))
+c.add_ref(ihp.cells.resistors.rsil(length=20, width=1))
 c.show()
