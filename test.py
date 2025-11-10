@@ -217,23 +217,29 @@ ihp.PDK.activate()
 
 
 # -----------------------------------------------------------------
+# c = gf.Component()
+
+# c.add_ref(ihp.cells.capacitors.cmim(width="10u", length="10u"))
+# c.move((40,0))
+# c.add_ref(ihp.cells.capacitors.cmim(width="20u", length="20u"))
+
+
+# c.move((-40,35))
+# c.add_ref(ihp.cells.capacitors.rfcmim(width="10u", length="10u"))
+# c.move((40,0))
+# c.add_ref(ihp.cells.capacitors.rfcmim(width="20u", length="20u"))
+
+# c.move((-40,35))
+# c.add_ref(ihp.cells.capacitors.svaricap(Nx=1))
+# c.move((40,0))
+# c.add_ref(ihp.cells.capacitors.svaricap(Nx=10))
+# c.show()
+
+# -----------------------------------------------------------------
+
 c = gf.Component()
 
-c.add_ref(ihp.cells.capacitors.cmim(width="10u", length="10u"))
-c.move((40,0))
-c.add_ref(ihp.cells.capacitors.cmim(width="20u", length="20u"))
-
-
-c.move((-40,35))
-c.add_ref(ihp.cells.capacitors.rfcmim(width="10u", length="10u"))
-c.move((40,0))
-c.add_ref(ihp.cells.capacitors.rfcmim(width="20u", length="20u"))
-
-c.move((-40,35))
-c.add_ref(ihp.cells.capacitors.svaricap(Nx=1))
-c.move((40,0))
-c.add_ref(ihp.cells.capacitors.svaricap(Nx=10))
+c.add_ref(ihp.cells.via_stack(top_layer="TopMetal2", bottom_layer="Metal1"))
 c.show()
-
 
 
