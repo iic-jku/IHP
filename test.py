@@ -237,9 +237,28 @@ ihp.PDK.activate()
 
 # -----------------------------------------------------------------
 
+# c = gf.Component()
+
+# c.add_ref(ihp.cells.via_stack(top_layer="TopMetal2", bottom_layer="Metal1"))
+# c.show()
+
+# -----------------------------------------------------------------
+
 c = gf.Component()
 
-c.add_ref(ihp.cells.via_stack(top_layer="TopMetal2", bottom_layer="Metal1"))
+c.add_ref(ihp.cells.passives.esd(model="diodevdd_2kv"))
 c.show()
 
+c.move((0,5))
+c.add_ref(ihp.cells.passives.ptap1())
+c.show()
+
+c.move((0,5))
+c.add_ref(ihp.cells.passives.ntap1())
+c.show()
+
+
+c.move((200,200))
+c.add_ref(ihp.cells.passives.sealring())
+c.show()
 
