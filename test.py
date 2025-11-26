@@ -70,12 +70,12 @@ ihp.PDK.activate()
 # ----------------------------------------------------------------
 
 # c = gf.Component()
-# nm_1 = ihp.cells.my_nmos(ng = 10).copy()
-# nm_2 = ihp.cells.my_nmos(ng = 8).copy()
+# nm_1 = ihp.cells.nmos(ng = 10).copy()
+# nm_2 = ihp.cells.nmos(ng = 8).copy()
 # nm_1_ref = c.add_ref(nm_1)
 # nm_1_ref_2 = c.add_ref(nm_1)
 # nm_1_ref_2.move((0, 1))
-# pm = c.add_ref(ihp.cells.my_pmos(ng = 5).copy())
+# pm = c.add_ref(ihp.cells.pmos(ng = 5).copy())
 # nm_2_ref = c.add_ref(nm_2)
 
 # nm_2.move((0, -2))
@@ -107,28 +107,28 @@ ihp.PDK.activate()
 
 # ----------------------------------------------------------------
 
-# c = ihp.cells.my_nmos().copy()
+# c = ihp.cells.nmos().copy()
 # c.move((0,1))
-# c << ihp.cells.my_nmos(ng = 2).copy()
+# c << ihp.cells.nmos(ng = 2).copy()
 # c.draw_ports()
 # c.show()
 
 # ----------------------------------------------------------------
 
-# c = ihp.cells.my_nmos(ng = 5).copy()
+# c = ihp.cells.nmos(ng = 5).copy()
 # c.pprint_ports()
 # c.draw_ports()
 # c.show()
 
 # ----------------------------------------------------------------
 
-# c = ihp.cells.my_nmosHV(ng = 15).copy()
+# c = ihp.cells.nmosHV(ng = 15).copy()
 # c.pprint_ports()
 # c.draw_ports()
 # c.move((0,2))
 # c.show()
 
-# c.add_ref(ihp.cells.my_pmosHV(ng=15).copy())
+# c.add_ref(ihp.cells.pmosHV(ng=15).copy())
 # c.draw_ports()
 # c.show()
 
@@ -199,20 +199,20 @@ ihp.PDK.activate()
 # -----------------------------------------------------------------
 # c = gf.Component()
 
-# c.add_ref(ihp.cells.resistors.rhigh(length=10))
+# c.add_ref(ihp.cells.rhigh(length=10))
 # c.move((5,0))
-# c.add_ref(ihp.cells.resistors.rhigh(length=20, width=1))
+# c.add_ref(ihp.cells.rhigh(length=20, width=1))
 
 # c.move((5,0))
-# c.add_ref(ihp.cells.resistors.rppd(length=10))
+# c.add_ref(ihp.cells.rppd(length=10))
 # c.move((5,0))
-# c.add_ref(ihp.cells.resistors.rppd(length=20, width=1))
+# c.add_ref(ihp.cells.rppd(length=20, width=1))
 # c.show()
 
 # c.move((5,0))
-# c.add_ref(ihp.cells.resistors.rsil(length=10))
+# c.add_ref(ihp.cells.rsil(length=10))
 # c.move((5,0))
-# c.add_ref(ihp.cells.resistors.rsil(length=20, width=1))
+# c.add_ref(ihp.cells.rsil(length=20, width=1))
 # c.show()
 
 
@@ -276,7 +276,18 @@ ihp.PDK.activate()
 
 # -----------------------------------------------------------------
 
-c = gf.Component()
+# c = gf.Component()
 
-c.add_ref(ihp.cells.via_stacks.no_filler_stack())
-c.show()
+# c.add_ref(ihp.cells.via_stacks.no_filler_stack())
+# c.show()
+
+# -----------------------------------------------------------------
+
+# c = gf.Component()
+# c.add_ref(ihp.cells.antennas.dantenna())
+# c.show()
+
+# c.move((0,2))
+
+# c.add_ref(ihp.cells.antennas.dpantenna())
+# c.show()

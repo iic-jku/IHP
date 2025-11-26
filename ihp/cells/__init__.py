@@ -8,8 +8,8 @@ from .passives import *
 from .text import *
 from .via_stacks import *
 from .waveguides import *
-# reused stuff from IHP
 from .mos_transistors import *
 from .bjt_transistors import *
 from .inductors import *
 from .resistors import *
+from .antennas import *
