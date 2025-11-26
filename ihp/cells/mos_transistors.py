@@ -23,7 +23,7 @@ from .. import tech
 
 
 _add_ports_metal1 = partial(
-    gf.add_ports.add_ports_from_boxes, pin_layer=(tech.LAYER.Metal1pin), port_type="electrical", port_name_prefix='DS_', ports_on_short_side=True, auto_rename_ports=False
+    gf.add_ports.add_ports_from_boxes, pin_layer=(tech.LAYER.Metal1drawing), port_type="electrical", port_name_prefix='DS_', ports_on_short_side=True, auto_rename_ports=False
 )
 _add_ports_poly = partial(
     gf.add_ports.add_ports_from_boxes, pin_layer=(tech.LAYER.GatPolydrawing), port_type="electrical", port_name_prefix="G_", ports_on_short_side=True, auto_rename_ports=False
