@@ -264,11 +264,19 @@ ihp.PDK.activate()
 
 # -----------------------------------------------------------------
 
+# c = gf.Component()
+
+# c.add_ref(ihp.cells.bondpads.bondpad(shape="octagon"))
+# c.show()
+
+# c.move((0,100))
+# c.add_ref(ihp.cells.bondpads.bondpad_array(n_pads=4, pad_pitch=100))
+# c.show()
+
+
+# -----------------------------------------------------------------
+
 c = gf.Component()
 
-c.add_ref(ihp.cells.bondpads.bondpad(shape="octagon"))
-c.show()
-
-c.move((0,100))
-c.add_ref(ihp.cells.bondpads.bondpad_array(n_pads=4, pad_pitch=100))
+c.add_ref(ihp.cells.via_stacks.no_filler_stack())
 c.show()

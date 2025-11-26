@@ -1,8 +1,10 @@
-"""Via stack components for IHP PDK."""
+"""Via stack components for IHP PDK. Also includes NoFillerStack."""
+#TODO prbably not the right place for NoFillerStack
 import sys
 sys.path.append("/foss/pdks/ihp-sg13g2/libs.tech/klayout/python")
 sys.path.append("/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 from sg13g2_pycell_lib.ihp.via_stack_code import via_stack as via_stackIHP
+from sg13g2_pycell_lib.ihp.NoFillerStack_code import NoFillerStack as no_filler_stackIHP
 
 from cni.tech import Tech
 
@@ -95,6 +97,73 @@ def via_stack(
     # ----------------------------------------------------------------
     c = gf.read.import_gds(gdspath="temp.gds")
     
+    os.remove("temp.gds")
+    return c
+
+
+@gf.cell
+def no_filler_stack(
+    width: int = 10,
+    length: int = 10,
+    noAct: str = "Yes",   # no active filler
+    noGP: str = "Yes",    # no GatePoly filler
+    noM1: str = "Yes",    # no M1 filler
+    noM2: str = "Yes",    # no M2 filler
+    noM3: str = "Yes",    # no M3 filler
+    noM4: str = "Yes",    # no M4 filler
+    noM5: str = "Yes",    # no M5 filler
+    noTM1: str = "Yes",   # no TM1 filler
+    noTM2: str = "Yes",   # no TM2 filler
+) -> Component:
+    """Create a NoFiller via stack test component.
+
+    Interface mirrors the provided GUI (except minLW).
+
+    Args:
+        bottom_layer: Bottom metal layer name.
+        top_layer: Top metal layer name.
+        width: device width (string with units, e.g. '100u').
+        length: device length (string with units).
+        noAct..noTM2: booleans to enable/disable filler for each layer.
+
+    Returns:
+        gdsfactory.Component with NoFiller via stack.
+    """
+    tech = Tech.get("SG13_dev")
+
+    layout = pya.Layout()
+    cell = layout.create_cell("NO_FILLER_STACK")
+
+    device = PCellWrapper(impl=no_filler_stackIHP(), tech=tech)
+
+    params = {
+        "cdf_version": 8,
+        "Display": "Selected",
+        "w": width*1e-6,
+        "l": length*1e-6,
+        "noAct": noAct,
+        "noGP": noGP,
+        "noM1": noM1,
+        "noM2": noM2,
+        "noM3": noM3,
+        "noM4": noM4,
+        "noM5": noM5,
+        "noTM1": noTM1,
+        "noTM2": noTM2,
+    }
+
+    # Convert params into a list in the order of device.param_decls
+    param_values = [params.get(p.name, None) for p in device.param_decls]
+
+    device.produce(
+        layout=layout,
+        layers={},
+        parameters=param_values,
+        cell=cell,
+    )
+
+    layout.write("temp.gds")
+    c = gf.read.import_gds(gdspath="temp.gds")
     os.remove("temp.gds")
     return c
 
