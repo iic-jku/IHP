@@ -17,7 +17,7 @@ from ihp.tech import (
     LAYER_STACK,
     LAYER_VIEWS,
     cross_sections,
-    routing_strategies,
+    #routing_strategies,
 )
 
 components = cells
@@ -56,5 +56,5 @@ PDK = Pdk(
     layer_stack=LAYER_STACK,
     layer_views=LAYER_VIEWS,
     connectivity=connectivity,
-    routing_strategies=routing_strategies,
+    #routing_strategies=routing_strategies,
 )
