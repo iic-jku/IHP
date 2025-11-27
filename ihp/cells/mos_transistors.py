@@ -215,20 +215,13 @@ def pmosHV(
 
 @gf.cell
 def rfnmos(
-    cdf_version=8,
-    rfmode=1,
-    model='sg13_lv_nmos',
     w=1.0,
-    ws=1,
     l=0.72,
     ng=1,
-    calculate=True,
     cnt_rows=1,
     Met2Cont="Yes",
     gat_ring="Yes",
     guard_ring="Yes",
-    Wmin=0.15,
-    Lmin=0.13
     ) -> gf.Component:
     """Create an RF NMOS transistor.
 
@@ -250,26 +243,26 @@ def rfnmos(
     """
     
     params = {       
-        'cdf_version': cdf_version, 
-        'rfmode': rfmode,
-        'model': model,
+        'cdf_version': tech.techParams['CDFVersion'], 
+        'rfmode': 1,
+        'model': tech.techParams['rfnmos_model'],
         'w': w*1e-6,    # Width in μm
-        'ws': ws*1e-6,   # Single Width in nm
+        'ws': eng_string_to_float(tech.techParams['rfnmos_defW'])/eng_string_to_float(tech.techParams['rfnmos_defNG'])*1e-6,   # Single Width in nm
         'l': l*1e-6,   # Length in μm
         'ng': ng,     # Number of gates
-        'calculate': calculate,
+        'calculate': True,
         'cnt_rows': cnt_rows,
         'Met2Cont': Met2Cont,
         'gat_ring': gat_ring,
         'guard_ring': guard_ring,
-        'Wmin': Wmin*1e-6,
-        'Lmin': Lmin*1e-6,
+        'Wmin': eng_string_to_float(tech.techParams['rfnmos_minW']),
+        'Lmin': eng_string_to_float(tech.techParams['rfnmos_minL']),
         'm': 1,
         'trise': '',
         'Display': 'Selected'
     }
 
-    c = generate_gf_from_ihp(cell_name="pmosHV", cell_params=params, function_name=pmosHVIHP())
+    c = generate_gf_from_ihp(cell_name="rfnmos", cell_params=params, function_name=rfnmosIHP())
     # Adjust port orientations, for metal1 so every other port points in the opposite direction
     # for i, port in enumerate(c.ports):
     #     port.orientation = 90 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
