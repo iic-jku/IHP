@@ -106,41 +106,29 @@ ihp.PDK.activate()
 
 
 # ----------------------------------------------------------------
+# c = gf.Component()
 
-# c = ihp.cells.nmos().copy()
-# c.move((0,1))
-# c << ihp.cells.nmos(ng = 2).copy()
-# c.draw_ports()
+# c.add_ref(ihp.cells.nmos(ng = 1, guardRingType="psub", guardRingDistance=1))
+# c.move((0,4))
+
+# c.add_ref(ihp.cells.pmos(ng=1, guardRingType="nwell", guardRingDistance=1))
+# c.move((0,5))
+
+# c.add_ref(ihp.cells.nmosHV(ng = 1, guardRingType="psub", guardRingDistance=1))
+# c.move((0,5))
+
+# c.add_ref(ihp.cells.pmosHV(ng=1, guardRingType="nwell", guardRingDistance=1))
 # c.show()
-
-# ----------------------------------------------------------------
-
-# c = ihp.cells.nmos(ng = 5).copy()
-# c.pprint_ports()
-# c.draw_ports()
-# c.show()
-
-# ----------------------------------------------------------------
-
-c = ihp.cells.nmosHV(ng = 15).copy()
-c.pprint_ports()
-c.draw_ports()
-c.move((0,2))
-c.show()
-
-c.add_ref(ihp.cells.pmosHV(ng=15).copy())
-c.draw_ports()
-c.show()
 
 # ----------------------------------------------------------------
 # rf transistors
 
 
-# c = ihp.cells.rfnmos().copy()
-# c.pprint_ports()
-# c.draw_ports()
-# c.show()
-# c.move((1, -1.25 ))
+c = ihp.cells.rfnmos().copy()
+c.pprint_ports()
+c.draw_ports()
+c.show()
+c.move((1, -1.25 ))
 
 # nm = c.add_ref(ihp.cells.nmos(w=1, l=0.72).copy())
 # nm.rotate(90)
