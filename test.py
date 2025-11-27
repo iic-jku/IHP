@@ -122,15 +122,15 @@ ihp.PDK.activate()
 
 # ----------------------------------------------------------------
 
-# c = ihp.cells.nmosHV(ng = 15).copy()
-# c.pprint_ports()
-# c.draw_ports()
-# c.move((0,2))
-# c.show()
+c = ihp.cells.nmosHV(ng = 15).copy()
+c.pprint_ports()
+c.draw_ports()
+c.move((0,2))
+c.show()
 
-# c.add_ref(ihp.cells.pmosHV(ng=15).copy())
-# c.draw_ports()
-# c.show()
+c.add_ref(ihp.cells.pmosHV(ng=15).copy())
+c.draw_ports()
+c.show()
 
 # ----------------------------------------------------------------
 # rf transistors
