@@ -269,312 +269,168 @@ def rfnmos(
     return c
 
 
-# @gf.cell
-# def rfnmosHV(
-#     cdf_version=8,
-#     rfmode=1,
-#     model='sg13_hv_nmos',
-#     w=1.0,
-#     ws=1.0,
-#     l=0.72,
-#     ng=1,
-#     calculate=True,
-#     cnt_rows=1,
-#     Met2Cont="Yes",
-#     gat_ring="Yes",
-#     guard_ring="Yes",
-#     Wmin=0.33,
-#     Lmin=0.45
-#     ) -> gf.Component:
-#     """Create an RF NMOS transistor.
+@gf.cell
+def rfnmosHV(
+    w=1.0,
+    l=0.72,
+    ng=1,
+    cnt_rows=1,
+    Met2Cont="Yes",
+    gat_ring="Yes",
+    guard_ring="Yes",
+    ) -> gf.Component:
+    """Create an RF NMOS transistor.
 
-#     Args:
-#         cdf_version: CDF version.
-#         model: Device model name.
-#         w: Total width of the transistor in micrometers.
-#         ws: Single width in nanometers.
-#         l: Length of the transistor in micrometers.
-#         Wmin: Minimum width in micrometers.
-#         Lmin: Minimum length in micrometers.
-#         ng: Number of gates/fingers.
-#         m: Multiplier (number of parallel devices).
-#         trise: Temp rise from ambient
-#         # TODO: complete other params
+    Args:
+        cdf_version: CDF version.
+        model: Device model name.
+        w: Total width of the transistor in micrometers.
+        ws: Single width in nanometers.
+        l: Length of the transistor in micrometers.
+        Wmin: Minimum width in micrometers.
+        Lmin: Minimum length in micrometers.
+        ng: Number of gates/fingers.
+        m: Multiplier (number of parallel devices).
+        trise: Temp rise from ambient
+        # TODO: complete other params
 
-#     Returns:
-#         Component with PMOS transistor layout.
-#     """
+    Returns:
+        Component with PMOS transistor layout.
+    """
     
+    params = {       
+        'cdf_version': tech.techParams['CDFVersion'], 
+        'rfmode': 1,
+        'model': tech.techParams['rfnmosHV_model'],
+        'w': w*1e-6,    # Width in μm
+        'ws': eng_string_to_float(tech.techParams['rfnmosHV_defW'])/eng_string_to_float(tech.techParams['rfnmosHV_defNG'])*1e-6,   # Single Width in nm
+        'l': l*1e-6,   # Length in μm
+        'ng': ng,     # Number of gates
+        'calculate': True,
+        'cnt_rows': cnt_rows,
+        'Met2Cont': Met2Cont,
+        'gat_ring': gat_ring,
+        'guard_ring': guard_ring,
+        'Wmin': eng_string_to_float(tech.techParams['rfnmosHV_minW']),
+        'Lmin': eng_string_to_float(tech.techParams['rfnmosHV_minL']),
+        'm': 1,
+        'trise': '',
+        'Display': 'Selected'
+    }
+
+    c = generate_gf_from_ihp(cell_name="rfnmosHV", cell_params=params, function_name=rfnmosHVIHP())
+    # Adjust port orientations, for metal1 so every other port points in the opposite direction
+    # for i, port in enumerate(c.ports):
+    #     port.orientation = 90 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
+    return c
+
+
+@gf.cell
+def rfpmos(
+    w=1.0,
+    l=0.72,
+    ng=1,
+    cnt_rows=1,
+    Met2Cont="Yes",
+    gat_ring="Yes",
+    guard_ring="Yes",
+    ) -> gf.Component:
+    """Create an RF NMOS transistor.
+
+    Args:
+        cdf_version: CDF version.
+        model: Device model name.
+        w: Total width of the transistor in micrometers.
+        ws: Single width in nanometers.
+        l: Length of the transistor in micrometers.
+        Wmin: Minimum width in micrometers.
+        Lmin: Minimum length in micrometers.
+        ng: Number of gates/fingers.
+        m: Multiplier (number of parallel devices).
+        trise: Temp rise from ambient
+        # TODO: complete other params
+
+    Returns:
+        Component with PMOS transistor layout.
+    """
     
-#     # ----------------------------------------------------------------
-#     # Step 1: Get the technology object
-#     # ----------------------------------------------------------------
-#     tech = Tech.get("SG13_dev")  # Must match the name registered in SG13_Tech
+    params = {       
+        'cdf_version': tech.techParams['CDFVersion'], 
+        'rfmode': 1,
+        'model': tech.techParams['rfpmos_model'],
+        'w': w*1e-6,    # Width in μm
+        'ws': eng_string_to_float(tech.techParams['rfpmos_defW'])/eng_string_to_float(tech.techParams['rfpmos_defNG'])*1e-6,   # Single Width in nm
+        'l': l*1e-6,   # Length in μm
+        'ng': ng,     # Number of gates
+        'calculate': True,
+        'cnt_rows': cnt_rows,
+        'Met2Cont': Met2Cont,
+        'gat_ring': gat_ring,
+        'guard_ring': guard_ring,
+        'Wmin': eng_string_to_float(tech.techParams['rfpmos_minW']),
+        'Lmin': eng_string_to_float(tech.techParams['rfpmos_minL']),
+        'm': 1,
+        'trise': '',
+        'Display': 'Selected'
+    }
 
-#     # ----------------------------------------------------------------
-#     # Step 2: Create a layout and a cell
-#     # ----------------------------------------------------------------
-#     layout = pya.Layout()                # new empty layout
-#     cell = layout.create_cell("RF_NMOS_HV_1")  # new cell for your transistor
+    c = generate_gf_from_ihp(cell_name="rfpmos", cell_params=params, function_name=rfpmosIHP())
+    # Adjust port orientations, for metal1 so every other port points in the opposite direction
+    # for i, port in enumerate(c.ports):
+    #     port.orientation = 90 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
+    return c
 
-#     # ----------------------------------------------------------------
-#     # Step 3: Wrap the PyCell
-#     # ----------------------------------------------------------------
-#     # PCellWrapper acts like the 'specs' object in KLayout
-#     # It handles parameter declarations and calls defineParamSpecs internally
-#     device = PCellWrapper(impl=rfnmosHVIHP(), tech=tech)
+@gf.cell
+def rfpmosHV(
+    w=1.0,
+    l=0.72,
+    ng=1,
+    cnt_rows=1,
+    Met2Cont="Yes",
+    gat_ring="Yes",
+    guard_ring="Yes",
+    ) -> gf.Component:
+    """Create an RF NMOS transistor.
 
-#     # ----------------------------------------------------------------
-#     # Step 4: Define parameters
-#     # ----------------------------------------------------------------
-#     params = {       
-#         'cdf_version': cdf_version, 
-#         'rfmode': rfmode,
-#         'model': model,
-#         'w': w*1e-6,    # Width in μm
-#         'ws': ws*1e-6,   # Single Width in nm
-#         'l': l*1e-6,   # Length in μm
-#         'ng': ng,     # Number of gates
-#         'calculate': calculate,
-#         'cnt_rows': cnt_rows,
-#         'Met2Cont': Met2Cont,
-#         'gat_ring': gat_ring,
-#         'guard_ring': guard_ring,
-#         'Wmin': Wmin*1e-6,
-#         'Lmin': Lmin*1e-6,
-#         'm': 1,
-#         'trise': '',
-#         'Display': 'Selected'
-#     }
+    Args:
+        cdf_version: CDF version.
+        model: Device model name.
+        w: Total width of the transistor in micrometers.
+        ws: Single width in nanometers.
+        l: Length of the transistor in micrometers.
+        Wmin: Minimum width in micrometers.
+        Lmin: Minimum length in micrometers.
+        ng: Number of gates/fingers.
+        m: Multiplier (number of parallel devices).
+        trise: Temp rise from ambient
+        # TODO: complete other params
 
-#     # Convert params into a list in the order of device.param_decls
-#     param_values = [params[p.name] for p in device.param_decls]
-
-#     # ----------------------------------------------------------------
-#     # Step 5: Produce the layout
-#     # ----------------------------------------------------------------
-#     device.produce(layout=layout,
-#                 layers={},        # can pass layer map if needed
-#                 parameters=param_values,
-#                 cell=cell)
-
-#     # ----------------------------------------------------------------
-#     # Step 6: Save GDS
-#     # ----------------------------------------------------------------
-#     layout.write("temp.gds")
-#     print("✅ RF_NMOS_HV PyCell placed successfully and GDS written.")
-#     # ----------------------------------------------------------------
-#     c = gf.import_gds(gdspath="temp.gds", post_process=_add_ports)
+    Returns:
+        Component with PMOS transistor layout.
+    """
     
-#     # Adjust port orientations, for metal1 so every other port points in the opposite direction
-#     for i, port in enumerate(c.ports):
-#         port.orientation = 270 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
-#     os.remove("temp.gds")
-#     return c
+    params = {       
+        'cdf_version': tech.techParams['CDFVersion'], 
+        'rfmode': 1,
+        'model': tech.techParams['rfpmosHV_model'],
+        'w': w*1e-6,    # Width in μm
+        'ws': eng_string_to_float(tech.techParams['rfpmosHV_defW'])/eng_string_to_float(tech.techParams['rfpmosHV_defNG'])*1e-6,   # Single Width in nm
+        'l': l*1e-6,   # Length in μm
+        'ng': ng,     # Number of gates
+        'calculate': True,
+        'cnt_rows': cnt_rows,
+        'Met2Cont': Met2Cont,
+        'gat_ring': gat_ring,
+        'guard_ring': guard_ring,
+        'Wmin': eng_string_to_float(tech.techParams['rfpmosHV_minW']),
+        'Lmin': eng_string_to_float(tech.techParams['rfpmosHV_minL']),
+        'm': 1,
+        'trise': '',
+        'Display': 'Selected'
+    }
 
-
-# @gf.cell
-# def rfpmos(
-#     cdf_version=8,
-#     rfmode=1,
-#     model='sg13_lv_pmos',
-#     w=1.0,
-#     ws=1.0,
-#     l=0.72,
-#     ng=1,
-#     calculate=True,
-#     cnt_rows=1,
-#     Met2Cont="Yes",
-#     gat_ring="Yes",
-#     guard_ring="Yes",
-#     Wmin=0.15,
-#     Lmin=0.13
-#     ) -> gf.Component:
-#     """Create an RF NMOS transistor.
-
-#     Args:
-#         cdf_version: CDF version.
-#         model: Device model name.
-#         w: Total width of the transistor in micrometers.
-#         ws: Single width in nanometers.
-#         l: Length of the transistor in micrometers.
-#         Wmin: Minimum width in micrometers.
-#         Lmin: Minimum length in micrometers.
-#         ng: Number of gates/fingers.
-#         m: Multiplier (number of parallel devices).
-#         trise: Temp rise from ambient
-#         # TODO: complete other params
-
-#     Returns:
-#         Component with PMOS transistor layout.
-#     """
-    
-    
-#     # ----------------------------------------------------------------
-#     # Step 1: Get the technology object
-#     # ----------------------------------------------------------------
-#     tech = Tech.get("SG13_dev")  # Must match the name registered in SG13_Tech
-
-#     # ----------------------------------------------------------------
-#     # Step 2: Create a layout and a cell
-#     # ----------------------------------------------------------------
-#     layout = pya.Layout()                # new empty layout
-#     cell = layout.create_cell("RF_PMOS_1")  # new cell for your transistor
-
-#     # ----------------------------------------------------------------
-#     # Step 3: Wrap the PyCell
-#     # ----------------------------------------------------------------
-#     # PCellWrapper acts like the 'specs' object in KLayout
-#     # It handles parameter declarations and calls defineParamSpecs internally
-#     device = PCellWrapper(impl=rfpmosIHP(), tech=tech)
-
-#     # ----------------------------------------------------------------
-#     # Step 4: Define parameters
-#     # ----------------------------------------------------------------
-#     params = {       
-#         'cdf_version': cdf_version, 
-#         'rfmode': rfmode,
-#         'model': model,
-#         'w': w*1e-6,    # Width in μm
-#         'ws': ws*1e-6,   # Single Width in nm
-#         'l': l*1e-6,   # Length in μm
-#         'ng': ng,     # Number of gates
-#         'calculate': calculate,
-#         'cnt_rows': cnt_rows,
-#         'Met2Cont': Met2Cont,
-#         'gat_ring': gat_ring,
-#         'guard_ring': guard_ring,
-#         'Wmin': Wmin*1e-6,
-#         'Lmin': Lmin*1e-6,
-#         'm': 1,
-#         'trise': '',
-#         'Display': 'Selected'
-#     }
-
-#     # Convert params into a list in the order of device.param_decls
-#     param_values = [params[p.name] for p in device.param_decls]
-
-#     # ----------------------------------------------------------------
-#     # Step 5: Produce the layout
-#     # ----------------------------------------------------------------
-#     device.produce(layout=layout,
-#                 layers={},        # can pass layer map if needed
-#                 parameters=param_values,
-#                 cell=cell)
-
-#     # ----------------------------------------------------------------
-#     # Step 6: Save GDS
-#     # ----------------------------------------------------------------
-#     layout.write("temp.gds")
-#     print("✅ RF_PMOS PyCell placed successfully and GDS written.")
-#     # ----------------------------------------------------------------
-#     c = gf.import_gds(gdspath="temp.gds", post_process=_add_ports)
-    
-#     # Adjust port orientations, for metal1 so every other port points in the opposite direction
-#     for i, port in enumerate(c.ports):
-#         port.orientation = 270 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
-#     os.remove("temp.gds")
-#     return c
-
-# @gf.cell
-# def rfpmosHV(
-#     cdf_version=8,
-#     rfmode=1,
-#     model='sg13_hv_pmos',
-#     w=1.0,
-#     ws=1.0,
-#     l=0.72,
-#     ng=1,
-#     calculate=True,
-#     cnt_rows=1,
-#     Met2Cont="Yes",
-#     gat_ring="Yes",
-#     guard_ring="Yes",
-#     Wmin=0.39,
-#     Lmin=0.4
-#     ) -> gf.Component:
-#     """Create an RF NMOS transistor.
-
-#     Args:
-#         cdf_version: CDF version.
-#         model: Device model name.
-#         w: Total width of the transistor in micrometers.
-#         ws: Single width in nanometers.
-#         l: Length of the transistor in micrometers.
-#         Wmin: Minimum width in micrometers.
-#         Lmin: Minimum length in micrometers.
-#         ng: Number of gates/fingers.
-#         m: Multiplier (number of parallel devices).
-#         trise: Temp rise from ambient
-#         # TODO: complete other params
-
-#     Returns:
-#         Component with PMOS transistor layout.
-#     """
-    
-    
-#     # ----------------------------------------------------------------
-#     # Step 1: Get the technology object
-#     # ----------------------------------------------------------------
-#     tech = Tech.get("SG13_dev")  # Must match the name registered in SG13_Tech
-
-#     # ----------------------------------------------------------------
-#     # Step 2: Create a layout and a cell
-#     # ----------------------------------------------------------------
-#     layout = pya.Layout()                # new empty layout
-#     cell = layout.create_cell("RF_PMOS_HV_1")  # new cell for your transistor
-
-#     # ----------------------------------------------------------------
-#     # Step 3: Wrap the PyCell
-#     # ----------------------------------------------------------------
-#     # PCellWrapper acts like the 'specs' object in KLayout
-#     # It handles parameter declarations and calls defineParamSpecs internally
-#     device = PCellWrapper(impl=rfpmosHVIHP(), tech=tech)
-
-#     # ----------------------------------------------------------------
-#     # Step 4: Define parameters
-#     # ----------------------------------------------------------------
-#     params = {       
-#         'cdf_version': cdf_version, 
-#         'rfmode': rfmode,
-#         'model': model,
-#         'w': w*1e-6,    # Width in μm
-#         'ws': ws*1e-6,   # Single Width in nm
-#         'l': l*1e-6,   # Length in μm
-#         'ng': ng,     # Number of gates
-#         'calculate': calculate,
-#         'cnt_rows': cnt_rows,
-#         'Met2Cont': Met2Cont,
-#         'gat_ring': gat_ring,
-#         'guard_ring': guard_ring,
-#         'Wmin': Wmin*1e-6,
-#         'Lmin': Lmin*1e-6,
-#         'm': 1,
-#         'trise': '',
-#         'Display': 'Selected'
-#     }
-
-#     # Convert params into a list in the order of device.param_decls
-#     param_values = [params[p.name] for p in device.param_decls]
-
-#     # ----------------------------------------------------------------
-#     # Step 5: Produce the layout
-#     # ----------------------------------------------------------------
-#     device.produce(layout=layout,
-#                 layers={},        # can pass layer map if needed
-#                 parameters=param_values,
-#                 cell=cell)
-
-#     # ----------------------------------------------------------------
-#     # Step 6: Save GDS
-#     # ----------------------------------------------------------------
-#     layout.write("temp.gds")
-#     print("✅ RF_PMOS_HV PyCell placed successfully and GDS written.")
-#     # ----------------------------------------------------------------
-#     c = gf.import_gds(gdspath="temp.gds", post_process=_add_ports)
-    
-#     # Adjust port orientations, for metal1 so every other port points in the opposite direction
-#     for i, port in enumerate(c.ports):
-#         port.orientation = 270 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
-#     os.remove("temp.gds")
-#     return c
+    c = generate_gf_from_ihp(cell_name="rfpmosHV", cell_params=params, function_name=rfpmosHVIHP())
+    # Adjust port orientations, for metal1 so every other port points in the opposite direction
+    # for i, port in enumerate(c.ports):
+    #     port.orientation = 90 if port.name.startswith("DS_") and i % 2 == 1 else port.orientation
+    return c

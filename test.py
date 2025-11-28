@@ -124,33 +124,18 @@ c.add_ref(ihp.cells.pmosHV(ng=1, guardRingType="nwell", guardRingDistance=1))
 c.move((1.5,3))
 
 c.add_ref(ihp.cells.rfnmos(ng = 1)).rotate(-90)
-c.move((0,6))
+c.move((0,5))
+
+c.add_ref(ihp.cells.rfnmosHV(ng=1)).rotate(-90)
+c.move((0,5))
+
+c.add_ref(ihp.cells.rfpmos(ng = 1)).rotate(-90)
+c.move((0,5))
+
+c.add_ref(ihp.cells.rfpmosHV(ng=1)).rotate(-90)
+c.move((0,5))
+
 c.show()
-
-# nm = c.add_ref(ihp.cells.nmos(w=1, l=0.72).copy())
-# nm.rotate(90)
-# c. move((0,6))
-
-
-# c.add_ref(ihp.cells.rfnmosHV().copy())
-
-# c.pprint_ports()
-# c.draw_ports()
-# c.show()
-
-# c.move((0,5))
-
-# c.add_ref(ihp.cells.rfpmos().copy())
-# c.pprint_ports()
-# c.draw_ports()
-# c.show()
-
-# c.move((0,6))
-
-# c.add_ref(ihp.cells.rfpmosHV().copy())
-# c.pprint_ports()
-# c.draw_ports()
-# c.show()
 
 # ----------------------------------------------------------------
 # c = gf.Component()
