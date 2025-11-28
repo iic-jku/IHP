@@ -157,32 +157,33 @@ ihp.PDK.activate()
 # ----------------------------------------------------------------
 # inductor test
 
-c = gf.Component()
-
-c.add_ref(ihp.cells.inductor2())
-c.move((-100, 0))
-
-c.add_ref(ihp.cells.inductor3()) #broken?
-c.show()
-
-# -----------------------------------------------------------------
 # c = gf.Component()
 
-# c.add_ref(ihp.cells.rhigh(length=10))
-# c.move((5,0))
-# c.add_ref(ihp.cells.rhigh(length=20, width=1))
+# c.add_ref(ihp.cells.inductor2())
+# c.move((-100, 0))
 
-# c.move((5,0))
-# c.add_ref(ihp.cells.rppd(length=10))
-# c.move((5,0))
-# c.add_ref(ihp.cells.rppd(length=20, width=1))
+# c.add_ref(ihp.cells.inductor3()) #broken?
 # c.show()
 
-# c.move((5,0))
-# c.add_ref(ihp.cells.rsil(length=10))
-# c.move((5,0))
-# c.add_ref(ihp.cells.rsil(length=20, width=1))
-# c.show()
+# -----------------------------------------------------------------
+# resistor test
+
+c = gf.Component()
+
+c.add_ref(ihp.cells.rhigh(length=10))
+c.move((5,0))
+c.add_ref(ihp.cells.rhigh(length=20, width=1))
+
+c.move((5,0))
+c.add_ref(ihp.cells.rppd(length=10))
+c.move((5,0))
+c.add_ref(ihp.cells.rppd(length=20, width=1))
+
+c.move((5,0))
+c.add_ref(ihp.cells.rsil(length=10))
+c.move((5,0))
+c.add_ref(ihp.cells.rsil(length=20, width=1))
+c.show()
 
 
 # -----------------------------------------------------------------
