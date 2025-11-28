@@ -108,52 +108,49 @@ ihp.PDK.activate()
 # ----------------------------------------------------------------
 # test mos_transistors.py 
 
-
-c = gf.Component()
-
-c.add_ref(ihp.cells.nmos(ng = 1, guardRingType="psub", guardRingDistance=1))
-c.move((0,4))
-
-c.add_ref(ihp.cells.pmos(ng=1, guardRingType="nwell", guardRingDistance=1))
-c.move((0,5))
-
-c.add_ref(ihp.cells.nmosHV(ng = 1, guardRingType="psub", guardRingDistance=1))
-c.move((0,5))
-
-c.add_ref(ihp.cells.pmosHV(ng=1, guardRingType="nwell", guardRingDistance=1))
-c.move((1.5,3))
-
-c.add_ref(ihp.cells.rfnmos(ng = 1)).rotate(-90)
-c.move((0,5))
-
-c.add_ref(ihp.cells.rfnmosHV(ng=1)).rotate(-90)
-c.move((0,5))
-
-c.add_ref(ihp.cells.rfpmos(ng = 1)).rotate(-90)
-c.move((0,5))
-
-c.add_ref(ihp.cells.rfpmosHV(ng=1)).rotate(-90)
-c.move((0,5))
-
-c.show()
-
-# ----------------------------------------------------------------
 # c = gf.Component()
 
-# c.add_ref(ihp.cells.npn13G2().copy())
-# c.show()
-# c.move((4,11))
+# c.add_ref(ihp.cells.nmos(ng = 1, guardRingType="psub", guardRingDistance=1))
+# c.move((0,4))
 
-# c.add_ref(ihp.cells.npn13G2L().copy())
-# c.show()
-# c.move((0,8))
+# c.add_ref(ihp.cells.pmos(ng=1, guardRingType="nwell", guardRingDistance=1))
+# c.move((0,5))
 
-# c.add_ref(ihp.cells.npn13G2V().copy())
-# c.show()
-# c.move((-3.5,4))
+# c.add_ref(ihp.cells.nmosHV(ng = 1, guardRingType="psub", guardRingDistance=1))
+# c.move((0,5))
 
-# c.add_ref(ihp.cells.pnpMPA().copy())
+# c.add_ref(ihp.cells.pmosHV(ng=1, guardRingType="nwell", guardRingDistance=1))
+# c.move((1.5,3))
+
+# c.add_ref(ihp.cells.rfnmos(ng = 1)).rotate(-90)
+# c.move((0,5))
+
+# c.add_ref(ihp.cells.rfnmosHV(ng=1)).rotate(-90)
+# c.move((0,5))
+
+# c.add_ref(ihp.cells.rfpmos(ng = 1)).rotate(-90)
+# c.move((0,5))
+
+# c.add_ref(ihp.cells.rfpmosHV(ng=1)).rotate(-90)
+# c.move((0,5))
+
 # c.show()
+
+# ----------------------------------------------------------------
+c = gf.Component()
+
+c.add_ref(ihp.cells.npn13G2(Nx=5).copy())
+c.move((4,11))
+
+c.add_ref(ihp.cells.npn13G2L(Nx=10).copy())
+c.move((0,8))
+
+c.add_ref(ihp.cells.npn13G2V(Nx=15).copy())
+c.move((-3.5,4))
+
+c.add_ref(ihp.cells.pnpMPA().copy())
+c.move((3,3))
+c.show()
 
 
 # ----------------------------------------------------------------
