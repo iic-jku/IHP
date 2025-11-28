@@ -137,31 +137,33 @@ ihp.PDK.activate()
 # c.show()
 
 # ----------------------------------------------------------------
-c = gf.Component()
+#bjt transistors test
 
-c.add_ref(ihp.cells.npn13G2(Nx=5).copy())
-c.move((4,11))
-
-c.add_ref(ihp.cells.npn13G2L(Nx=10).copy())
-c.move((0,8))
-
-c.add_ref(ihp.cells.npn13G2V(Nx=15).copy())
-c.move((-3.5,4))
-
-c.add_ref(ihp.cells.pnpMPA().copy())
-c.move((3,3))
-c.show()
-
-
-# ----------------------------------------------------------------
 # c = gf.Component()
 
-# c.add_ref(ihp.cells.inductor2().copy())
-# c.show()
-# c.move((-100, 10))
+# c.add_ref(ihp.cells.npn13G2(Nx=5).copy())
+# c.move((4,11))
 
-# c.add_ref(ihp.cells.inductor3().copy())
+# c.add_ref(ihp.cells.npn13G2L(Nx=10).copy())
+# c.move((0,8))
+
+# c.add_ref(ihp.cells.npn13G2V(Nx=15).copy())
+# c.move((-3.5,4))
+
+# c.add_ref(ihp.cells.pnpMPA().copy())
+# c.move((3,3))
 # c.show()
+
+# ----------------------------------------------------------------
+# inductor test
+
+c = gf.Component()
+
+c.add_ref(ihp.cells.inductor2())
+c.move((-100, 0))
+
+c.add_ref(ihp.cells.inductor3()) #broken?
+c.show()
 
 # -----------------------------------------------------------------
 # c = gf.Component()
