@@ -17,7 +17,7 @@ cd "${BASENAME}/palace_auto_sim_data" || exit 1
 # MPI ranks: half the cores, less headroom for other users of the big shared
 # machines. That formula goes <1 on anything below 26 cores and would silently pin
 # long sims to a single rank, so fall back to plain half-the-cores there.
-NP=${PALACE_NP:-$(( $(nproc)/2 - 12 ))}
+NP=${PALACE_NP:-$(( $(nproc) - 4 ))}
 (( NP < 1 )) && NP=$(( ($(nproc)+1)/2 ))
 (( NP < 1 )) && NP=1
 palace -np "$NP" config.json
