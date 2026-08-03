@@ -79,7 +79,7 @@ def parse_elmer_results(found_filename, freq, S_dB, S_arg):
         # we have multiple frequencies
         omegalist = data[:, omega_column]
     else:
-        # we have only one freqiency point
+        # we have only one frequency point
         omegalist = [data[omega_column]]
     for omega in omegalist:
         freq.append(omega / (1e9*2*math.pi))
@@ -434,7 +434,7 @@ for found_filename in found_datafiles:
     data_path = os.path.dirname(found_filename)
     output_path = data_path
 
-    # get name of parent diretory, so that we can use it as filename for output 
+    # get name of parent directory, so that we can use it as filename for output 
     splitpath =  os.path.split(data_path)
     parentname = splitpath[1]
     
