@@ -38,4 +38,3 @@ for f in frequencys:
     c.write_gds(os.path.join(GDS_DIR, "blc_" + str(int(f / 1e9)) + "GHz.gds"), with_metadata=False)
 
     c.show()
-
