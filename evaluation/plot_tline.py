@@ -158,9 +158,10 @@ def parse_model(name: str) -> dict | None:
 def model_key(path: str) -> str | None:
     """The model identity (the tline_..._GHz tag) from anywhere in a path, or None.
 
-    Palace names every run's leaf file the same (palace_auto_sim.sNp), so the model's
-    stack/width/length/frequency lives in the *directory* path, not the filename - this
-    pulls that tag out of the full path so different models don't collide on basename.
+    Runs before the model_basename fix all wrote the same leaf name
+    (palace_auto_sim.sNp), so the model's stack/width/length/frequency lives in the
+    *directory* path - this pulls the tag out of the full path. Newer runs name the leaf
+    after the GDS too, but keying on the path still reads both old and new results.
     """
     m = MODEL_RE.search(path)
     return m.group(0) if m else None

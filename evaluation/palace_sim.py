@@ -76,8 +76,11 @@ merge_polygon_size = 0
 # get path for this simulation file
 script_path = utilities.get_script_path(__file__)
 
-# use script filename as model basename
-model_basename = utilities.get_basename(__file__)
+# use the GDS filename as model basename, so the Palace output directory and the
+# Touchstone file combine_snp.py writes carry the model name instead of the script
+# name (gds2palace derives both from this: sim_path = <basename>_data and the Palace
+# "Output" dir = output/<basename>, which combine_snp.py turns into <basename>.sNp)
+model_basename = utilities.get_basename(gds_filename)
 
 # set and create directory for simulation output
 sim_path = utilities.create_sim_path (script_path,model_basename, dirname=os.path.splitext(gds_filename)[0])

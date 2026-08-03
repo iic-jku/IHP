@@ -29,7 +29,7 @@
 #
 # Directory layout produced:
 #   gds/<sweep>/*.gds                              layouts (from generate-*)
-#   gds/<sweep>/<model>/palace_auto_sim_data/...   mesh, config, Palace output, .sNp
+#   gds/<sweep>/<model>/<model>_data/...   mesh, config, Palace output, .sNp
 #   images/*.png, *.csv                            results (from plot-* and img-*)
 # =============================================================================
 
@@ -87,9 +87,9 @@ generate: generate-blc generate-wpd generate-tline ## Generate all GDS sweeps
 # 2. SIM - mesh + solve each GDS with Palace (SLOW; many runs per sweep)
 # -----------------------------------------------------------------------------
 # run_more_sims.sh loops over every .gds in the given folder, calling run_sim.sh
-# (which runs palace_auto_sim.py to build the mesh/config, then Palace), and
+# (which runs palace_sim.py to build the mesh/config, then Palace), and
 # finally runs combine_snp.py once to turn all raw port-S.csv output into .sNp
-# Touchstone files. The stackup is set by XML_filename in palace_auto_sim.py
+# Touchstone files. The stackup is set by XML_filename in palace_sim.py
 # (currently SG13G2_200um.xml).
 sim-blc: ## Run Palace simulations on all generated BLC GDS files
 	cd $(MAKEFILE_DIR) && ./run_more_sims.sh $(GDS_DIR)/blc

@@ -78,8 +78,9 @@ def design_freq_ghz(path: str) -> float | None:
     """Pull the coupler's design frequency (GHz) out of a file path.
 
     The frequency is encoded in the directory name (blc_<N>GHz) rather than the leaf
-    filename, since Palace names every run's output file the same, so we search the
-    whole path. Returns the number in GHz, or None if no blc_<N>GHz tag is present.
+    filename, because runs before the model_basename fix all wrote the same leaf name,
+    so we search the whole path — which reads both old and new results. Returns the
+    number in GHz, or None if no blc_<N>GHz tag is present.
     """
     m = FREQ_RE.search(path)
     return float(m.group(1)) if m else None
