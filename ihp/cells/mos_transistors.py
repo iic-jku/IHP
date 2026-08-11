@@ -68,18 +68,18 @@ def nmos(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "model": tech.techParams["nmos_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "model": tech.techParams["nmos_model"],  # not read by IHP code
         "w": w * 1e-6,  # um to m
         "ws": eng_string_to_float(tech.techParams["nmos_defW"])
         / eng_string_to_float(tech.techParams["nmos_defNG"]),  # single finger width
         "l": l * 1e-6,  # um to m
         "ng": ng,  # Number of gates
-        "m": 1,  # Multiplier
+        "m": 1,  # Multiplier, not read by IHP code
         "Wmin": eng_string_to_float(tech.techParams["nmos_minW"]),
         "Lmin": eng_string_to_float(tech.techParams["nmos_minL"]),
-        "trise": "",
-        "Display": "Selected",
+        "trise": "",  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }
@@ -144,18 +144,18 @@ def nmosHV(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "model": tech.techParams["nmosHV_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "model": tech.techParams["nmosHV_model"],  # not read by IHP code
         "w": w * 1e-6,  # um to m
         "ws": eng_string_to_float(tech.techParams["nmosHV_defW"])
         / eng_string_to_float(tech.techParams["nmosHV_defNG"]),  # single finger width
         "l": l * 1e-6,  # um to m
         "ng": ng,  # Number of gates
-        "m": 1,  # Multiplier
+        "m": 1,  # Multiplier, not read by IHP code
         "Wmin": eng_string_to_float(tech.techParams["nmosHV_minW"]),
         "Lmin": eng_string_to_float(tech.techParams["nmosHV_minL"]),
-        "trise": "",
-        "Display": "Selected",
+        "trise": "",  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }
@@ -220,18 +220,18 @@ def pmos(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "model": tech.techParams["pmos_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "model": tech.techParams["pmos_model"],  # not read by IHP code
         "w": w * 1e-6,  # um to m
         "ws": eng_string_to_float(tech.techParams["pmos_defW"])
         / eng_string_to_float(tech.techParams["pmos_defNG"]),  # single finger width
         "l": l * 1e-6,  # um to m
         "ng": ng,  # Number of gates
-        "m": 1,  # Multiplier
+        "m": 1,  # Multiplier, not read by IHP code
         "Wmin": eng_string_to_float(tech.techParams["pmos_minW"]),
         "Lmin": eng_string_to_float(tech.techParams["pmos_minL"]),
-        "trise": "",
-        "Display": "Selected",
+        "trise": "",  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }
@@ -296,18 +296,18 @@ def pmosHV(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "model": tech.techParams["pmosHV_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "model": tech.techParams["pmosHV_model"],  # not read by IHP code
         "w": w * 1e-6,  # um to m
         "ws": eng_string_to_float(tech.techParams["pmosHV_defW"])
         / eng_string_to_float(tech.techParams["pmosHV_defNG"]),  # single finger width
         "l": l * 1e-6,  # um to m
         "ng": ng,  # Number of gates
-        "m": 1,  # Multiplier
+        "m": 1,  # Multiplier, not read by IHP code
         "Wmin": eng_string_to_float(tech.techParams["pmosHV_minW"]),
         "Lmin": eng_string_to_float(tech.techParams["pmosHV_minL"]),
-        "trise": "",
-        "Display": "Selected",
+        "trise": "",  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }
@@ -378,25 +378,25 @@ def rfnmos(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "rfmode": 1,
-        "model": tech.techParams["rfnmos_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "rfmode": 1,  # not read by IHP code
+        "model": tech.techParams["rfnmos_model"],  # not read by IHP code
         "w": w * 1e-6,  # um to m
         "ws": eng_string_to_float(tech.techParams["rfnmos_defW"])
         / eng_string_to_float(tech.techParams["rfnmos_defNG"])
-        * 1e-6,  # single finger width
+        * 1e-6,  # single finger width, not read by IHP code
         "l": l * 1e-6,  # um to m
         "ng": ng,  # Number of gates
-        "calculate": True,
+        "calculate": True,  # not read by IHP code
         "cnt_rows": cnt_rows,
         "Met2Cont": Met2Cont,
         "gat_ring": gat_ring,
         "guard_ring": guard_ring,
-        "Wmin": eng_string_to_float(tech.techParams["rfnmos_minW"]),
-        "Lmin": eng_string_to_float(tech.techParams["rfnmos_minL"]),
-        "m": 1,
-        "trise": "",
-        "Display": "Selected",
+        "Wmin": eng_string_to_float(tech.techParams["rfnmos_minW"]),  # not read by IHP code
+        "Lmin": eng_string_to_float(tech.techParams["rfnmos_minL"]),  # not read by IHP code
+        "m": 1,  # not declared in KLayout, ignored
+        "trise": "",  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
     }
 
     c = generate_gf_from_ihp(
@@ -465,25 +465,25 @@ def rfnmosHV(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "rfmode": 1,
-        "model": tech.techParams["rfnmosHV_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "rfmode": 1,  # not read by IHP code
+        "model": tech.techParams["rfnmosHV_model"],  # not read by IHP code
         "w": w * 1e-6,  # um to m
         "ws": eng_string_to_float(tech.techParams["rfnmosHV_defW"])
         / eng_string_to_float(tech.techParams["rfnmosHV_defNG"])
-        * 1e-6,  # single finger width
+        * 1e-6,  # single finger width, not read by IHP code
         "l": l * 1e-6,  # um to m
         "ng": ng,  # Number of gates
-        "calculate": True,
+        "calculate": True,  # not read by IHP code
         "cnt_rows": cnt_rows,
         "Met2Cont": Met2Cont,
         "gat_ring": gat_ring,
         "guard_ring": guard_ring,
-        "Wmin": eng_string_to_float(tech.techParams["rfnmosHV_minW"]),
-        "Lmin": eng_string_to_float(tech.techParams["rfnmosHV_minL"]),
-        "m": 1,
-        "trise": "",
-        "Display": "Selected",
+        "Wmin": eng_string_to_float(tech.techParams["rfnmosHV_minW"]),  # not read by IHP code
+        "Lmin": eng_string_to_float(tech.techParams["rfnmosHV_minL"]),  # not read by IHP code
+        "m": 1,  # not declared in KLayout, ignored
+        "trise": "",  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
     }
 
     c = generate_gf_from_ihp(
@@ -526,25 +526,25 @@ def rfpmos(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "rfmode": 1,
-        "model": tech.techParams["rfpmos_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "rfmode": 1,  # not read by IHP code
+        "model": tech.techParams["rfpmos_model"],  # not read by IHP code
         "w": w * 1e-6,  # um to m
         "ws": eng_string_to_float(tech.techParams["rfpmos_defW"])
         / eng_string_to_float(tech.techParams["rfpmos_defNG"])
-        * 1e-6,  # single finger width
+        * 1e-6,  # single finger width, not read by IHP code
         "l": l * 1e-6,  # um to m
         "ng": ng,  # Number of gates
-        "calculate": True,
+        "calculate": True,  # not read by IHP code
         "cnt_rows": cnt_rows,
         "Met2Cont": Met2Cont,
         "gat_ring": gat_ring,
         "guard_ring": guard_ring,
-        "Wmin": eng_string_to_float(tech.techParams["rfpmos_minW"]),
-        "Lmin": eng_string_to_float(tech.techParams["rfpmos_minL"]),
-        "m": 1,
-        "trise": "",
-        "Display": "Selected",
+        "Wmin": eng_string_to_float(tech.techParams["rfpmos_minW"]),  # not read by IHP code
+        "Lmin": eng_string_to_float(tech.techParams["rfpmos_minL"]),  # not read by IHP code
+        "m": 1,  # not declared in KLayout, ignored
+        "trise": "",  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
     }
 
     c = generate_gf_from_ihp(
@@ -587,25 +587,25 @@ def rfpmosHV(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "rfmode": 1,
-        "model": tech.techParams["rfpmosHV_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "rfmode": 1,  # not read by IHP code
+        "model": tech.techParams["rfpmosHV_model"],  # not read by IHP code
         "w": w * 1e-6,  # um to m
         "ws": eng_string_to_float(tech.techParams["rfpmosHV_defW"])
         / eng_string_to_float(tech.techParams["rfpmosHV_defNG"])
-        * 1e-6,  # single finger width
+        * 1e-6,  # single finger width, not read by IHP code
         "l": l * 1e-6,  # um to m
         "ng": ng,  # Number of gates
-        "calculate": True,
+        "calculate": True,  # not read by IHP code
         "cnt_rows": cnt_rows,
         "Met2Cont": Met2Cont,
         "gat_ring": gat_ring,
         "guard_ring": guard_ring,
-        "Wmin": eng_string_to_float(tech.techParams["rfpmosHV_minW"]),
-        "Lmin": eng_string_to_float(tech.techParams["rfpmosHV_minL"]),
-        "m": 1,
-        "trise": "",
-        "Display": "Selected",
+        "Wmin": eng_string_to_float(tech.techParams["rfpmosHV_minW"]),  # not read by IHP code
+        "Lmin": eng_string_to_float(tech.techParams["rfpmosHV_minL"]),  # not read by IHP code
+        "m": 1,  # not declared in KLayout, ignored
+        "trise": "",  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
     }
 
     c = generate_gf_from_ihp(

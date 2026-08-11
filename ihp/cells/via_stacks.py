@@ -72,8 +72,8 @@ def via_stack(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        # "cdf_version": tech.techParams["CDFVersion"],
+        # "Display": "Selected",
         "b_layer": bottom_layer,
         "t_layer": top_layer,
         "vn_columns": vn_columns,
@@ -175,11 +175,11 @@ def no_filler_stack(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
         "w": width * 1e-6,
         "l": length * 1e-6,
-        "minLW": 10e-9,  # hardcoded not in tech file
+        "minLW": 10e-9,  # hardcoded not in tech file, not read by IHP code
         "noAct": noAct,
         "noGP": noGP,
         "noM1": noM1,

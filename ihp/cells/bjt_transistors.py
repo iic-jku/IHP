@@ -63,9 +63,9 @@ def npn13G2(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["npn13G2_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
+        "model": tech.techParams["npn13G2_model"],  # not read by IHP code
         "Nx": Nx,
         "Ny": Ny,
         "le": emitter_length * 1e-6,  # um to m
@@ -76,12 +76,12 @@ def npn13G2(
         "bipwiny": bipwiny * 1e-6,
         "empolyx": empolyx * 1e-6,
         "empolyy": empolyy * 1e-6,
-        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "area": 1,  # hardcoded in IHP PyCell, not in techparams
-        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams
-        "m": 1,
-        "trise": "",
+        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "area": 1,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "m": 1,  # not read by IHP code
+        "trise": "",  # not read by IHP code
         "Text": text,
         "CMetY1": CMetY1 * 1e-6,  # hardcoded in IHP PyCell, not in techparams
         "CMetY2": CMetY2 * 1e-6,  # hardcoded in IHP PyCell, not in techparams
@@ -135,20 +135,20 @@ def npn13G2L(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["npn13G2L_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
+        "model": tech.techParams["npn13G2L_model"],  # not read by IHP code
         "Nx": Nx,
         "le": emitter_length * 1e-6,  # um to m
         "we": emitter_width * 1e-6,  # um to m
-        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "area": 1,  # hardcoded in IHP PyCell, not in techparams
-        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams
-        "Vbe": "",
-        "Vce": "",
-        "m": 1,
-        "trise": "",
+        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "area": 1,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Vbe": "",  # not read by IHP code
+        "Vce": "",  # not read by IHP code
+        "m": 1,  # not read by IHP code
+        "trise": "",  # not read by IHP code
     }
 
     c = generate_gf_from_ihp(
@@ -199,20 +199,20 @@ def npn13G2V(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["npn13G2V_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
+        "model": tech.techParams["npn13G2V_model"],  # not read by IHP code
         "Nx": Nx,
         "le": emitter_length * 1e-6,  # um to m
         "we": emitter_width * 1e-6,  # um to m
-        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "area": 1,  # hardcoded in IHP PyCell, not in techparams
-        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams
-        "Vbe": "",
-        "Vce": "",
-        "m": 1,
-        "trise": "",
+        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "area": 1,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Vbe": "",  # not read by IHP code
+        "Vce": "",  # not read by IHP code
+        "m": 1,  # not read by IHP code
+        "trise": "",  # not read by IHP code
     }
 
     c = generate_gf_from_ihp(
@@ -261,19 +261,19 @@ def pnpMPA(
     area = width * length
     perimeter = 2 * (width + length)
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["pnpMPA_model"],
-        "Calculate": "a",
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
+        "model": tech.techParams["pnpMPA_model"],  # not read by IHP code
+        "Calculate": "a",  # not read by IHP code
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
-        "a": area * 1e-12,
-        "p": perimeter * 1e-6,
-        "ac": 7.524 * 1e-12,
-        "pc": 11.16 * 1e-6,
-        "m": 1,  # Multiplier
-        "region": "",
-        "trise": "",
+        "a": area * 1e-12,  # not read by IHP code
+        "p": perimeter * 1e-6,  # not read by IHP code
+        "ac": 7.524 * 1e-12,  # not read by IHP code
+        "pc": 11.16 * 1e-6,  # not read by IHP code
+        "m": 1,  # Multiplier, not read by IHP code
+        "region": "",  # not read by IHP code
+        "trise": "",  # not read by IHP code
     }
 
     c = generate_gf_from_ihp(

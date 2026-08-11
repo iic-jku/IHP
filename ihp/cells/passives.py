@@ -54,8 +54,8 @@ def esd(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
         "model": model,
     }
 
@@ -196,20 +196,20 @@ def ptap1(
     area = width * length
     perimeter = 2 * (width + length)
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "Calculate": "R,A",
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
+        "Calculate": "R,A",  # not read by IHP code
         "R": CbTapCalc(
             "R", 0, length * 1e-6, width * 1e-6, "ptap1"
-        ),  # TODO Is this used?
+        ),  # TODO Is this used?, not read by IHP code
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
-        "A": area,
-        "Perim": perimeter,
-        "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell
-        "Wmin": eng_string_to_float(tech.techParams["ptap1_minLW"]),
-        "Lmin": eng_string_to_float(tech.techParams["ptap1_minLW"]),
-        "m": 1,
+        "A": area,  # not read by IHP code
+        "Perim": perimeter,  # not read by IHP code
+        "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell, not read by IHP code
+        "Wmin": eng_string_to_float(tech.techParams["ptap1_minLW"]),  # not declared in KLayout, ignored
+        "Lmin": eng_string_to_float(tech.techParams["ptap1_minLW"]),  # not declared in KLayout, ignored
+        "m": 1,  # not declared in KLayout, ignored
     }
 
     c = generate_gf_from_ihp(
@@ -244,20 +244,20 @@ def ntap1(
     area = width * length
     perimeter = 2 * (width + length)
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "Calculate": "R,A",
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
+        "Calculate": "R,A",  # not read by IHP code
         "R": CbTapCalc(
             "R", 0, length * 1e-6, width * 1e-6, "ntap1"
-        ),  # TODO Is this used?
+        ),  # TODO Is this used?, not read by IHP code
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
-        "A": area,
-        "Perim": perimeter,
-        "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell
-        "Wmin": eng_string_to_float(tech.techParams["ntap1_minLW"]),
-        "Lmin": eng_string_to_float(tech.techParams["ntap1_minLW"]),
-        "m": 1,
+        "A": area,  # not read by IHP code
+        "Perim": perimeter,  # not read by IHP code
+        "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell, not read by IHP code
+        "Wmin": eng_string_to_float(tech.techParams["ntap1_minLW"]),  # not declared in KLayout, ignored
+        "Lmin": eng_string_to_float(tech.techParams["ntap1_minLW"]),  # not declared in KLayout, ignored
+        "m": 1,  # not declared in KLayout, ignored
     }
 
     c = generate_gf_from_ihp(
@@ -301,8 +301,8 @@ def sealring(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "l": width * 1e-6,  # um to m
         "w": height * 1e-6,  # um to m
         "addLabel": addLabel,
@@ -344,7 +344,7 @@ def guard_ring(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
         "h": height * 1e-6,  # um to m
         "w": width * 1e-6,  # um to m
         "type": guardRingType,

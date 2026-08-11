@@ -36,14 +36,14 @@ def schottky(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["dschottky_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
+        "model": tech.techParams["dschottky_model"],  # not read by IHP code
         "w": width * 1e-6,
         "l": length * 1e-6,
         "Nx": Nx,
         "Ny": Ny,
-        "m": 1,
+        "m": 1,  # not read by IHP code
     }
 
     c = generate_gf_from_ihp(

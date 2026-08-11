@@ -52,24 +52,24 @@ def dantenna(
     area = width * 1e-6 * length * 1e-6
     perimeter = 2 * (width * 1e-6 + length * 1e-6)
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["dantenna_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
+        "model": tech.techParams["dantenna_model"],  # not read by IHP code
         "Calculate": "a",
         "w": width * 1e-6,
         "l": length * 1e-6,
         "a": area,
         "p": perimeter,
         "addRecLayer": addRecLayer,
-        "bn": "sub!",
-        "off": False,
-        "Vd": "",
-        "perim": "",
-        "m": 1,
-        "trise": "",
-        "region": "",
-        "dtemp": "",
-        "mode": "No",
+        "bn": "sub!",  # not read by IHP code
+        "off": False,  # not read by IHP code
+        "Vd": "",  # not read by IHP code
+        "perim": "",  # not read by IHP code
+        "m": 1,  # not read by IHP code
+        "trise": "",  # not read by IHP code
+        "region": "",  # not read by IHP code
+        "dtemp": "",  # not read by IHP code
+        "mode": "No",  # not read by IHP code
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }
@@ -124,24 +124,24 @@ def dpantenna(
     area = width * 1e-6 * length * 1e-6
     perimeter = 2 * (width * 1e-6 + length * 1e-6)
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["dpantenna_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
+        "model": tech.techParams["dpantenna_model"],  # not read by IHP code
         "Calculate": "a",
         "w": width * 1e-6,
         "l": length * 1e-6,
         "a": area,
         "p": perimeter,
         "addRecLayer": addRecLayer,
-        "bn": "sub!",
-        "off": False,
-        "Vd": "",
-        "perim": "",
-        "m": 1,
-        "trise": "",
-        "region": "",
-        "dtemp": "",
-        "mode": "No",
+        "bn": "sub!",  # not declared in KLayout, ignored
+        "off": False,  # not read by IHP code
+        "Vd": "",  # not read by IHP code
+        "perim": "",  # not read by IHP code
+        "m": 1,  # not read by IHP code
+        "trise": "",  # not read by IHP code
+        "region": "",  # not read by IHP code
+        "dtemp": "",  # not read by IHP code
+        "mode": "No",  # not read by IHP code
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }

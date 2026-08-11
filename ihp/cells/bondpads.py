@@ -60,9 +60,9 @@ def bondpad(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "model": "bondpad",  # hardcoded for bondpad
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "model": "bondpad",  # hardcoded for bondpad, not read by IHP code
+        "Display": "Selected",  # not declared in KLayout, ignored
         "shape": shape,
         "stack": stack,
         "fill": fillMetals,
@@ -74,7 +74,7 @@ def bondpad(
         "addFillerEx": addFillerEx,
         "passEncl": passEncl * 1e-6,
         "padType": padType,
-        "padPin": "PAD",
+        "padPin": "PAD",  # not read by IHP code
     }
     spacing_from_edge = 1.885  # manual measurement from the pad layout
     width = diameter * hwQuota - 2 * spacing_from_edge

@@ -65,11 +65,11 @@ def rhigh(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "Calculate": "l",  # TODO check what to do
         "Recommendation": "No",
-        "model": tech.techParams["rhigh_model"],
+        "model": tech.techParams["rhigh_model"],  # not read by IHP code
         "R": CbResCalc(
             "R", 0, length * 1e-6, width * 1e-6, bends, polySpace * 1e-6, "rhigh"
         ),  # TODO Is this used?
@@ -80,18 +80,18 @@ def rhigh(
         "Imax": CbResCurrent(
             width * 1e-6, tech.techParams["epsilon2"], "rhighG2"
         ),  # TODO Is this used?
-        "bn": "sub!",
-        "Wmin": eng_string_to_float(tech.techParams["rhigh_minW"]) * 1e-6,
-        "Lmin": eng_string_to_float(tech.techParams["rhigh_minL"]) * 1e-6,
-        "PSmin": eng_string_to_float(tech.techParams["rhigh_minPS"]) * 1e-6,
-        "Rspec": tech.techParams["rhigh_rspec"],
-        "Rkspec": tech.techParams["rhigh_rkspec"],
-        "Rzspec": tech.techParams["rhigh_rzspec"],
-        "tc1": -2300e-6,  # hardcoded in the PCell
-        "tc2": 2.1e-6,  # hardcoded in the PCell
-        "PWB": "No",
-        "m": 1,  # Multiplier
-        "trise": 0,
+        "bn": "sub!",  # not read by IHP code
+        "Wmin": eng_string_to_float(tech.techParams["rhigh_minW"]) * 1e-6,  # not read by IHP code
+        "Lmin": eng_string_to_float(tech.techParams["rhigh_minL"]) * 1e-6,  # not read by IHP code
+        "PSmin": eng_string_to_float(tech.techParams["rhigh_minPS"]) * 1e-6,  # not read by IHP code
+        "Rspec": tech.techParams["rhigh_rspec"],  # not read by IHP code
+        "Rkspec": tech.techParams["rhigh_rkspec"],  # not read by IHP code
+        "Rzspec": tech.techParams["rhigh_rzspec"],  # not read by IHP code
+        "tc1": -2300e-6,  # hardcoded in the PCell, not read by IHP code
+        "tc2": 2.1e-6,  # hardcoded in the PCell, not read by IHP code
+        "PWB": "No",  # not read by IHP code
+        "m": 1,  # Multiplier, not read by IHP code
+        "trise": 0,  # not read by IHP code
         "NumberOfSegments": numberOfSegments,
         "SegmentConnection": segmentConnection,
         "SegmentSpacing": segmentSpacing * 1e-6,
@@ -154,11 +154,11 @@ def rppd(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "Calculate": "l",  # TODO check what to do
         "Recommendation": "No",
-        "model": tech.techParams["rppd_model"],
+        "model": tech.techParams["rppd_model"],  # not read by IHP code
         "R": CbResCalc(
             "R", 0, length * 1e-6, width * 1e-6, bends, polySpace * 1e-6, "rppd"
         ),  # TODO Is this used?
@@ -169,18 +169,18 @@ def rppd(
         "Imax": CbResCurrent(
             width * 1e-6, tech.techParams["epsilon2"], "rppdG2"
         ),  # TODO Is this used?
-        "bn": "sub!",
-        "Wmin": eng_string_to_float(tech.techParams["rppd_minW"]) * 1e-6,
-        "Lmin": eng_string_to_float(tech.techParams["rppd_minL"]) * 1e-6,
-        "PSmin": eng_string_to_float(tech.techParams["rppd_minPS"]) * 1e-6,
-        "Rspec": tech.techParams["rppd_rspec"],
-        "Rkspec": tech.techParams["rppd_rkspec"],
-        "Rzspec": tech.techParams["rppd_rzspec"],
-        "tc1": -170e-6,  # hardcoded in the PCell
-        "tc2": 0.4e-6,  # hardcoded in the PCell
-        "PWB": "No",
-        "m": 1,  # Multiplier
-        "trise": 0,
+        "bn": "sub!",  # not read by IHP code
+        "Wmin": eng_string_to_float(tech.techParams["rppd_minW"]) * 1e-6,  # not read by IHP code
+        "Lmin": eng_string_to_float(tech.techParams["rppd_minL"]) * 1e-6,  # not read by IHP code
+        "PSmin": eng_string_to_float(tech.techParams["rppd_minPS"]) * 1e-6,  # not read by IHP code
+        "Rspec": tech.techParams["rppd_rspec"],  # not read by IHP code
+        "Rkspec": tech.techParams["rppd_rkspec"],  # not read by IHP code
+        "Rzspec": tech.techParams["rppd_rzspec"],  # not read by IHP code
+        "tc1": -170e-6,  # hardcoded in the PCell, not read by IHP code
+        "tc2": 0.4e-6,  # hardcoded in the PCell, not read by IHP code
+        "PWB": "No",  # not read by IHP code
+        "m": 1,  # Multiplier, not read by IHP code
+        "trise": 0,  # not read by IHP code
         "NumberOfSegments": numberOfSegments,
         "SegmentConnection": segmentConnection,
         "SegmentSpacing": segmentSpacing * 1e-6,
@@ -243,11 +243,11 @@ def rsil(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "Calculate": "l",  # TODO check what to do
-        "Recommendation": "No",
-        "model": tech.techParams["rsil_model"],
+        "Recommendation": "No",  # not declared in KLayout, ignored
+        "model": tech.techParams["rsil_model"],  # not read by IHP code
         "R": resistance,  # TODO IHP function defines it as user parameter but also calculates it
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
@@ -255,18 +255,18 @@ def rsil(
         "Imax": CbResCurrent(
             width * 1e-6, tech.techParams["epsilon2"], "rsilG2"
         ),  # TODO Is this used?
-        "bn": "sub!",
-        "Wmin": eng_string_to_float(tech.techParams["rsil_minW"]) * 1e-6,
-        "Lmin": eng_string_to_float(tech.techParams["rsil_minL"]) * 1e-6,
-        "PSmin": eng_string_to_float(tech.techParams["rsil_minPS"]) * 1e-6,
-        "Rspec": tech.techParams["rsil_rspec"],
-        "Rkspec": tech.techParams["rsil_rkspec"],
-        "Rzspec": tech.techParams["rsil_rzspec"],
-        "tc1": -170e-6,  # hardcoded in the PCell
-        "tc2": 0.4e-6,  # hardcoded in the PCell
-        "PWB": "No",
-        "m": 1,  # Multiplier
-        "trise": 0,
+        "bn": "sub!",  # not read by IHP code
+        "Wmin": eng_string_to_float(tech.techParams["rsil_minW"]) * 1e-6,  # not read by IHP code
+        "Lmin": eng_string_to_float(tech.techParams["rsil_minL"]) * 1e-6,  # not read by IHP code
+        "PSmin": eng_string_to_float(tech.techParams["rsil_minPS"]) * 1e-6,  # not read by IHP code
+        "Rspec": tech.techParams["rsil_rspec"],  # not read by IHP code
+        "Rkspec": tech.techParams["rsil_rkspec"],  # not read by IHP code
+        "Rzspec": tech.techParams["rsil_rzspec"],  # not read by IHP code
+        "tc1": -170e-6,  # hardcoded in the PCell, not read by IHP code
+        "tc2": 0.4e-6,  # hardcoded in the PCell, not read by IHP code
+        "PWB": "No",  # not declared in KLayout, ignored
+        "m": 1,  # Multiplier, not read by IHP code
+        "trise": 0,  # not read by IHP code
         "NumberOfSegments": numberOfSegments,
         "SegmentConnection": segmentConnection,
         "SegmentSpacing": segmentSpacing * 1e-6,

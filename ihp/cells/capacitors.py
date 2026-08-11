@@ -48,24 +48,24 @@ def cmim(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "Calculate": "w&l",
-        "model": tech.techParams["cmim_model"],
         "C": CbCapCalc(
             "C", 0, width * 1e-6, length * 1e-6, "cmim"
         ),  # TODO Is this used?
+        "model": tech.techParams["cmim_model"],  # not read by IHP code
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
         "Cspec": eng_string_to_float(
             tech.techParams["cmim_caspec"]
-        ),  # specific capacitance
-        "Wmin": eng_string_to_float(tech.techParams["cmim_minLW"]),
-        "Lmin": eng_string_to_float(tech.techParams["cmim_minLW"]),
-        "Cmax": eng_string_to_float(tech.techParams["cmim_maxC"]),
-        "ic": "",
-        "m": 1,  # Multiplier
-        "trise": "",
+        ),  # specific capacitance, not read by IHP code
+        "Wmin": eng_string_to_float(tech.techParams["cmim_minLW"]),  # not read by IHP code
+        "Lmin": eng_string_to_float(tech.techParams["cmim_minLW"]),  # not read by IHP code
+        "Cmax": eng_string_to_float(tech.techParams["cmim_maxC"]),  # not read by IHP code
+        "ic": "",  # not read by IHP code
+        "m": 1,  # Multiplier, not read by IHP code
+        "trise": "",  # not read by IHP code
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }
@@ -136,25 +136,25 @@ def rfcmim(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
         "Calculate": "C",
-        "model": tech.techParams["rfcmim_model"],
         "C": CbCapCalc(
             "C", 0, width * 1e-6, length * 1e-6, "rfcmim"
         ),  # TODO Is this used?
+        "model": tech.techParams["rfcmim_model"],  # not read by IHP code
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
         "wfeed": feed_width * 1e-6,
         "Cspec": eng_string_to_float(
             tech.techParams["rfcmim_caspec"]
-        ),  # specific capacitance
-        "Wmin": eng_string_to_float(tech.techParams["rfcmim_minLW"]),
-        "Lmin": eng_string_to_float(tech.techParams["rfcmim_minLW"]),
-        "Cmax": eng_string_to_float(tech.techParams["rfcmim_maxC"]),
-        "ic": "",
-        "m": 1,  # Multiplier
-        "trise": "",
+        ),  # specific capacitance, not read by IHP code
+        "Wmin": eng_string_to_float(tech.techParams["rfcmim_minLW"]),  # not read by IHP code
+        "Lmin": eng_string_to_float(tech.techParams["rfcmim_minLW"]),  # not read by IHP code
+        "Cmax": eng_string_to_float(tech.techParams["rfcmim_maxC"]),  # not read by IHP code
+        "ic": "",  # not declared in KLayout, ignored
+        "m": 1,  # Multiplier, not declared in KLayout, ignored
+        "trise": "",  # not declared in KLayout, ignored
     }
 
     c = generate_gf_from_ihp(
@@ -217,14 +217,14 @@ def svaricap(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["SVaricap_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
+        "model": tech.techParams["SVaricap_model"],  # not read by IHP code
         "w": width,  # eng-format string, e.g. "9.74u"
         "l": length,  # eng-format string, e.g. "0.8u"
         "Nx": Nx,
-        "bn": "sub!",
-        "trise": "",
+        "bn": "sub!",  # not read by IHP code
+        "trise": "",  # not declared in KLayout, ignored
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }

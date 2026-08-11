@@ -59,8 +59,8 @@ def inductor2(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "model": "inductor2",
         "w": width * 1e-6,
         "s": space * 1e-6,
@@ -76,7 +76,7 @@ def inductor2(
         "Smin": 2.1 * 1e-6,
         "Dmin": 15.48 * 1e-6,
         "minNr_t": 1,
-        "mergeStat": 16,
+        "mergeStat": 16,  # not read by IHP code
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }
@@ -141,8 +141,8 @@ def inductor3(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "model": "inductor3",
         "w": width * 1e-6,
         "s": space * 1e-6,
@@ -158,7 +158,7 @@ def inductor3(
         "Smin": 2.1 * 1e-6,
         "Dmin": 25.84 * 1e-6,
         "minNr_t": 2,
-        "mergeStat": 16,
+        "mergeStat": 16,  # not read by IHP code
         "guardRingType": guardRingType,
         "guardRingDistance": guardRingDistance * 1e-6,
     }
