@@ -21,10 +21,69 @@ from .. import tech
 from .utils import *
 
 
+def _resolve_cap(cell: str, width, length, C) -> tuple[float, float, float]:
+    """Given at most two of (width, length, C), derive the rest with IHP's CbCapCalc.
+
+    The PyCell layout code only reads w and l (its C parameter is display-only,
+    recomputed from w/l in setupParams), so the solving the GUI's Calculate
+    field triggers has to happen here - using the same CbCapCalc modes the GUI
+    callback calls ('w', 'l', 'lw', 'C').
+
+    Args:
+        cell: Technology cell name for parameter lookup ('cmim', 'rfcmim').
+        width: Width in micrometers, or None to derive it.
+        length: Length in micrometers, or None to derive it.
+        C: Capacitance in farads, or None to derive it from the geometry.
+            A dimension omitted alongside another dimension falls back to the
+            technology default size (`<cell>_defLW`).
+
+    Returns:
+        (width_um, length_um, C_farads), consistent with each other.
+
+    Raises:
+        ValueError: If all three are given, or a dimension is outside the
+            technology limits (`<cell>_minLW` .. `<cell>_maxLW`).
+    """
+    if width is not None and length is not None and C is not None:
+        raise ValueError(
+            f"{cell}: give at most two of width, length, C - the third is derived"
+        )
+
+    # CbCapCalc signature: (calc, c, l, w, cell); lengths in metres
+    if C is None:
+        default = eng_string_to_float(tech.techParams[f"{cell}_defLW"]) * 1e6
+        width = default if width is None else width
+        length = default if length is None else length
+        C = CbCapCalc("C", 0, length * 1e-6, width * 1e-6, cell)
+    elif width is None and length is None:
+        width = length = CbCapCalc("lw", C, 0, 0, cell) * 1e6
+    elif width is None:
+        width = CbCapCalc("w", C, length * 1e-6, 0, cell) * 1e6
+    else:
+        length = CbCapCalc("l", C, 0, width * 1e-6, cell) * 1e6
+
+    lo = eng_string_to_float(tech.techParams[f"{cell}_minLW"]) * 1e6
+    hi = eng_string_to_float(tech.techParams[f"{cell}_maxLW"]) * 1e6
+    for name, value in (("width", width), ("length", length)):
+        if not lo <= value <= hi:
+            raise ValueError(
+                f"{cell}: {name}={value:.4g}um is outside [{lo:.4g}, {hi:.4g}]um"
+            )
+    c_lo = eng_string_to_float(tech.techParams[f"{cell}_minC"])
+    c_hi = eng_string_to_float(tech.techParams[f"{cell}_maxC"])
+    if not c_lo <= C <= c_hi:
+        raise ValueError(
+            f"{cell}: C={C * 1e15:.4g}fF is outside [{c_lo * 1e15:.4g}, {c_hi * 1e15:.4g}]fF"
+        )
+
+    return width, length, C
+
+
 @gf.cell
 def cmim(
-    width: float = 6.99,
-    length: float = 6.99,
+    width: float | None = None,
+    length: float | None = None,
+    C: float | None = None,
     guardRingType: Literal["none", "psub", "nwell"] = "none",
     guardRingDistance: float = 1,
 ) -> gf.Component:
@@ -34,9 +93,20 @@ def cmim(
     guard rings. The capacitor dimensions and the spacing to the guard ring
     can be customized.
 
+    Give any two of width, length and C (or fewer - missing dimensions fall
+    back to the technology default size) and the remaining one is derived
+    with IHP's CbCapCalc, like the Calculate field in the PCell dialog:
+
+        cmim(width=10, length=10)   # C follows from the geometry
+        cmim(C=1e-12, length=10)    # width follows from C and length
+        cmim(C=1e-12)               # square capacitor of that value
+
+    The realised capacitance is reported as `component.info['C']`.
+
     Args:
-        width: Width of the capacitor in micrometers.
-        length: Length of the capacitor in micrometers.
+        width: Width of the capacitor in micrometers. Derived when omitted.
+        length: Length of the capacitor in micrometers. Derived when omitted.
+        C: Capacitance in farads. Derived from the geometry when omitted.
         guardRingType: Type of guard ring to include. Options:
             - 'none': No guard ring.
             - 'psub': P-substrate guard ring surrounding the capacitor.
@@ -45,15 +115,18 @@ def cmim(
 
     Returns:
         gdsfactory.Component: The generated MIM capacitor layout.
+
+    Raises:
+        ValueError: If width, length and C are all given, or a dimension
+            (given or derived from C) is outside the technology limits.
     """
+    width, length, C = _resolve_cap("cmim", width, length, C)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
         "Display": "Selected",  # not read by IHP code
-        "Calculate": "w&l",
-        "C": CbCapCalc(
-            "C", 0, width * 1e-6, length * 1e-6, "cmim"
-        ),  # TODO Is this used?
+        "Calculate": "w&l",  # only read by the GUI callback, inert here
+        "C": C,  # display-only: the PyCell recomputes C from w/l
         "model": tech.techParams["cmim_model"],  # not read by IHP code
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
@@ -111,37 +184,46 @@ def cmim(
         )
     c.ports["B"].orientation = 0
     c.ports["T"].orientation = 180
+    c.info["C"] = C
 
     return c
 
 
 @gf.cell
 def rfcmim(
-    width: float = 6.99,
-    length: float = 6.99,
+    width: float | None = None,
+    length: float | None = None,
+    C: float | None = None,
     feed_width: float = 3,
 ) -> gf.Component:
     """Create an RF MIM (Metal-Insulator-Metal) capacitor with optimized layout.
 
     This function generates a layout for an RF MIM capacitor with a feed
-    line. The capacitor dimensions and feed width can be customized.
+    line. Give any two of width, length and C (or fewer - missing dimensions
+    fall back to the technology default size) and the remaining one is
+    derived with IHP's CbCapCalc, like the Calculate field in the PCell
+    dialog. The realised capacitance is reported as `component.info['C']`.
 
     Args:
-        width: Width of the capacitor in micrometers.
-        length: Length of the capacitor in micrometers.
+        width: Width of the capacitor in micrometers. Derived when omitted.
+        length: Length of the capacitor in micrometers. Derived when omitted.
+        C: Capacitance in farads. Derived from the geometry when omitted.
         feed_width: Width of the feed line connecting to the capacitor, in micrometers.
 
     Returns:
         gdsfactory.Component: The generated RF MIM capacitor layout.
+
+    Raises:
+        ValueError: If width, length and C are all given, or a dimension
+            (given or derived from C) is outside the technology limits.
     """
+    width, length, C = _resolve_cap("rfcmim", width, length, C)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
         "Display": "Selected",  # not declared in KLayout, ignored
-        "Calculate": "C",
-        "C": CbCapCalc(
-            "C", 0, width * 1e-6, length * 1e-6, "rfcmim"
-        ),  # TODO Is this used?
+        "Calculate": "C",  # only read by the GUI callback, inert here
+        "C": C,  # display-only: the PyCell recomputes C from w/l
         "model": tech.techParams["rfcmim_model"],  # not read by IHP code
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
@@ -186,6 +268,7 @@ def rfcmim(
         auto_rename_ports=False,
     )
     c.ports["e1"].name = "TIE"
+    c.info["C"] = C
 
     return c
 
