@@ -2,6 +2,7 @@ import itertools
 import os
 
 import gdsfactory as gf
+
 import ihp
 
 ihp.PDK.activate()
@@ -29,18 +30,14 @@ MIN_WIDTH = {
 }
 
 # every usable (ground, signal) pair, ground always below signal in the stack
-METAL_STACKS = [
-    (METAL_STACK[i], METAL_STACK[j])
-    for i, j in itertools.combinations(range(len(METAL_STACK)), 2)
-]
+METAL_STACKS = [(METAL_STACK[i], METAL_STACK[j]) for i, j in itertools.combinations(range(len(METAL_STACK)), 2)]
 
 # (ground, signal) pairs realistic for RF routing: Metal1-Metal5 are thin,
 # high-resistance-per-square logic/routing layers that nobody would route a real RF
 # line on, so only stacks with a thick top metal (TopMetal1/TopMetal2) as the signal
 # layer are included - which is what those layers exist for.
 RF_METAL_STACKS = [
-    (ground, signal) for ground, signal in METAL_STACKS
-    if signal in ("topmetal1_routing", "topmetal2_routing")
+    (ground, signal) for ground, signal in METAL_STACKS if signal in ("topmetal1_routing", "topmetal2_routing")
 ]
 
 
@@ -67,4 +64,5 @@ def write_tline_gds(tline: gf.Component, name: str, gds_dir: str) -> None:
     port2 = c.add_ref(gf.components.rectangle(size=(0.1, t.ports["e2"].width), layer=(202, 0)))
     port2.center = t.ports["e2"].center
     port2.move((-0.05, 0))
+
     c.write_gds(os.path.join(gds_dir, f"{name}.gds"), with_metadata=False)

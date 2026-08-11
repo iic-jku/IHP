@@ -137,8 +137,8 @@ corrects for that:
   hard-coding which port is through/coupled/isolated, the two ports with the largest
   `|Sx1|` at the design frequency are taken as the outputs and the weakest as the
   isolated port. The design frequency is read from the *directory* name
-  (`blc_<N>GHz/…`), not the leaf filename (Palace names every run's output file the
-  same, so leaf names would collide).
+  (`blc_<N>GHz/…`), not the leaf filename (runs before the `model_basename` fix all
+  wrote the same leaf name, so path-based keying reads old and new results alike).
 
 - **WPD — fixed port roles.** Unlike the BLC there is nothing to classify: port 1 is
   the input, ports 2/3 the outputs (as tagged in `generate_wpd.py`), and the outputs
@@ -222,26 +222,26 @@ make plot-tline-sparams FILES="gds/tline_sparams/lineA gds/tline_sparams/lineB"
 | [`generate_tline_sparams.py`](generate_tline_sparams.py) | build the fixed-50 Ω verification sweep |
 | [`run_sim.sh`](run_sim.sh) | one GDS → mesh + config + one Palace run |
 | [`run_more_sims.sh`](run_more_sims.sh) | loop `run_sim.sh` over a folder, then `combine_snp.py` |
-| [`palace_auto_sim.py`](palace_auto_sim.py) | GDS + stackup → Gmsh mesh + Palace `config.json` (via `gds2palace`) |
+| [`palace_sim.py`](palace_sim.py) | GDS + stackup → Gmsh mesh + Palace `config.json` (via `gds2palace`) |
 | [`combine_snp.py`](combine_snp.py) | Palace/Elmer raw output → Touchstone `.sNp` (+ DC extrap, port de-embed) |
 | [`plot_tline.py`](plot_tline.py) | `z0` / `z0-freq` / `z0-3d` / `loss` / `design` / `sparams` plotting + extraction |
 | [`plot_blc.py`](plot_blc.py) | coupler S-params, imbalance, phase, and cross-design summary |
 | [`plot_wpd.py`](plot_wpd.py) | divider S-params, imbalance, phase, and cross-design summary |
-| `SG13G2_200um.xml` | **active** stackup (200 µm conductive substrate) used by `palace_auto_sim.py` |
+| `SG13G2_200um.xml` | **active** stackup (200 µm conductive substrate) used by `palace_sim.py` |
 | `SG13G2_nosub.xml` | alternative stackup without the substrate (faster, no substrate loss) |
 
-`combine_snp.py` and `palace_auto_sim.py` are adapted from the upstream `gds2palace`
+`combine_snp.py` and `palace_sim.py` are adapted from the upstream `gds2palace`
 project — re-syncing them from upstream will overwrite local edits/comments.
 
 ---
 
 ## Configuration notes
 
-- **Stackup**: set by `XML_filename` in [`palace_auto_sim.py`](palace_auto_sim.py)
+- **Stackup**: set by `XML_filename` in [`palace_sim.py`](palace_sim.py)
   (currently `SG13G2_200um.xml`, which includes the conductive silicon substrate).
   Switch to `SG13G2_nosub.xml` to drop the substrate (faster, no substrate loss).
 - **Port markers**: the generators tag port locations on GDS layers 201–204;
-  `palace_auto_sim.py` turns layer `200+n` into lumped port `n` (50 Ω reference).
+  `palace_sim.py` turns layer `200+n` into lumped port `n` (50 Ω reference).
 - **Palace parallelism**: `run_sim.sh` runs Palace on all machine cores minus 12
   (kept free for other users), with a floor of 1 — see the `-np` line to adjust.
   It also passes `--allow-run-as-root` (needed in the container).
@@ -252,7 +252,7 @@ project — re-syncing them from upstream will overwrite local edits/comments.
 
 ```
 gds/<sweep>/*.gds                              # layouts (dropped by clean-intermediates)
-gds/<sweep>/<model>/palace_auto_sim_data/      # mesh, config.json, Palace output, .sNp
+gds/<sweep>/<model>/<model>_data/      # mesh, config.json, Palace output, .sNp
 images/*.png, *.csv                             # extracted results
 ```
 

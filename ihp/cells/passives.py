@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 from typing import Literal
 
@@ -17,10 +15,50 @@ from sg13g2_pycell_lib.ihp.guard_ring_code import guard_ring as guardringIHP
 from sg13g2_pycell_lib.ihp.ntap1_code import ntap1 as ntap1IHP
 from sg13g2_pycell_lib.ihp.ptap1_code import ptap1 as ptap1IHP
 from sg13g2_pycell_lib.ihp.sealring_code import sealring as sealringIHP
-from sg13g2_pycell_lib.ihp.utility_functions import CbTapCalc, eng_string_to_float
+from sg13g2_pycell_lib.ihp.utility_functions import CbTapCalc
 
 from .. import tech
 from .utils import *
+
+
+def _resolve_tap(cell, width, length, R):
+    """Given at most two of (width, length, R), derive the rest with IHP's
+    CbTapCalc, like the Calculate button in the PCell dialog.
+
+    Args:
+        cell: Technology cell name ('ptap1', 'ntap1').
+        width: Tap width in micrometers, or None to derive it.
+        length: Tap length in micrometers, or None to derive it.
+        R: Resistance in ohms, or None to derive it. R alone yields a square
+            tap; a dimension omitted alongside another dimension falls back
+            to the technology default.
+
+    Returns:
+        (width_um, length_um, R_ohms), consistent with each other.
+
+    Raises:
+        ValueError: If all three are given, or a dimension (given or derived)
+            is outside the technology limits.
+    """
+    if width is not None and length is not None and R is not None:
+        raise ValueError(f"{cell}: give at most two of width, length, R - the third is derived")
+
+    # CbTapCalc signature: (calc, r, l, w, cell); lengths in metres
+    if R is None:
+        width = tech_num(f"{cell}_defW", 1e6) if width is None else width
+        length = tech_num(f"{cell}_defL", 1e6) if length is None else length
+        R = CbTapCalc("R", 0, length * 1e-6, width * 1e-6, cell)
+    elif width is None and length is None:
+        width = length = CbTapCalc("wl", R, 0, 0, cell) * 1e6
+    elif width is None:
+        width = CbTapCalc("w", R, length * 1e-6, 0, cell) * 1e6
+    else:
+        length = CbTapCalc("l", R, 0, width * 1e-6, cell) * 1e6
+
+    # taps share one limit pair for both dimensions (minLW/maxLW)
+    lo, hi = tech_num(f"{cell}_minLW", 1e6), tech_num(f"{cell}_maxLW", 1e6)
+    check_limits(cell, [("width", width, lo, hi, "um"), ("length", length, lo, hi, "um")])
+    return width, length, R
 
 
 @gf.cell
@@ -54,14 +92,12 @@ def esd(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
         "model": model,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="esd", cell_params=params, function_name=esdIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="esd", cell_params=params, function_name=esdIHP())
 
     # add ports to the component
     # default direction should be away from the device center
@@ -112,11 +148,7 @@ def esd(
             # its own Metal2 pin box (the box whose center is not taken by the
             # Metal2 port that did register).
             lay = gf.get_layer(tech.LAYER.Metal2pin)
-            taken = [
-                tuple(round(v, 3) for v in pt.center)
-                for pt in c.ports
-                if pt.name in ("e1", "e2")
-            ]
+            taken = [tuple(round(v, 3) for v in pt.center) for pt in c.ports if pt.name in ("e1", "e2")]
             missing = "e1" if any(pt.name == "e2" for pt in c.ports) else "e2"
             for box in c.get_boxes(layer=lay):
                 bb = box.bbox()
@@ -176,8 +208,9 @@ def esd(
 
 @gf.cell
 def ptap1(
-    width: float = 0.78,
-    length: float = 0.78,
+    width: float | None = None,
+    length: float | None = None,
+    R: float | None = None,
 ) -> gf.Component:
     """Create a P+ substrate tap layout.
 
@@ -185,36 +218,39 @@ def ptap1(
     width and length. It is typically used for connecting the P-substrate
     to a reference potential.
 
+    Give any two of width, length and R (or fewer - missing dimensions fall
+    back to the technology defaults) and the remaining one is derived with
+    IHP's CbTapCalc. The realised resistance is reported as
+    `component.info['R']`.
+
     Args:
-        width: Width of the tap in micrometers.
-        length: Length of the tap in micrometers.
+        width: Width of the tap in micrometers. Derived when omitted.
+        length: Length of the tap in micrometers. Derived when omitted.
+        R: Resistance in ohms. Derived from the geometry when omitted.
 
     Returns:
         gdsfactory.Component: The generated P+ substrate tap layout.
     """
 
+    width, length, R = _resolve_tap("ptap1", width, length, R)
     area = width * length
     perimeter = 2 * (width + length)
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "Calculate": "R,A",
-        "R": CbTapCalc(
-            "R", 0, length * 1e-6, width * 1e-6, "ptap1"
-        ),  # TODO Is this used?
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
+        "Calculate": "R,A",  # not read by IHP code
+        "R": R,  # display-only; resolved by _resolve_tap
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
-        "A": area,
-        "Perim": perimeter,
-        "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell
-        "Wmin": eng_string_to_float(tech.techParams["ptap1_minLW"]),
-        "Lmin": eng_string_to_float(tech.techParams["ptap1_minLW"]),
-        "m": 1,
+        "A": area,  # not read by IHP code
+        "Perim": perimeter,  # not read by IHP code
+        "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell, not read by IHP code
+        "Wmin": tech_num("ptap1_minLW"),  # not declared in KLayout, ignored
+        "Lmin": tech_num("ptap1_minLW"),  # not declared in KLayout, ignored
+        "m": 1,  # not declared in KLayout, ignored
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="ptap1", cell_params=params, function_name=ptap1IHP()
-    )
+    c = generate_gf_from_ihp(cell_name="ptap1", cell_params=params, function_name=ptap1IHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -223,46 +259,51 @@ def ptap1(
         port_type="electrical",
         ports_on_short_side=True,
     )
+    c.info["R"] = R
 
     return c
 
 
 @gf.cell
 def ntap1(
-    width: float = 0.78,
-    length: float = 0.78,
+    width: float | None = None,
+    length: float | None = None,
+    R: float | None = None,
 ) -> gf.Component:
     """Create an N+ substrate tap.
 
+    Give any two of width, length and R (or fewer - missing dimensions fall
+    back to the technology defaults) and the remaining one is derived with
+    IHP's CbTapCalc. The realised resistance is reported as
+    `component.info['R']`.
+
     Args:
-        width: Width of the tap in micrometers.
-        length: Length of the tap in micrometers.
+        width: Width of the tap in micrometers. Derived when omitted.
+        length: Length of the tap in micrometers. Derived when omitted.
+        R: Resistance in ohms. Derived from the geometry when omitted.
 
     Returns:
         Component with N+ tap layout.
     """
+    width, length, R = _resolve_tap("ntap1", width, length, R)
     area = width * length
     perimeter = 2 * (width + length)
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "Calculate": "R,A",
-        "R": CbTapCalc(
-            "R", 0, length * 1e-6, width * 1e-6, "ntap1"
-        ),  # TODO Is this used?
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
+        "Calculate": "R,A",  # not read by IHP code
+        "R": R,  # display-only; resolved by _resolve_tap
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
-        "A": area,
-        "Perim": perimeter,
-        "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell
-        "Wmin": eng_string_to_float(tech.techParams["ntap1_minLW"]),
-        "Lmin": eng_string_to_float(tech.techParams["ntap1_minLW"]),
-        "m": 1,
+        "A": area,  # not read by IHP code
+        "Perim": perimeter,  # not read by IHP code
+        "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell, not read by IHP code
+        "Wmin": tech_num("ntap1_minLW"),  # not declared in KLayout, ignored
+        "Lmin": tech_num("ntap1_minLW"),  # not declared in KLayout, ignored
+        "m": 1,  # not declared in KLayout, ignored
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="ntap1", cell_params=params, function_name=ntap1IHP()
-    )
+    c = generate_gf_from_ihp(cell_name="ntap1", cell_params=params, function_name=ntap1IHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -271,6 +312,7 @@ def ntap1(
         port_type="electrical",
         ports_on_short_side=True,
     )
+    c.info["R"] = R
 
     return c
 
@@ -298,23 +340,30 @@ def sealring(
 
     Returns:
         gdsfactory.Component: The generated seal ring layout.
+
+    Raises:
+        ValueError: If width or height is below the technology minimum.
     """
+    # only a minimum is defined for the seal ring (sealring_minL, both axes)
+    lo = tech_num("sealring_minL", 1e6)
+    check_limits(
+        "sealring",
+        [("width", width, lo, None, "um"), ("height", height, lo, None, "um")],
+    )
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
         "l": width * 1e-6,  # um to m
         "w": height * 1e-6,  # um to m
         "addLabel": addLabel,
         "addSlit": addSlit,
-        "Wmin": eng_string_to_float(tech.techParams["sealring_complete_minW"]),
-        "Lmin": eng_string_to_float(tech.techParams["sealring_complete_minL"]),
+        "Wmin": tech_num("sealring_complete_minW"),
+        "Lmin": tech_num("sealring_complete_minL"),
         "edgeBox": edgeBox * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="sealring", cell_params=params, function_name=sealringIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="sealring", cell_params=params, function_name=sealringIHP())
 
     # add ports to the component
     # ports should be added manually if needed
@@ -344,15 +393,13 @@ def guard_ring(
     """
 
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
         "h": height * 1e-6,  # um to m
         "w": width * 1e-6,  # um to m
         "type": guardRingType,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="guardring", cell_params=params, function_name=guardringIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="guardring", cell_params=params, function_name=guardringIHP())
 
     # add ports to the component
     # ports should be added manually if needed

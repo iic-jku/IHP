@@ -1,7 +1,8 @@
 import os
 
-import ihp
 from tline_common import METAL_STACKS, short_name, write_tline_gds
+
+import ihp
 
 # general S-parameter verification sweep: fixed 50 ohm lines across lengths,
 # metal stacks and frequency bands (distinct from the Zc(w)/loss(w) plot sweeps)

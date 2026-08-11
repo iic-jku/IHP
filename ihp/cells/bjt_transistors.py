@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 
 import gdsfactory as gf
@@ -29,7 +27,7 @@ def npn13G2(
     empolyx: float = 0.15,
     empolyy: float = 0.18,
     emitter_length: float = 0.9,
-    emitter_width: float = 0.7,
+    emitter_width: float = 0.07,
     Nx: int = 1,
     Ny: int = 1,
     text: str = "npn13G2",
@@ -62,10 +60,35 @@ def npn13G2(
         gdsfactory.Component: The generated npn13G2 transistor layout.
     """
 
+    # npn13G2_code swaps le/we internally, so the wrapper's emitter_length
+    # maps to the technology's WE limits and emitter_width to LE (both are
+    # fixed sizes in SG13G2 - only the finger count Nx is really variable)
+    check_limits(
+        "npn13G2",
+        [
+            (
+                "emitter_length",
+                emitter_length,
+                tech_num("npn13G2_minWE", 1e6),
+                tech_num("npn13G2_maxWE", 1e6),
+                "um",
+            ),
+            (
+                "emitter_width",
+                emitter_width,
+                tech_num("npn13G2_minLE", 1e6),
+                tech_num("npn13G2_maxLE", 1e6),
+                "um",
+            ),
+            ("Nx", Nx, tech_num("npn13G2_minNX"), tech_num("npn13G2_maxNX"), ""),
+            ("Ny", Ny, tech_num("npn13G2_minNY"), tech_num("npn13G2_maxNY"), ""),
+        ],
+    )
+
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["npn13G2_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
+        "model": tech.techParams["npn13G2_model"],  # not read by IHP code
         "Nx": Nx,
         "Ny": Ny,
         "le": emitter_length * 1e-6,  # um to m
@@ -76,20 +99,18 @@ def npn13G2(
         "bipwiny": bipwiny * 1e-6,
         "empolyx": empolyx * 1e-6,
         "empolyy": empolyy * 1e-6,
-        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "area": 1,  # hardcoded in IHP PyCell, not in techparams
-        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams
-        "m": 1,
-        "trise": "",
+        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "area": 1,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "m": 1,  # not read by IHP code
+        "trise": "",  # not read by IHP code
         "Text": text,
         "CMetY1": CMetY1 * 1e-6,  # hardcoded in IHP PyCell, not in techparams
         "CMetY2": CMetY2 * 1e-6,  # hardcoded in IHP PyCell, not in techparams
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="npn13G2", cell_params=params, function_name=npn13G2IHP()
-    )
+    c = generate_gf_from_ihp(cell_name="npn13G2", cell_params=params, function_name=npn13G2IHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -134,26 +155,31 @@ def npn13G2L(
         gdsfactory.Component: The generated npn13G2L transistor layout.
     """
 
+    # npn13G2L's techparams LE/WE limits are stale copies of npn13G2's and
+    # would reject this cell's own defaults, so only Nx is validated
+    check_limits(
+        "npn13G2L",
+        [("Nx", Nx, tech_num("npn13G2L_minNX"), tech_num("npn13G2L_maxNX"), "")],
+    )
+
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["npn13G2L_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
+        "model": tech.techParams["npn13G2L_model"],  # not read by IHP code
         "Nx": Nx,
         "le": emitter_length * 1e-6,  # um to m
         "we": emitter_width * 1e-6,  # um to m
-        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "area": 1,  # hardcoded in IHP PyCell, not in techparams
-        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams
-        "Vbe": "",
-        "Vce": "",
-        "m": 1,
-        "trise": "",
+        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "area": 1,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Vbe": "",  # not read by IHP code
+        "Vce": "",  # not read by IHP code
+        "m": 1,  # not read by IHP code
+        "trise": "",  # not read by IHP code
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="npn13G2L", cell_params=params, function_name=npn13G2LIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="npn13G2L", cell_params=params, function_name=npn13G2LIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -198,26 +224,31 @@ def npn13G2V(
         gdsfactory.Component: The generated npn13G2V transistor layout.
     """
 
+    # npn13G2V's techparams LE/WE limits are stale copies of npn13G2's and
+    # would reject this cell's own defaults, so only Nx is validated
+    check_limits(
+        "npn13G2V",
+        [("Nx", Nx, tech_num("npn13G2V_minNX"), tech_num("npn13G2V_maxNX"), "")],
+    )
+
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["npn13G2V_model"],
+        "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
+        "Display": "Selected",  # not read by IHP code
+        "model": tech.techParams["npn13G2V_model"],  # not read by IHP code
         "Nx": Nx,
         "le": emitter_length * 1e-6,  # um to m
         "we": emitter_width * 1e-6,  # um to m
-        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams
-        "area": 1,  # hardcoded in IHP PyCell, not in techparams
-        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams
-        "Vbe": "",
-        "Vce": "",
-        "m": 1,
-        "trise": "",
+        "Icmax": 3 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Iarea": 1 * 1e-3,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "area": 1,  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "bn": "sub!",  # hardcoded in IHP PyCell, not in techparams, not read by IHP code
+        "Vbe": "",  # not read by IHP code
+        "Vce": "",  # not read by IHP code
+        "m": 1,  # not read by IHP code
+        "trise": "",  # not read by IHP code
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="npn13G2V", cell_params=params, function_name=npn13G2VIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="npn13G2V", cell_params=params, function_name=npn13G2VIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -258,27 +289,45 @@ def pnpMPA(
         gdsfactory.Component: The generated pnpMPA transistor layout.
     """
 
+    check_limits(
+        "pnpMPA",
+        [
+            (
+                "width",
+                width,
+                tech_num("pnpMPA_minW", 1e6),
+                tech_num("pnpMPA_maxW", 1e6),
+                "um",
+            ),
+            (
+                "length",
+                length,
+                tech_num("pnpMPA_minL", 1e6),
+                tech_num("pnpMPA_maxL", 1e6),
+                "um",
+            ),
+        ],
+    )
+
     area = width * length
     perimeter = 2 * (width + length)
     params = {
-        "cdf_version": tech.techParams["CDFVersion"],
-        "Display": "Selected",
-        "model": tech.techParams["pnpMPA_model"],
-        "Calculate": "a",
+        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
+        "Display": "Selected",  # not declared in KLayout, ignored
+        "model": tech.techParams["pnpMPA_model"],  # not read by IHP code
+        "Calculate": "a",  # not read by IHP code
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
-        "a": area * 1e-12,
-        "p": perimeter * 1e-6,
-        "ac": 7.524 * 1e-12,
-        "pc": 11.16 * 1e-6,
-        "m": 1,  # Multiplier
-        "region": "",
-        "trise": "",
+        "a": area * 1e-12,  # not read by IHP code
+        "p": perimeter * 1e-6,  # not read by IHP code
+        "ac": 7.524 * 1e-12,  # not read by IHP code
+        "pc": 11.16 * 1e-6,  # not read by IHP code
+        "m": 1,  # Multiplier, not read by IHP code
+        "region": "",  # not read by IHP code
+        "trise": "",  # not read by IHP code
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="pnpMPA", cell_params=params, function_name=pnpMPAIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="pnpMPA", cell_params=params, function_name=pnpMPAIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(

@@ -51,23 +51,43 @@ from matplotlib import pyplot as plt
 # ---------------------------------------------------------------------------
 # style: shared with plot_blc.py - validated CVD-safe palette, recessive grid
 # ---------------------------------------------------------------------------
-PALETTE = ["#2a78d6", "#1baf7a", "#eda100", "#008300",
-           "#4a3aa7", "#e34948", "#e87ba4", "#eb6834"]
+PALETTE = [
+    "#2a78d6",
+    "#1baf7a",
+    "#eda100",
+    "#008300",
+    "#4a3aa7",
+    "#e34948",
+    "#e87ba4",
+    "#eb6834",
+]
 INK, MUTED, GRID, SURFACE = "#0b0b0b", "#52514e", "#e5e5e2", "#fcfcfb"
 
 # fixed colours for the four roles, so every plot reads the same way
 C_RETURN, C_OUT_A, C_OUT_B, C_ISO = PALETTE[5], PALETTE[0], PALETTE[1], PALETTE[2]
 
-plt.rcParams.update({
-    "figure.facecolor": SURFACE, "axes.facecolor": SURFACE,
-    "savefig.facecolor": SURFACE, "font.size": 11,
-    "axes.edgecolor": MUTED, "axes.labelcolor": INK, "text.color": INK,
-    "xtick.color": MUTED, "ytick.color": MUTED,
-    "axes.spines.top": False, "axes.spines.right": False,
-    "axes.grid": True, "grid.color": GRID, "grid.linewidth": 0.8,
-    "axes.axisbelow": True, "lines.linewidth": 2, "lines.markersize": 6,
-    "legend.frameon": False,
-})
+plt.rcParams.update(
+    {
+        "figure.facecolor": SURFACE,
+        "axes.facecolor": SURFACE,
+        "savefig.facecolor": SURFACE,
+        "font.size": 11,
+        "axes.edgecolor": MUTED,
+        "axes.labelcolor": INK,
+        "text.color": INK,
+        "xtick.color": MUTED,
+        "ytick.color": MUTED,
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "axes.grid": True,
+        "grid.color": GRID,
+        "grid.linewidth": 0.8,
+        "axes.axisbelow": True,
+        "lines.linewidth": 2,
+        "lines.markersize": 6,
+        "legend.frameon": False,
+    }
+)
 
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
 
@@ -79,8 +99,9 @@ def design_freq_ghz(path: str) -> float | None:
     """Pull the divider's design frequency (GHz) out of a file path.
 
     The frequency is encoded in the directory name (wpd_<N>GHz) rather than the leaf
-    filename, since Palace names every run's output file the same, so we search the
-    whole path. Returns the number in GHz, or None if no wpd_<N>GHz tag is present.
+    filename, because runs before the model_basename fix all wrote the same leaf name,
+    so we search the whole path — which reads both old and new results. Returns the
+    number in GHz, or None if no wpd_<N>GHz tag is present.
     """
     m = FREQ_RE.search(path)
     return float(m.group(1)) if m else None
@@ -187,8 +208,8 @@ def plot_one(ntwk, fghz, rl_spec):
     ax1.plot(fg, _sdb(ntwk, 1, 0), color=C_OUT_A, label="output  S21")
     ax1.plot(fg, _sdb(ntwk, 2, 0), color=C_OUT_B, label="output  S31")
     ax1.plot(fg, _sdb(ntwk, 2, 1), color=C_ISO, label="isolation  S32")
-    ax1.axhline(-3.01, color=MUTED, ls=":", lw=1)            # ideal 3 dB split
-    ax1.axhline(-rl_spec, color=MUTED, ls="--", lw=1)        # match/isolation spec
+    ax1.axhline(-3.01, color=MUTED, ls=":", lw=1)  # ideal 3 dB split
+    ax1.axhline(-rl_spec, color=MUTED, ls="--", lw=1)  # match/isolation spec
     ax1.text(fg[0], -3.01, " -3 dB", va="bottom", ha="left", color=MUTED, fontsize=9)
     ax1.set_ylabel("magnitude  (dB)")
     ax1.set_ylim(bottom=max(-40, ax1.get_ylim()[0]))
@@ -201,8 +222,7 @@ def plot_one(ntwk, fghz, rl_spec):
     ax2.set_ylabel("imbalance  |S21|-|S31|  (dB)")
 
     # --- panel 3: output phase difference (ideally 0 - the outputs are in phase) ---
-    dphi = _wrap180(np.degrees(np.angle(ntwk.s[:, 1, 0])
-                               - np.angle(ntwk.s[:, 2, 0])))
+    dphi = _wrap180(np.degrees(np.angle(ntwk.s[:, 1, 0]) - np.angle(ntwk.s[:, 2, 0])))
     ax3.plot(fg, dphi, color=C_OUT_B)
     ax3.axhline(0, color=MUTED, ls="--", lw=1)
     ax3.text(fg[0], 0, " ideal 0 deg", va="bottom", ha="left", color=MUTED, fontsize=9)
@@ -213,8 +233,15 @@ def plot_one(ntwk, fghz, rl_spec):
     if fghz is not None:
         for ax in (ax1, ax2, ax3):
             ax.axvline(fghz, color=INK, ls="-", lw=0.8, alpha=0.35)
-        ax1.text(fghz, ax1.get_ylim()[1], f" design {fghz:g} GHz",
-                 va="top", ha="left", color=INK, fontsize=9)
+        ax1.text(
+            fghz,
+            ax1.get_ylim()[1],
+            f" design {fghz:g} GHz",
+            va="top",
+            ha="left",
+            color=INK,
+            fontsize=9,
+        )
 
     tag = f"{fghz:g}GHz" if fghz is not None else "unknown"
     fig.suptitle(f"Wilkinson power divider  @ design {tag}", fontsize=14, color=INK)
@@ -257,7 +284,11 @@ def plot_summary(rows, rl_spec):
     axr.set_ylabel("phase error from 0 deg  (deg)")
     axr.set_title("output phase balance at design frequency", fontsize=12, color=INK)
 
-    fig.suptitle("Wilkinson power divider performance vs design frequency", fontsize=14, color=INK)
+    fig.suptitle(
+        "Wilkinson power divider performance vs design frequency",
+        fontsize=14,
+        color=INK,
+    )
     fig.tight_layout()
     os.makedirs(OUT_DIR, exist_ok=True)
     out = os.path.join(OUT_DIR, "wpd_summary.png")
@@ -271,8 +302,14 @@ def dump_summary_csv(rows):
     rows = sorted(rows, key=lambda r: r["design_ghz"])
     os.makedirs(OUT_DIR, exist_ok=True)
     out = os.path.join(OUT_DIR, "wpd_summary.csv")
-    cols = ["design_ghz", "return_loss", "isolation", "excess_loss",
-            "imbalance", "phase_err"]
+    cols = [
+        "design_ghz",
+        "return_loss",
+        "isolation",
+        "excess_loss",
+        "imbalance",
+        "phase_err",
+    ]
     with open(out, "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(cols)
@@ -284,14 +321,17 @@ def dump_summary_csv(rows):
 def main():
     """CLI entry point: discover WPD .s3p files, draw a detail figure per divider,
     and a summary figure + CSV across all of them."""
-    p = argparse.ArgumentParser(description=__doc__,
-                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     # positional: .s3p files, or directories searched recursively for them
     p.add_argument("paths", nargs="+", help="Touchstone .s3p files or directories")
     # guide line (dB, given as a positive number) drawn for return loss / isolation;
     # purely cosmetic - it doesn't filter anything.
-    p.add_argument("--rl-spec", type=float, default=15.0,
-                   help="return-loss / isolation guide line in dB (default 15)")
+    p.add_argument(
+        "--rl-spec",
+        type=float,
+        default=15.0,
+        help="return-loss / isolation guide line in dB (default 15)",
+    )
     args = p.parse_args()
 
     found = find_wpd_touchstone(args.paths)
@@ -304,12 +344,12 @@ def main():
         if ntwk.nports != 3:
             print(f"skipping {path!r}: expected 3 ports, got {ntwk.nports}")
             continue
-        plot_one(ntwk, fghz, args.rl_spec)                  # per-divider detail figure
+        plot_one(ntwk, fghz, args.rl_spec)  # per-divider detail figure
         m = metrics_at_design(ntwk, fghz)
         rows.append({"design_ghz": fghz if fghz is not None else 0.0, **m})
 
     if rows:
-        plot_summary(rows, args.rl_spec)                    # across-dividers overview
+        plot_summary(rows, args.rl_spec)  # across-dividers overview
         dump_summary_csv(rows)
 
 
