@@ -1,3 +1,7 @@
+# evaluation/gds/ holds simulation results (Touchstone files, meshes), not
+# source - skrf writes trailing whitespace in headers, so linting the data
+# would churn 1000+ files on every sim run
+exclude: ^evaluation/gds/
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
