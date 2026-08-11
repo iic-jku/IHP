@@ -25,10 +25,67 @@ from .. import tech
 from .utils import *
 
 
+def _resolve_res(cell, length, width, R, bends, polySpace):
+    """Given at most two of (length, width, R), derive the rest with IHP's CbResCalc.
+
+    The PCell layout code draws from w/l (rsil additionally reads R for its
+    silicide handling), so the solving the GUI's Calculate field triggers has
+    to happen here, using the same CbResCalc modes the GUI callback calls
+    ('R', 'l', 'w'). Bends and poly spacing enter the resistance formula and
+    are always taken as given.
+
+    Args:
+        cell: Technology cell name ('rsil', 'rppd', 'rhigh').
+        length: Resistor length in micrometers, or None to derive it.
+        width: Resistor width in micrometers, or None to derive it.
+        R: Resistance in ohms, or None to derive it from the geometry.
+            A dimension omitted alongside R falls back to the technology
+            default; with R given and both dimensions omitted, the default
+            width is kept and the length is solved.
+        bends: Number of bends.
+        polySpace: Poly spacing in micrometers.
+
+    Returns:
+        (length_um, width_um, R_ohms), consistent with each other.
+
+    Raises:
+        ValueError: If all three are given, or a value (given or derived) is
+            outside the technology limits.
+    """
+    if length is not None and width is not None and R is not None:
+        raise ValueError(
+            f"{cell}: give at most two of length, width, R - the third is derived"
+        )
+
+    # CbResCalc signature: (calc, r, l, w, b, ps, cell); lengths in metres
+    ps_m = polySpace * 1e-6
+    if R is None:
+        width = tech_num(f"{cell}_defW", 1e6) if width is None else width
+        length = tech_num(f"{cell}_defL", 1e6) if length is None else length
+        R = CbResCalc("R", 0, length * 1e-6, width * 1e-6, bends, ps_m, cell)
+    elif length is None:
+        width = tech_num(f"{cell}_defW", 1e6) if width is None else width
+        length = CbResCalc("l", R, 0, width * 1e-6, bends, ps_m, cell) * 1e6
+    else:  # width is None
+        width = CbResCalc("w", R, length * 1e-6, 0, bends, ps_m, cell) * 1e6
+
+    check_limits(
+        cell,
+        [
+            ("width", width, tech_num(f"{cell}_minW", 1e6), tech_num(f"{cell}_maxW", 1e6), "um"),
+            ("length", length, tech_num(f"{cell}_minL", 1e6), tech_num(f"{cell}_maxL", 1e6), "um"),
+            ("polySpace", polySpace, tech_num(f"{cell}_minPS", 1e6), tech_num(f"{cell}_maxPS", 1e6), "um"),
+            ("bends", bends, tech_num(f"{cell}_minB"), tech_num(f"{cell}_maxB"), ""),
+        ],
+    )
+    return length, width, R
+
+
 @gf.cell
 def rhigh(
-    length: float = 0.96,
-    width: float = 0.5,
+    length: float | None = None,
+    width: float | None = None,
+    R: float | None = None,
     bends: int = 0,
     polySpace: float = 0.18,
     numberOfSegments: int = 1,
@@ -43,9 +100,20 @@ def rhigh(
     with configurable width, length, bends, and multiple segments. Optional
     guard rings can be added for isolation.
 
+    Give any two of length, width and R (or fewer - missing dimensions fall
+    back to the technology defaults) and the remaining one is derived with
+    IHP's CbResCalc, like the Calculate field in the PCell dialog:
+
+        rhigh(length=2, width=0.5)   # R follows from the geometry
+        rhigh(R=10e3, width=0.5)     # length follows from R and width
+        rhigh(R=10e3)                # default width, length solved
+
+    The realised resistance is reported as `component.info['R']`.
+
     Args:
-        length: Length of the resistor in micrometers.
-        width: Width of the resistor in micrometers.
+        length: Length of the resistor in micrometers. Derived when omitted.
+        width: Width of the resistor in micrometers. Derived when omitted.
+        R: Resistance in ohms. Derived from the geometry when omitted.
         bends: Number of bends in the resistor path.
         polySpace: Spacing between polysilicon lines in micrometers.
         numberOfSegments: Number of resistor segments.
@@ -62,17 +130,20 @@ def rhigh(
 
     Returns:
         gdsfactory.Component: The generated high-resistance polysilicon resistor layout.
+
+    Raises:
+        ValueError: If length, width and R are all given, or a value (given
+            or derived) is outside the technology limits.
     """
+    length, width, R = _resolve_res("rhigh", length, width, R, bends, polySpace)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
         "Display": "Selected",  # not read by IHP code
-        "Calculate": "l",  # TODO check what to do
+        "Calculate": "l",  # only read by the GUI callback, inert here
         "Recommendation": "No",
         "model": tech.techParams["rhigh_model"],  # not read by IHP code
-        "R": CbResCalc(
-            "R", 0, length * 1e-6, width * 1e-6, bends, polySpace * 1e-6, "rhigh"
-        ),  # TODO Is this used?
+        "R": R,  # display-only for rhigh; resolved by _resolve_res
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
         "b": bends,
@@ -110,14 +181,16 @@ def rhigh(
         port_type="electrical",
         ports_on_short_side=False,
     )
+    c.info["R"] = R
 
     return c
 
 
 @gf.cell
 def rppd(
-    length: float = 0.5,
-    width: float = 0.5,
+    length: float | None = None,
+    width: float | None = None,
+    R: float | None = None,
     bends: int = 0,
     polySpace: float = 0.18,
     numberOfSegments: int = 1,
@@ -132,9 +205,15 @@ def rppd(
     configurable width, length, bends, and multiple segments. Optional
     guard rings can be added for isolation.
 
+    Give any two of length, width and R (or fewer - missing dimensions fall
+    back to the technology defaults) and the remaining one is derived with
+    IHP's CbResCalc, like the Calculate field in the PCell dialog. The
+    realised resistance is reported as `component.info['R']`.
+
     Args:
-        length: Length of the resistor in micrometers.
-        width: Width of the resistor in micrometers.
+        length: Length of the resistor in micrometers. Derived when omitted.
+        width: Width of the resistor in micrometers. Derived when omitted.
+        R: Resistance in ohms. Derived from the geometry when omitted.
         bends: Number of bends in the resistor path.
         polySpace: Spacing between polysilicon lines in micrometers.
         numberOfSegments: Number of resistor segments.
@@ -151,17 +230,20 @@ def rppd(
 
     Returns:
         gdsfactory.Component: The generated P+ polysilicon resistor layout.
+
+    Raises:
+        ValueError: If length, width and R are all given, or a value (given
+            or derived) is outside the technology limits.
     """
+    length, width, R = _resolve_res("rppd", length, width, R, bends, polySpace)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
         "Display": "Selected",  # not read by IHP code
-        "Calculate": "l",  # TODO check what to do
+        "Calculate": "l",  # only read by the GUI callback, inert here
         "Recommendation": "No",
         "model": tech.techParams["rppd_model"],  # not read by IHP code
-        "R": CbResCalc(
-            "R", 0, length * 1e-6, width * 1e-6, bends, polySpace * 1e-6, "rppd"
-        ),  # TODO Is this used?
+        "R": R,  # display-only for rppd; resolved by _resolve_res
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
         "b": bends,
@@ -199,16 +281,17 @@ def rppd(
         port_type="electrical",
         ports_on_short_side=False,
     )
+    c.info["R"] = R
 
     return c
 
 
 @gf.cell
 def rsil(
-    length: float = 0.5,
-    width: float = 0.5,
+    length: float | None = None,
+    width: float | None = None,
+    R: float | None = None,
     polySpace: float = 0.18,
-    resistance: float = 24.9,
     numberOfSegments: int = 1,
     segmentConnection: Literal["None", "Serial", "Parallel"] = "Serial",
     segmentSpacing: float = 2,
@@ -221,11 +304,16 @@ def rsil(
     with configurable width, length, target resistance, multiple segments,
     and optional guard rings for isolation.
 
+    Give any two of length, width and R (or fewer - missing dimensions fall
+    back to the technology defaults) and the remaining one is derived with
+    IHP's CbResCalc, like the Calculate field in the PCell dialog. The
+    realised resistance is reported as `component.info['R']`.
+
     Args:
-        length: Length of the resistor in micrometers.
-        width: Width of the resistor in micrometers.
+        length: Length of the resistor in micrometers. Derived when omitted.
+        width: Width of the resistor in micrometers. Derived when omitted.
+        R: Resistance in ohms. Derived from the geometry when omitted.
         polySpace: Spacing between polysilicon lines in micrometers.
-        resistance: Target resistance value in ohms.
         numberOfSegments: Number of resistor segments.
         segmentConnection: Connection type between segments. Options:
             - 'None': Segments not connected.
@@ -240,15 +328,21 @@ def rsil(
 
     Returns:
         gdsfactory.Component: The generated silicided polysilicon resistor layout.
+
+    Raises:
+        ValueError: If length, width and R are all given, or a value (given
+            or derived) is outside the technology limits.
     """
+    # rsil has no bends parameter; CbResCalc still takes b, fixed at 0
+    length, width, R = _resolve_res("rsil", length, width, R, 0, polySpace)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
         "Display": "Selected",  # not read by IHP code
-        "Calculate": "l",  # TODO check what to do
+        "Calculate": "l",  # only read by the GUI callback, inert here
         "Recommendation": "No",  # not declared in KLayout, ignored
         "model": tech.techParams["rsil_model"],  # not read by IHP code
-        "R": resistance,  # TODO IHP function defines it as user parameter but also calculates it
+        "R": R,  # read by rsil's layout code; resolved by _resolve_res
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
         "ps": polySpace * 1e-6,
@@ -285,6 +379,7 @@ def rsil(
         port_type="electrical",
         ports_on_short_side=False,
     )
+    c.info["R"] = R
 
     return c
 

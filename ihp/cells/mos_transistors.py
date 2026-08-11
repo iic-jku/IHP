@@ -26,6 +26,33 @@ from .. import tech
 from .utils import *
 
 
+def _check_fet(cell, w, l, ng):
+    """Validate FET sizing against the technology limits.
+
+    Mirrors the checks the GUI's mos callback (mos_cb.tcl) applies: the per-
+    finger limits scale with the finger count, since w is the TOTAL width
+    (each finger draws w/ng). The RF FETs have no GUI callback at all, so
+    for them this is the only place the limits are enforced.
+
+    Args:
+        cell: Technology cell name ('nmos', 'rfpmosHV', ...).
+        w: Total transistor width in micrometers.
+        l: Gate length in micrometers.
+        ng: Number of gates/fingers.
+
+    Raises:
+        ValueError: If a value is outside the technology limits.
+    """
+    check_limits(
+        cell,
+        [
+            ("ng", ng, 1, tech_num(f"{cell}_maxNG"), ""),
+            ("w", w, tech_num(f"{cell}_minW", 1e6) * ng, tech_num(f"{cell}_maxW", 1e6) * ng, "um"),
+            ("l", l, tech_num(f"{cell}_minL", 1e6), tech_num(f"{cell}_maxL", 1e6), "um"),
+        ],
+    )
+
+
 def _rename_ports_by_position(c, prefix):
     """Renumber auto-generated ports deterministically from left to right.
 
@@ -66,6 +93,7 @@ def nmos(
     Returns:
         gdsfactory.Component: The generated NMOS transistor layout.
     """
+    _check_fet("nmos", w, l, ng)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
@@ -142,6 +170,7 @@ def nmosHV(
     Returns:
         gdsfactory.Component: The generated high-voltage NMOS transistor layout.
     """
+    _check_fet("nmosHV", w, l, ng)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
@@ -218,6 +247,7 @@ def pmos(
     Returns:
         gdsfactory.Component: The generated PMOS transistor layout.
     """
+    _check_fet("pmos", w, l, ng)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
@@ -294,6 +324,7 @@ def pmosHV(
     Returns:
         gdsfactory.Component: The generated high-voltage PMOS transistor layout.
     """
+    _check_fet("pmosHV", w, l, ng)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
@@ -376,6 +407,7 @@ def rfnmos(
     Returns:
         gdsfactory.Component: The generated RF NMOS transistor layout.
     """
+    _check_fet("rfnmos", w, l, ng)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
@@ -463,6 +495,7 @@ def rfnmosHV(
     Returns:
         gdsfactory.Component: The generated high-voltage RF NMOS transistor layout.
     """
+    _check_fet("rfnmosHV", w, l, ng)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
@@ -524,6 +557,7 @@ def rfpmos(
     Returns:
         gdsfactory.Component: The generated RF PMOS transistor layout.
     """
+    _check_fet("rfpmos", w, l, ng)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
@@ -585,6 +619,7 @@ def rfpmosHV(
     Returns:
         gdsfactory.Component: The generated high-voltage RF PMOS transistor layout.
     """
+    _check_fet("rfpmosHV", w, l, ng)
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored

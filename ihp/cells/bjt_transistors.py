@@ -29,7 +29,7 @@ def npn13G2(
     empolyx: float = 0.15,
     empolyy: float = 0.18,
     emitter_length: float = 0.9,
-    emitter_width: float = 0.7,
+    emitter_width: float = 0.07,
     Nx: int = 1,
     Ny: int = 1,
     text: str = "npn13G2",
@@ -61,6 +61,19 @@ def npn13G2(
     Returns:
         gdsfactory.Component: The generated npn13G2 transistor layout.
     """
+
+    # npn13G2_code swaps le/we internally, so the wrapper's emitter_length
+    # maps to the technology's WE limits and emitter_width to LE (both are
+    # fixed sizes in SG13G2 - only the finger count Nx is really variable)
+    check_limits(
+        "npn13G2",
+        [
+            ("emitter_length", emitter_length, tech_num("npn13G2_minWE", 1e6), tech_num("npn13G2_maxWE", 1e6), "um"),
+            ("emitter_width", emitter_width, tech_num("npn13G2_minLE", 1e6), tech_num("npn13G2_maxLE", 1e6), "um"),
+            ("Nx", Nx, tech_num("npn13G2_minNX"), tech_num("npn13G2_maxNX"), ""),
+            ("Ny", Ny, tech_num("npn13G2_minNY"), tech_num("npn13G2_maxNY"), ""),
+        ],
+    )
 
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
@@ -134,6 +147,13 @@ def npn13G2L(
         gdsfactory.Component: The generated npn13G2L transistor layout.
     """
 
+    # npn13G2L's techparams LE/WE limits are stale copies of npn13G2's and
+    # would reject this cell's own defaults, so only Nx is validated
+    check_limits(
+        "npn13G2L",
+        [("Nx", Nx, tech_num("npn13G2L_minNX"), tech_num("npn13G2L_maxNX"), "")],
+    )
+
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
         "Display": "Selected",  # not read by IHP code
@@ -198,6 +218,13 @@ def npn13G2V(
         gdsfactory.Component: The generated npn13G2V transistor layout.
     """
 
+    # npn13G2V's techparams LE/WE limits are stale copies of npn13G2's and
+    # would reject this cell's own defaults, so only Nx is validated
+    check_limits(
+        "npn13G2V",
+        [("Nx", Nx, tech_num("npn13G2V_minNX"), tech_num("npn13G2V_maxNX"), "")],
+    )
+
     params = {
         "cdf_version": tech.techParams["CDFVersion"],  # not read by IHP code
         "Display": "Selected",  # not read by IHP code
@@ -257,6 +284,14 @@ def pnpMPA(
     Returns:
         gdsfactory.Component: The generated pnpMPA transistor layout.
     """
+
+    check_limits(
+        "pnpMPA",
+        [
+            ("width", width, tech_num("pnpMPA_minW", 1e6), tech_num("pnpMPA_maxW", 1e6), "um"),
+            ("length", length, tech_num("pnpMPA_minL", 1e6), tech_num("pnpMPA_maxL", 1e6), "um"),
+        ],
+    )
 
     area = width * length
     perimeter = 2 * (width + length)
