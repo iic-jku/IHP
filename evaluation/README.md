@@ -162,6 +162,7 @@ Run `make help` for the live list. Grouped:
 | generate | `generate-blc`, `generate-wpd`, `generate-tline-{sparams,z0,loss}`, `generate-tline`, `generate` |
 | sim | `sim-blc`, `sim-wpd`, `sim-tline-{sparams,z0,loss}`, `sim-tline`, `sim` |
 | plot | `plot-tline-{z0,z0-freq,z0-3d,loss,design}`, `plot-tline-sparams`, `plot-tline`, `plot-blc`, `plot-wpd`, `plot` |
+| img (layout previews) | `img-blc`, `img-wpd`, `img-tline`, `img`, `img-all` |
 | all-in-one | `all` (generate + sim + plot) |
 | cleanup (keeps `.sNp`) | `clean-sim-raw` (meshes + raw Palace output + JSON configs), `clean-layouts` (`.gds` files), `clean-intermediates` (both) |
 | cleanup (destructive) | `clean` (all of gds/, **incl. `.sNp`**), `clean-images` (images/), `clean-all` (both) |
@@ -189,6 +190,15 @@ make plot-tline-z0 EVAL_FREQ=150      # Zc(w) @ 150 GHz, read from the 200 GHz s
 make plot-tline-z0 FREQ=200           # restrict to one design tag (if several exist)
 ```
 
+`plot-tline-z0`, `plot-tline-z0-freq`, `plot-tline-z0-3d` and `plot-tline-design` open
+an interactive matplotlib window by default (they still write the PNG too). Pass an
+empty `Z0_SHOW=` for a non-blocking batch run — the aggregate `plot-tline` target sets
+it empty for you, so only direct invocations block:
+
+```bash
+make plot-tline-z0 Z0_SHOW=           # write the PNG, don't open a window (headless)
+```
+
 `plot-tline-design` is the synthesis view: a **Zc-vs-loss scatter** with one point per
 (stack, width), joining the z0 sweep (Zc) with the loss sweep (two-length de-embedded
 loss), so it needs sim results from both. "I need 70 Ω — what's the cheapest way to
@@ -201,6 +211,27 @@ unreadable past ~8), so pass them explicitly:
 ```bash
 make plot-tline-sparams FILES="gds/tline_sparams/lineA gds/tline_sparams/lineB"
 ```
+
+### Layout previews (`img-*`)
+
+`img-blc`, `img-wpd` and `img-tline` render a generated GDS to a `<name>_black.png`
+in `images/` via `lay2img.py`, so you can eyeball a layout without opening KLayout.
+They render `lay2img.py` with the PDK layer properties, so **`PDK_ROOT`/`PDK` must
+point at the IHP PDK** (defaults `PDK_ROOT=IHP-Open-PDK`, `PDK=ihp-sg13g2`; override
+in the environment if elsewhere). Previews land in `images/`, so `make clean-images`
+removes them too.
+
+The three named targets are scoped to the **TopMetal2/Metal5** stack at one design
+frequency (`img-all` does all three; `blc`/`wpd` are TM2/M5 at every frequency, the
+tline is filtered to `*topmetal2_over_metal5*`):
+
+```bash
+make img-all IMG_FREQ=160     # blc + wpd + tline at 160 GHz (default IMG_FREQ=200)
+make img FILES="gds/blc/blc_160GHz.gds gds/wpd/wpd_160GHz.gds"   # arbitrary files
+```
+
+Other knobs: `IMG_OVERSAMPLING` (anti-aliasing, default 4) and `IMG_BG` (background,
+default `black`).
 
 > `make clean` deletes `gds/` **including all Palace meshes and `.sNp` results** (they
 > live under `gds/<sweep>/<model>/`), which are expensive to regenerate. Use
