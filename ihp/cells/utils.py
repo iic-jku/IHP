@@ -71,7 +71,7 @@ def generate_gf_from_ihp(cell_name, cell_params, function_name) -> gf.Component:
     tech = Tech.get("SG13_dev")  # Must match the name registered in SG13_Tech
 
     # ----------------------------------------------------------------
-    # Step 2: Create a layout and a cell
+    # Step 2: Create a layout and a cell for the PyCell to draw into
     # ----------------------------------------------------------------
     layout = pya.Layout()  # new empty layout
     cell = layout.create_cell(cell_name)  # new cell for your transistor
@@ -97,13 +97,10 @@ def generate_gf_from_ihp(cell_name, cell_params, function_name) -> gf.Component:
     )
 
     # ----------------------------------------------------------------
-    # Step 5: Bring to GDSFactory
+    # Step 5: Bring to gdsfactory - in memory, no GDS round-trip.
     # ----------------------------------------------------------------
-    layout.write("temp.gds")
-    print(f"{cell_name} PyCell placed successfully and GDS written.")
-    c = gf.read.import_gds(gdspath="temp.gds")
-    os.remove("temp.gds")
-    # ----------------------------------------------------------------
+    c = gf.Component()
+    c.copy_tree(cell)
 
     return c
 
