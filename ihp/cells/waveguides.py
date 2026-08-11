@@ -77,9 +77,7 @@ def _calculate_effective_dielectric_constant(
         layers = gf.get_active_pdk().get_layer_stack().layers
         keys = list(layers.keys())
         signal_idx = keys.index(signal_layer_name)
-        h_above = sum(
-            layers[keys[i]].thickness for i in range(signal_idx + 1, len(keys))
-        )
+        h_above = sum(layers[keys[i]].thickness for i in range(signal_idx + 1, len(keys)))
 
     e_eff = e_r * (1 - exp(-1.55 * (h_p + t + h_above) / h_p))
 
@@ -118,31 +116,17 @@ def _calculate_width_from_Z0(
         h_below, t = _get_stack_geometry(signal_cross_section, ground_cross_section[0])
         h_above, t = _get_stack_geometry(signal_cross_section, ground_cross_section[1])
         # approximation from https://www.pcbway.com/pcb_prototype/impedance_calculator.html
-        width = (
-            1.9
-            * (2 * h_above + t)
-            * exp(-Z0 * sqrt(e_r) / (80.0 * (1 - h_above / (4 * h_below))))
-            - t
-        ) / 0.8
+        width = (1.9 * (2 * h_above + t) * exp(-Z0 * sqrt(e_r) / (80.0 * (1 - h_above / (4 * h_below)))) - t) / 0.8
     else:
-        stack_height, signal_layer_thickness = _get_stack_geometry(
-            signal_cross_section, ground_cross_section
-        )
+        stack_height, signal_layer_thickness = _get_stack_geometry(signal_cross_section, ground_cross_section)
         # approximation from https://chemandy.com/calculators/microstrip-transmission-line-calculator-ipc2141.htm
 
-        width = (
-            exp(-Z0 * sqrt(e_r + 1.41) / 87.0) * 5.98 * stack_height
-            - signal_layer_thickness
-        ) / 0.8
+        width = (exp(-Z0 * sqrt(e_r + 1.41) / 87.0) * 5.98 * stack_height - signal_layer_thickness) / 0.8
 
     if width < 0:
-        raise ValueError(
-            "Calculated width is negative. Check Z0 and cross-section choices."
-        )
+        raise ValueError("Calculated width is negative. Check Z0 and cross-section choices.")
 
-    width = width - width % (
-        2 * tech.nm
-    )  # truncate to an even number of grid units (10 nm), ports need even widths
+    width = width - width % (2 * tech.nm)  # truncate to an even number of grid units (10 nm), ports need even widths
     print(f"Calculated width: {width} um for Z0: {round(Z0, 2)} ohm")
 
     return width
@@ -182,24 +166,13 @@ def _calculate_Z0_from_width(
 
         h_above, t = _get_stack_geometry(signal_cross_section, ground_cross_section[1])
         # approximation from https://www.pcbway.com/pcb_prototype/impedance_calculator.html
-        Z0 = (
-            80
-            / sqrt(e_r)
-            * log(1.9 * (2 * h_above + t) / (0.8 * width + t))
-            * (1 - h_above / (4 * h_below))
-        )
+        Z0 = 80 / sqrt(e_r) * log(1.9 * (2 * h_above + t) / (0.8 * width + t)) * (1 - h_above / (4 * h_below))
 
     else:
-        stack_height, signal_layer_thickness = _get_stack_geometry(
-            signal_cross_section, ground_cross_section
-        )
+        stack_height, signal_layer_thickness = _get_stack_geometry(signal_cross_section, ground_cross_section)
 
         # https://chemandy.com/calculators/microstrip-transmission-line-calculator-ipc2141.htm
-        Z0 = (
-            87.0
-            / sqrt(e_r + 1.41)
-            * log(5.98 * stack_height / (0.8 * width + signal_layer_thickness))
-        )
+        Z0 = 87.0 / sqrt(e_r + 1.41) * log(5.98 * stack_height / (0.8 * width + signal_layer_thickness))
 
     if Z0 < 0:
         warnings.warn(
@@ -229,9 +202,7 @@ def straight(
         width: width of the waveguide. If None, it will use the width of the cross_section.
         npoints: number of points.
     """
-    return gf.c.straight(
-        length=length, cross_section=cross_section, width=width, npoints=npoints
-    )
+    return gf.c.straight(length=length, cross_section=cross_section, width=width, npoints=npoints)
 
 
 @gf.cell
@@ -359,9 +330,7 @@ def straight_metal(
         cross_section: specification (CrossSection, string or dict).
         width: width of the waveguide. If None, it will use the width of the cross_section.
     """
-    return gf.c.straight(
-        length=length, cross_section=cross_section, width=width, npoints=2
-    )
+    return gf.c.straight(length=length, cross_section=cross_section, width=width, npoints=2)
 
 
 @gf.cell
@@ -730,13 +699,9 @@ def tline_bend_s(
 
     c = gf.Component()
 
-    signal = c.add_ref(
-        gf.c.bend_s(size=size, cross_section=signal_cross_section, width=width)
-    )
+    signal = c.add_ref(gf.c.bend_s(size=size, cross_section=signal_cross_section, width=width))
     c.add_ports(signal.ports)
-    c.add_ref(
-        gf.c.bend_s(size=(size), cross_section=ground_cross_section, width=7 * width)
-    )
+    c.add_ref(gf.c.bend_s(size=(size), cross_section=ground_cross_section, width=7 * width))
 
     return c
 
@@ -899,11 +864,7 @@ def coupler_tline(
     # calculate separation gap from even and odd mode impedances
     # https://www.dmcrf.com/microstrip-calculators/differential-microstrip-impedance-calculator/
     Z_d = 2 * Z0o
-    d = (
-        -h
-        / 0.98
-        * log(1 - (Z_d * sqrt(e_r + 1.41)) / (174 * log(5.98 * h / (0.8 * width + t))))
-    )
+    d = -h / 0.98 * log(1 - (Z_d * sqrt(e_r + 1.41)) / (174 * log(5.98 * h / (0.8 * width + t))))
     d = 8  # fixed gap override, the analytic value above is currently unused
 
     c = gf.Component()

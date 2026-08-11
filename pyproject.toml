@@ -55,6 +55,7 @@ strict = true
 
 [tool.ruff]
 fix = true
+line-length = 120
 
 [tool.ruff.lint]
 ignore = [

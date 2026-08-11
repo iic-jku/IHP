@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 from typing import Literal
 
@@ -79,16 +77,12 @@ def bondpad(
     spacing_from_edge = 1.885  # manual measurement from the pad layout
     width = diameter * hwQuota - 2 * spacing_from_edge
     height = diameter - 2 * spacing_from_edge
-    c = generate_gf_from_ihp(
-        cell_name="bondpad", cell_params=params, function_name=bondpadIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="bondpad", cell_params=params, function_name=bondpadIHP())
 
     if ground_connection in ["psub", "nwell"]:
         # Add guard ring to connect ground to substrate
         c.center = c.center
-        sub_ring = c.add_ref(
-            guard_ring(width=height, height=width, guardRingType=ground_connection)
-        )
+        sub_ring = c.add_ref(guard_ring(width=height, height=width, guardRingType=ground_connection))
         sub_ring.center = c.center
     return c
 
@@ -101,8 +95,7 @@ def bondpad_array(
     length_ground: float = 85.0,
     pitch: float | list[float] = 125.0,
     config: str = "GSG",
-    shape: Literal["octagon", "square", "circle"]
-    | list[Literal["octagon", "square", "circle"]] = "square",
+    shape: Literal["octagon", "square", "circle"] | list[Literal["octagon", "square", "circle"]] = "square",
     signal_cross_section: str = "topmetal2_routing",
     ground_cross_section: str = "metal5_routing",
     padType: Literal["bondpad", "probepad"] = "bondpad",
@@ -165,9 +158,7 @@ def bondpad_array(
             if signal_cross_section == "topmetal2_routing":
                 bottomMetal = layer_dict[tech.LAYER.TopMetal1drawing]
             else:
-                bottomMetal = layer_dict[
-                    gf.get_cross_section(signal_cross_section).layer
-                ]
+                bottomMetal = layer_dict[gf.get_cross_section(signal_cross_section).layer]
         else:
             topMetal = layer_dict[tech.LAYER.TopMetal2drawing]
             bottomMetal = layer_dict[gf.get_cross_section(ground_cross_section).layer]
@@ -175,9 +166,7 @@ def bondpad_array(
         # handle pitch as a list of floats
         if isinstance(pitch, list):
             if len(pitch) + 1 != len(config):
-                raise ValueError(
-                    "Pitch must be a list of length one less than the number of pads in the config."
-                )
+                raise ValueError("Pitch must be a list of length one less than the number of pads in the config.")
 
             pad = bondpad(
                 shape=shape_i,
@@ -209,13 +198,11 @@ def bondpad_array(
             if i > 0:
                 pad_refs[-1].movex(i * pitch)
 
-        c.add_ref(
-            gf.components.text(config[i], size=length / 2, layer=tech.LAYER.TEXTdrawing)
-        ).center = pad_refs[-1].center
+        c.add_ref(gf.components.text(config[i], size=length / 2, layer=tech.LAYER.TEXTdrawing)).center = pad_refs[
+            -1
+        ].center
 
-    gf.add_ports.add_ports_from_boxes(
-        c, pin_layer=tech.LAYER.TopMetal2drawing, port_type="electrical"
-    )
+    gf.add_ports.add_ports_from_boxes(c, pin_layer=tech.LAYER.TopMetal2drawing, port_type="electrical")
 
     for port in c.ports:
         port.orientation = 270

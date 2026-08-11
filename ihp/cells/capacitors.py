@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 from typing import Literal
 
@@ -45,9 +43,7 @@ def _resolve_cap(cell: str, width, length, C) -> tuple[float, float, float]:
             technology limits (`<cell>_minLW` .. `<cell>_maxLW`).
     """
     if width is not None and length is not None and C is not None:
-        raise ValueError(
-            f"{cell}: give at most two of width, length, C - the third is derived"
-        )
+        raise ValueError(f"{cell}: give at most two of width, length, C - the third is derived")
 
     # CbCapCalc signature: (calc, c, l, w, cell); lengths in metres
     if C is None:
@@ -66,15 +62,11 @@ def _resolve_cap(cell: str, width, length, C) -> tuple[float, float, float]:
     hi = eng_string_to_float(tech.techParams[f"{cell}_maxLW"]) * 1e6
     for name, value in (("width", width), ("length", length)):
         if not lo <= value <= hi:
-            raise ValueError(
-                f"{cell}: {name}={value:.4g}um is outside [{lo:.4g}, {hi:.4g}]um"
-            )
+            raise ValueError(f"{cell}: {name}={value:.4g}um is outside [{lo:.4g}, {hi:.4g}]um")
     c_lo = eng_string_to_float(tech.techParams[f"{cell}_minC"])
     c_hi = eng_string_to_float(tech.techParams[f"{cell}_maxC"])
     if not c_lo <= C <= c_hi:
-        raise ValueError(
-            f"{cell}: C={C * 1e15:.4g}fF is outside [{c_lo * 1e15:.4g}, {c_hi * 1e15:.4g}]fF"
-        )
+        raise ValueError(f"{cell}: C={C * 1e15:.4g}fF is outside [{c_lo * 1e15:.4g}, {c_hi * 1e15:.4g}]fF")
 
     return width, length, C
 
@@ -130,12 +122,10 @@ def cmim(
         "model": tech.techParams["cmim_model"],  # not read by IHP code
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
-        "Cspec": eng_string_to_float(
-            tech.techParams["cmim_caspec"]
-        ),  # specific capacitance, not read by IHP code
-        "Wmin": eng_string_to_float(tech.techParams["cmim_minLW"]),  # not read by IHP code
-        "Lmin": eng_string_to_float(tech.techParams["cmim_minLW"]),  # not read by IHP code
-        "Cmax": eng_string_to_float(tech.techParams["cmim_maxC"]),  # not read by IHP code
+        "Cspec": tech_num("cmim_caspec"),  # specific capacitance, not read by IHP code
+        "Wmin": tech_num("cmim_minLW"),  # not read by IHP code
+        "Lmin": tech_num("cmim_minLW"),  # not read by IHP code
+        "Cmax": tech_num("cmim_maxC"),  # not read by IHP code
         "ic": "",  # not read by IHP code
         "m": 1,  # Multiplier, not read by IHP code
         "trise": "",  # not read by IHP code
@@ -143,9 +133,7 @@ def cmim(
         "guardRingDistance": guardRingDistance * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="cmim", cell_params=params, function_name=cmimIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="cmim", cell_params=params, function_name=cmimIHP())
 
     # add ports to the component
     # no pin layers for cmim, so we use drawing layers
@@ -228,20 +216,16 @@ def rfcmim(
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
         "wfeed": feed_width * 1e-6,
-        "Cspec": eng_string_to_float(
-            tech.techParams["rfcmim_caspec"]
-        ),  # specific capacitance, not read by IHP code
-        "Wmin": eng_string_to_float(tech.techParams["rfcmim_minLW"]),  # not read by IHP code
-        "Lmin": eng_string_to_float(tech.techParams["rfcmim_minLW"]),  # not read by IHP code
-        "Cmax": eng_string_to_float(tech.techParams["rfcmim_maxC"]),  # not read by IHP code
+        "Cspec": tech_num("rfcmim_caspec"),  # specific capacitance, not read by IHP code
+        "Wmin": tech_num("rfcmim_minLW"),  # not read by IHP code
+        "Lmin": tech_num("rfcmim_minLW"),  # not read by IHP code
+        "Cmax": tech_num("rfcmim_maxC"),  # not read by IHP code
         "ic": "",  # not declared in KLayout, ignored
         "m": 1,  # Multiplier, not declared in KLayout, ignored
         "trise": "",  # not declared in KLayout, ignored
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="rfcmim", cell_params=params, function_name=rfcmimIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="rfcmim", cell_params=params, function_name=rfcmimIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -312,9 +296,7 @@ def svaricap(
         "guardRingDistance": guardRingDistance * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="svaricap", cell_params=params, function_name=SVaricapIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="svaricap", cell_params=params, function_name=SVaricapIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(

@@ -878,4 +878,3 @@ The devices *without* an `#ifdef` — notably `dantenna`, `dpantenna`, `cmim`, t
 | `vt2_rows` | — | `layout` |
 
 *Cadence-only (`#else` branch, not present in KLayout):* `cdf_version`
-

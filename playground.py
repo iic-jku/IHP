@@ -354,9 +354,7 @@ wavelength = scipy.constants.c / frequency * 1e6 / sqrt(3.85)
 quater_wavelength = wavelength / 4
 quater_wavelength = quater_wavelength - quater_wavelength % (tech.nm)  # round to DBU
 
-print(
-    f"Calculated quarter wave length for {frequency / 1e9:.0f} GHz is {quater_wavelength} um"
-)
+print(f"Calculated quarter wave length for {frequency / 1e9:.0f} GHz is {quater_wavelength} um")
 # c = gf.Component()
 
 # e_eff = ihp.cells.waveguides._calculate_effective_dielectric_constant(

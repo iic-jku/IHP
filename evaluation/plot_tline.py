@@ -75,24 +75,39 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (registers the '3d' proje
 # ---------------------------------------------------------------------------
 # style: recessive grid, thin marks; metal layers coloured with the IHP scheme
 # ---------------------------------------------------------------------------
-PALETTE = ["#2a78d6", "#1baf7a", "#eda100", "#008300",
-           "#4a3aa7", "#e34948", "#e87ba4", "#eb6834"]   # used by the sparams overlay
+PALETTE = [
+    "#2a78d6",
+    "#1baf7a",
+    "#eda100",
+    "#008300",
+    "#4a3aa7",
+    "#e34948",
+    "#e87ba4",
+    "#eb6834",
+]  # used by the sparams overlay
 INK, MUTED, GRID, SURFACE = "#0b0b0b", "#52514e", "#e5e5e2", "#fcfcfb"
 
 # stack order (bottom -> top); fixes legend ordering everywhere
-LAYER_ORDER = ["metal1", "metal2", "metal3", "metal4", "metal5",
-               "topmetal1", "topmetal2"]
+LAYER_ORDER = [
+    "metal1",
+    "metal2",
+    "metal3",
+    "metal4",
+    "metal5",
+    "topmetal1",
+    "topmetal2",
+]
 
 # IHP SG13G2 layer colours, taken from the PDK's KLayout layer properties
 # (ihp/klayout/tech/layers.lyp, drawing purpose). Several PDK colours are tuned for
 # filled shapes on KLayout's dark canvas and are too pale to read as thin lines on the
 # light plot background, so those are darkened here while keeping the same hue.
 IHP_LAYER_COLOR = {
-    "metal1":    "#39bfff",  # PDK #39bfff  blue
-    "metal2":    "#8a8a99",  # PDK #ccccd9  grey   (darkened)
-    "metal3":    "#d80000",  # PDK #d80000  red
-    "metal4":    "#5faa1e",  # PDK #93e837  green  (darkened)
-    "metal5":    "#b09a1e",  # PDK #dcd146  yellow (darkened)
+    "metal1": "#39bfff",  # PDK #39bfff  blue
+    "metal2": "#8a8a99",  # PDK #ccccd9  grey   (darkened)
+    "metal3": "#d80000",  # PDK #d80000  red
+    "metal4": "#5faa1e",  # PDK #93e837  green  (darkened)
+    "metal5": "#b09a1e",  # PDK #dcd146  yellow (darkened)
     "topmetal1": "#9c6b2f",  # PDK #ffe6bf  cream  (darkened to brown, distinct from metal5 gold)
     "topmetal2": "#ff8000",  # PDK #ff8000  orange
 }
@@ -100,20 +115,32 @@ IHP_LAYER_COLOR = {
 # how each signal (top) layer is drawn, so ground=colour and signal=line style are
 # two independent visual dimensions on the combined plot
 SIGNAL_STYLE = {
-    "topmetal2": ("-", "o"),    # thick top metal -> solid
-    "topmetal1": ("--", "s"),   # thinner top metal -> dashed
+    "topmetal2": ("-", "o"),  # thick top metal -> solid
+    "topmetal1": ("--", "s"),  # thinner top metal -> dashed
 }
 
-plt.rcParams.update({
-    "figure.facecolor": SURFACE, "axes.facecolor": SURFACE,
-    "savefig.facecolor": SURFACE, "font.size": 11,
-    "axes.edgecolor": MUTED, "axes.labelcolor": INK, "text.color": INK,
-    "xtick.color": MUTED, "ytick.color": MUTED,
-    "axes.spines.top": False, "axes.spines.right": False,
-    "axes.grid": True, "grid.color": GRID, "grid.linewidth": 0.8,
-    "axes.axisbelow": True, "lines.linewidth": 2, "lines.markersize": 6,
-    "legend.frameon": False,
-})
+plt.rcParams.update(
+    {
+        "figure.facecolor": SURFACE,
+        "axes.facecolor": SURFACE,
+        "savefig.facecolor": SURFACE,
+        "font.size": 11,
+        "axes.edgecolor": MUTED,
+        "axes.labelcolor": INK,
+        "text.color": INK,
+        "xtick.color": MUTED,
+        "ytick.color": MUTED,
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "axes.grid": True,
+        "grid.color": GRID,
+        "grid.linewidth": 0.8,
+        "axes.axisbelow": True,
+        "lines.linewidth": 2,
+        "lines.markersize": 6,
+        "legend.frameon": False,
+    }
+)
 
 ZREF = 50.0
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
@@ -207,11 +234,11 @@ def extract_line(ntwk: rf.Network, zref: float = ZREF):
     """Return (Zc, e^{-gamma L}) arrays over frequency from a 2-port line network."""
     n = ntwk.copy()
     n.renormalize(zref)
-    S11 = 0.5 * (n.s[:, 0, 0] + n.s[:, 1, 1])   # symmetrise
-    S21 = 0.5 * (n.s[:, 1, 0] + n.s[:, 0, 1])   # reciprocity
+    S11 = 0.5 * (n.s[:, 0, 0] + n.s[:, 1, 1])  # symmetrise
+    S21 = 0.5 * (n.s[:, 1, 0] + n.s[:, 0, 1])  # reciprocity
     with np.errstate(all="ignore"):
-        K = (S11 ** 2 - S21 ** 2 + 1) / (2 * S11)
-        root = np.sqrt(K ** 2 - 1)
+        K = (S11**2 - S21**2 + 1) / (2 * S11)
+        root = np.sqrt(K**2 - 1)
         G = K + root
         bad = np.abs(G) > 1
         G = np.where(bad, K - root, G)
@@ -273,10 +300,16 @@ def _attach_click_readout(fig, ax, points, unit, xlabel="w", xunit="um"):
     the readout (default width in um). Only useful with --show; harmless
     otherwise since nothing fires without a live canvas.
     """
-    ann = ax.annotate("", xy=(0, 0), xytext=(12, 12), textcoords="offset points",
-                      bbox=dict(boxstyle="round", fc="#ffffe0", ec=MUTED, alpha=0.95),
-                      arrowprops=dict(arrowstyle="->", color=MUTED),
-                      fontsize=9, zorder=10)
+    ann = ax.annotate(
+        "",
+        xy=(0, 0),
+        xytext=(12, 12),
+        textcoords="offset points",
+        bbox=dict(boxstyle="round", fc="#ffffe0", ec=MUTED, alpha=0.95),
+        arrowprops=dict(arrowstyle="->", color=MUTED),
+        fontsize=9,
+        zorder=10,
+    )
     ann.set_visible(False)
 
     def on_click(event):
@@ -288,7 +321,7 @@ def _attach_click_readout(fig, ax, points, unit, xlabel="w", xunit="um"):
             d2 = (px - event.x) ** 2 + (py - event.y) ** 2
             if best is None or d2 < best[0]:
                 best = (d2, x, y, desc)
-        if best is None or best[0] > 40 ** 2:      # click too far from any point -> clear
+        if best is None or best[0] > 40**2:  # click too far from any point -> clear
             ann.set_visible(False)
         else:
             _, x, y, desc = best
@@ -318,12 +351,13 @@ def _plot_vs_width(entries, ykey, ylabel, title, fname, unit="", show=False):
     signals = sorted({e["signal"] for e in entries}, key=_layer_rank)
 
     fig, ax = plt.subplots(figsize=(9, 6))
-    readout_points = []   # (width, value, "signal / ground") for the interactive readout
+    readout_points = []  # (width, value, "signal / ground") for the interactive readout
     for ground in grounds:
         for signal in signals:
-            pts = sorted((e for e in entries
-                          if e["ground"] == ground and e["signal"] == signal),
-                         key=lambda e: e["width"])
+            pts = sorted(
+                (e for e in entries if e["ground"] == ground and e["signal"] == signal),
+                key=lambda e: e["width"],
+            )
             if not pts:
                 continue
             ls, mk = SIGNAL_STYLE.get(signal, ("-", "o"))
@@ -338,17 +372,35 @@ def _plot_vs_width(entries, ykey, ylabel, title, fname, unit="", show=False):
 
     # two legends outside the axes: ground = colour, signal = line style
     ground_handles = [Line2D([], [], color=color_for(g), lw=2, label=g) for g in grounds]
-    signal_handles = [Line2D([], [], color=INK, lw=2,
-                             ls=SIGNAL_STYLE.get(s, ("-", "o"))[0],
-                             marker=SIGNAL_STYLE.get(s, ("-", "o"))[1], label=s)
-                      for s in signals]
-    leg_ground = ax.legend(handles=ground_handles, title="ground (colour)",
-                           loc="upper left", bbox_to_anchor=(1.02, 1.0),
-                           fontsize=9, title_fontsize=9)
+    signal_handles = [
+        Line2D(
+            [],
+            [],
+            color=INK,
+            lw=2,
+            ls=SIGNAL_STYLE.get(s, ("-", "o"))[0],
+            marker=SIGNAL_STYLE.get(s, ("-", "o"))[1],
+            label=s,
+        )
+        for s in signals
+    ]
+    leg_ground = ax.legend(
+        handles=ground_handles,
+        title="ground (colour)",
+        loc="upper left",
+        bbox_to_anchor=(1.02, 1.0),
+        fontsize=9,
+        title_fontsize=9,
+    )
     ax.add_artist(leg_ground)
-    ax.legend(handles=signal_handles, title="signal (style)",
-              loc="upper left", bbox_to_anchor=(1.02, 0.42),
-              fontsize=9, title_fontsize=9)
+    ax.legend(
+        handles=signal_handles,
+        title="signal (style)",
+        loc="upper left",
+        bbox_to_anchor=(1.02, 0.42),
+        fontsize=9,
+        title_fontsize=9,
+    )
 
     fig.tight_layout()
     os.makedirs(OUT_DIR, exist_ok=True)
@@ -377,8 +429,7 @@ def _plot_z0_vs_freq(curves, fname, show=False):
     """
     grounds = sorted({c["ground"] for c in curves}, key=_layer_rank)
     signals = sorted({c["signal"] for c in curves}, key=_layer_rank)
-    stacks = [(g, s) for g in grounds for s in signals
-              if any(c["ground"] == g and c["signal"] == s for c in curves)]
+    stacks = [(g, s) for g in grounds for s in signals if any(c["ground"] == g and c["signal"] == s for c in curves)]
     widths = sorted({c["width"] for c in curves})
 
     # sequential colour per width (narrow = dark, wide = bright)
@@ -387,26 +438,37 @@ def _plot_z0_vs_freq(curves, fname, show=False):
 
     ncol = min(3, len(stacks))
     nrow = -(-len(stacks) // ncol)
-    fig, axes = plt.subplots(nrow, ncol, figsize=(5.0 * ncol, 3.4 * nrow),
-                             squeeze=False, sharex=True)
+    fig, axes = plt.subplots(nrow, ncol, figsize=(5.0 * ncol, 3.4 * nrow), squeeze=False, sharex=True)
     for ax, (ground, signal) in zip(axes.flat, stacks):
-        sub = sorted((c for c in curves if c["ground"] == ground and c["signal"] == signal),
-                     key=lambda c: c["width"])
+        sub = sorted(
+            (c for c in curves if c["ground"] == ground and c["signal"] == signal),
+            key=lambda c: c["width"],
+        )
         for c in sub:
             ax.plot(c["f_ghz"], c["zc"], color=wcolor[c["width"]], lw=1.4)
         ax.set_title(f"{signal} / {ground}", fontsize=10, color=INK)
         ax.set_ylabel("Zc  (ohm)")
-    for ax in axes.flat[len(stacks):]:
+    for ax in axes.flat[len(stacks) :]:
         ax.set_visible(False)
 
-    fig.suptitle("Characteristic impedance vs frequency (per stack, curve = width)",
-                 fontsize=14, color=INK, y=1.0)
-    fig.tight_layout(rect=(0, 0.11, 1, 0.99))   # bottom band for x-label + width legend
+    fig.suptitle(
+        "Characteristic impedance vs frequency (per stack, curve = width)",
+        fontsize=14,
+        color=INK,
+        y=1.0,
+    )
+    fig.tight_layout(rect=(0, 0.11, 1, 0.99))  # bottom band for x-label + width legend
     fig.text(0.5, 0.065, "frequency  (GHz)", ha="center", color=INK, fontsize=11)
     handles = [Line2D([], [], color=wcolor[w], lw=2, label=f"{w:g}") for w in widths]
-    fig.legend(handles=handles, title="signal width (um)", loc="lower center",
-               ncol=min(len(widths), 8), bbox_to_anchor=(0.5, 0.0), fontsize=9,
-               title_fontsize=9)
+    fig.legend(
+        handles=handles,
+        title="signal width (um)",
+        loc="lower center",
+        ncol=min(len(widths), 8),
+        bbox_to_anchor=(0.5, 0.0),
+        fontsize=9,
+        title_fontsize=9,
+    )
 
     os.makedirs(OUT_DIR, exist_ok=True)
     out = os.path.join(OUT_DIR, fname)
@@ -433,11 +495,13 @@ def _plot_z0_surface(curves, signal, ground, fname, show=False):
     """
     sub = [c for c in curves if c["signal"] == signal and c["ground"] == ground]
     if not sub:
-        sys.exit(f"no z0 data for stack {signal}/{ground} "
-                 f"(available: {sorted({(c['signal'], c['ground']) for c in curves})})")
+        sys.exit(
+            f"no z0 data for stack {signal}/{ground} "
+            f"(available: {sorted({(c['signal'], c['ground']) for c in curves})})"
+        )
     by_w = {}
     for c in sorted(sub, key=lambda c: c["width"]):
-        by_w.setdefault(c["width"], c)      # one curve per width (keep first if duplicated)
+        by_w.setdefault(c["width"], c)  # one curve per width (keep first if duplicated)
     widths = sorted(by_w)
     if len(widths) < 2:
         sys.exit(f"need >= 2 widths for a surface, found {len(widths)} for {signal}/{ground}")
@@ -448,18 +512,30 @@ def _plot_z0_surface(curves, signal, ground, fname, show=False):
     npts = max(len(by_w[w]["f_ghz"]) for w in widths)
     fgrid = np.linspace(fmin, fmax, npts)
     Zc = np.array([np.interp(fgrid, by_w[w]["f_ghz"], by_w[w]["zc"]) for w in widths])  # (M, N)
-    F, W = np.meshgrid(fgrid, widths)       # (M, N) each: freq varies along cols, width along rows
+    F, W = np.meshgrid(fgrid, widths)  # (M, N) each: freq varies along cols, width along rows
 
     fig = plt.figure(figsize=(9, 7))
     ax = fig.add_subplot(projection="3d")
     norm = plt.Normalize(float(np.nanmin(Zc)), float(np.nanmax(Zc)))
-    ax.plot_surface(F, Zc, W, facecolors=plt.cm.viridis(norm(Zc)),
-                    rstride=1, cstride=1, linewidth=0, antialiased=True, shade=False)
+    ax.plot_surface(
+        F,
+        Zc,
+        W,
+        facecolors=plt.cm.viridis(norm(Zc)),
+        rstride=1,
+        cstride=1,
+        linewidth=0,
+        antialiased=True,
+        shade=False,
+    )
     ax.set_xlabel("frequency  (GHz)", labelpad=10)
     ax.set_ylabel("Zc  (ohm)", labelpad=10)
     ax.set_zlabel("signal width  w  (um)", labelpad=10)
-    ax.set_title(f"Characteristic impedance surface  -  {signal} / {ground}",
-                 fontsize=13, color=INK)
+    ax.set_title(
+        f"Characteristic impedance surface  -  {signal} / {ground}",
+        fontsize=13,
+        color=INK,
+    )
     for pane in (ax.xaxis, ax.yaxis, ax.zaxis):
         pane.pane.set_facecolor(SURFACE)
         pane.pane.set_edgecolor(GRID)
@@ -500,23 +576,36 @@ def _plot_design_chart(entries, title, fname, show=False):
     readout_points = []
     for ground in grounds:
         for signal in signals:
-            pts = sorted((e for e in entries
-                          if e["ground"] == ground and e["signal"] == signal),
-                         key=lambda e: e["width"])
+            pts = sorted(
+                (e for e in entries if e["ground"] == ground and e["signal"] == signal),
+                key=lambda e: e["width"],
+            )
             if not pts:
                 continue
             ls, mk = SIGNAL_STYLE.get(signal, ("-", "o"))
             xs = [e["Zc"] for e in pts]
             ys = [e["loss"] for e in pts]
-            ax.plot(xs, ys, ls=ls, marker=mk, color=color_for(ground),
-                    lw=1.1, alpha=0.85, markersize=6)
+            ax.plot(
+                xs,
+                ys,
+                ls=ls,
+                marker=mk,
+                color=color_for(ground),
+                lw=1.1,
+                alpha=0.85,
+                markersize=6,
+            )
             # label the two ends of the width trajectory (widest first: low-Zc end)
             for e in (pts[0], pts[-1]) if len(pts) > 1 else (pts[0],):
-                ax.annotate(f"{e['width']:g}", (e["Zc"], e["loss"]),
-                            textcoords="offset points", xytext=(5, 5),
-                            fontsize=7, color=MUTED)
-            readout_points += [(x, y, f"{signal} / {ground}  w={e['width']:g}um")
-                               for x, y, e in zip(xs, ys, pts)]
+                ax.annotate(
+                    f"{e['width']:g}",
+                    (e["Zc"], e["loss"]),
+                    textcoords="offset points",
+                    xytext=(5, 5),
+                    fontsize=7,
+                    color=MUTED,
+                )
+            readout_points += [(x, y, f"{signal} / {ground}  w={e['width']:g}um") for x, y, e in zip(xs, ys, pts)]
 
     # Pareto envelope: lowest loss achievable per Zc bin
     zc_all = np.array([e["Zc"] for e in entries])
@@ -530,30 +619,58 @@ def _plot_design_chart(entries, title, fname, show=False):
         env_x.append(zc_all[sel][i])
         env_y.append(loss_all[sel][i])
     order = np.argsort(env_x)
-    ax.plot(np.array(env_x)[order], np.array(env_y)[order], ":", color=MUTED,
-            lw=1.2, zorder=1, label="lowest loss per Zc")
+    ax.plot(
+        np.array(env_x)[order],
+        np.array(env_y)[order],
+        ":",
+        color=MUTED,
+        lw=1.2,
+        zorder=1,
+        label="lowest loss per Zc",
+    )
 
     ax.set_xlabel("characteristic impedance  Zc  (ohm)")
     ax.set_ylabel("loss  (dB/mm)")
     ax.set_title(title, fontsize=13, color=INK)
 
     ground_handles = [Line2D([], [], color=color_for(g), lw=2, label=g) for g in grounds]
-    signal_handles = [Line2D([], [], color=INK, lw=2,
-                             ls=SIGNAL_STYLE.get(s, ("-", "o"))[0],
-                             marker=SIGNAL_STYLE.get(s, ("-", "o"))[1], label=s)
-                      for s in signals]
-    envelope_handle = [Line2D([], [], color=MUTED, ls=":", lw=1.2,
-                              label="lowest loss per Zc")]
-    leg_ground = ax.legend(handles=ground_handles, title="ground (colour)",
-                           loc="upper left", bbox_to_anchor=(1.02, 1.0),
-                           fontsize=9, title_fontsize=9)
+    signal_handles = [
+        Line2D(
+            [],
+            [],
+            color=INK,
+            lw=2,
+            ls=SIGNAL_STYLE.get(s, ("-", "o"))[0],
+            marker=SIGNAL_STYLE.get(s, ("-", "o"))[1],
+            label=s,
+        )
+        for s in signals
+    ]
+    envelope_handle = [Line2D([], [], color=MUTED, ls=":", lw=1.2, label="lowest loss per Zc")]
+    leg_ground = ax.legend(
+        handles=ground_handles,
+        title="ground (colour)",
+        loc="upper left",
+        bbox_to_anchor=(1.02, 1.0),
+        fontsize=9,
+        title_fontsize=9,
+    )
     ax.add_artist(leg_ground)
-    leg_signal = ax.legend(handles=signal_handles, title="signal (style)",
-                           loc="upper left", bbox_to_anchor=(1.02, 0.55),
-                           fontsize=9, title_fontsize=9)
+    leg_signal = ax.legend(
+        handles=signal_handles,
+        title="signal (style)",
+        loc="upper left",
+        bbox_to_anchor=(1.02, 0.55),
+        fontsize=9,
+        title_fontsize=9,
+    )
     ax.add_artist(leg_signal)
-    ax.legend(handles=envelope_handle, loc="upper left", bbox_to_anchor=(1.02, 0.32),
-              fontsize=9)
+    ax.legend(
+        handles=envelope_handle,
+        loc="upper left",
+        bbox_to_anchor=(1.02, 0.32),
+        fontsize=9,
+    )
 
     fig.tight_layout()
     os.makedirs(OUT_DIR, exist_ok=True)
@@ -579,8 +696,7 @@ def _dump_csv(entries, ykey, fname):
         w = csv.writer(f)
         w.writerow(["signal", "ground", "width_um", *ykeys])
         for e in sorted(entries, key=lambda e: (e["ground"], e["signal"], e["width"])):
-            w.writerow([e["signal"], e["ground"], e["width"],
-                        *(f"{e[k]:.4f}" for k in ykeys)])
+            w.writerow([e["signal"], e["ground"], e["width"], *(f"{e[k]:.4f}" for k in ykeys)])
     print(f"wrote {out}")
 
 
@@ -616,12 +732,13 @@ def _collect_width_sweep(paths, freq_ghz, length_um, eval_freq_ghz=None):
         if freq_ghz is not None and abs(meta["freq_ghz"] - freq_ghz) > 1e-6:
             continue
         ntwk = rf.Network(f)
-        fghz = eval_freq_ghz if eval_freq_ghz is not None else (
-            freq_ghz if freq_ghz is not None else meta["freq_ghz"])
+        fghz = eval_freq_ghz if eval_freq_ghz is not None else (freq_ghz if freq_ghz is not None else meta["freq_ghz"])
         band = ntwk.frequency.f / 1e9
         if not warned_outside_band and not (band.min() <= fghz <= band.max()):
-            print(f"warning: eval frequency {fghz:g} GHz is outside the simulated band "
-                  f"({band.min():g}-{band.max():g} GHz); using the nearest band edge")
+            print(
+                f"warning: eval frequency {fghz:g} GHz is outside the simulated band "
+                f"({band.min():g}-{band.max():g} GHz); using the nearest band edge"
+            )
             warned_outside_band = True
         zc, loss = value_at(ntwk, fghz, length_um)
         entries.append({**meta, "Zc": zc, "loss": loss})
@@ -652,9 +769,15 @@ def _collect_z0_vs_freq(paths):
             continue
         ntwk = rf.Network(f)
         Zc, _ = extract_line(ntwk)
-        curves.append({"signal": meta["signal"], "ground": meta["ground"],
-                       "width": meta["width"], "f_ghz": ntwk.frequency.f / 1e9,
-                       "zc": Zc.real})
+        curves.append(
+            {
+                "signal": meta["signal"],
+                "ground": meta["ground"],
+                "width": meta["width"],
+                "f_ghz": ntwk.frequency.f / 1e9,
+                "zc": Zc.real,
+            }
+        )
     if not curves:
         sys.exit("no z0 curves extracted (no width-tagged .s2p found)")
     return curves
@@ -686,14 +809,22 @@ def _collect_loss_two_length(paths, freq_ghz, length1_um, length2_um):
         n1 = rf.Network(lengths[length1_um])
         n2 = rf.Network(lengths[length2_um])
         loss = loss_at_two_length(n1, n2, length2_um - length1_um, fghz)
-        entries.append({"signal": signal, "ground": ground, "width": width,
-                        "freq_ghz": fghz, "loss": loss})
+        entries.append(
+            {
+                "signal": signal,
+                "ground": ground,
+                "width": width,
+                "freq_ghz": fghz,
+                "loss": loss,
+            }
+        )
     if missing:
-        print(f"warning: {missing} (stack, width, freq) points missing one of "
-              f"length1={length1_um}um / length2={length2_um}um, skipped")
+        print(
+            f"warning: {missing} (stack, width, freq) points missing one of "
+            f"length1={length1_um}um / length2={length2_um}um, skipped"
+        )
     if not entries:
-        sys.exit(f"no files matched both length1={length1_um}um and length2={length2_um}um "
-                 "at the requested frequency")
+        sys.exit(f"no files matched both length1={length1_um}um and length2={length2_um}um at the requested frequency")
     return entries
 
 
@@ -714,15 +845,17 @@ def _collect_design_chart(paths, freq_ghz, length_um, length1_um, length2_um):
     for f in files:
         meta = parse_model(f)
         if meta is None or meta["width"] is None or meta["length"] is not None:
-            continue    # z0 side: only the single-length (untagged-length) sweep
+            continue  # z0 side: only the single-length (untagged-length) sweep
         if freq_ghz is not None and abs(meta["freq_ghz"] - freq_ghz) > 1e-6:
             continue
         fghz = freq_ghz if freq_ghz is not None else meta["freq_ghz"]
         zc, _ = value_at(rf.Network(f), fghz, length_um)
         zc_by_key[(meta["signal"], meta["ground"], meta["width"])] = zc
     if not zc_by_key:
-        sys.exit("no z0-sweep files matched (need width-tagged .s2p WITHOUT a length tag "
-                 "- did you pass the tline_z0 directory?)")
+        sys.exit(
+            "no z0-sweep files matched (need width-tagged .s2p WITHOUT a length tag "
+            "- did you pass the tline_z0 directory?)"
+        )
 
     loss_entries = _collect_loss_two_length(paths, freq_ghz, length1_um, length2_um)
 
@@ -739,19 +872,21 @@ def _collect_design_chart(paths, freq_ghz, length_um, length1_um, length2_um):
     if only_z0:
         print(f"note: {only_z0} z0 points had no matching loss pair (skipped)")
     if not entries:
-        sys.exit("no (stack, width) points exist in BOTH sweeps - pass both "
-                 "gds/tline_z0 and gds/tline_loss")
+        sys.exit("no (stack, width) points exist in BOTH sweeps - pass both gds/tline_z0 and gds/tline_loss")
     return entries
 
 
 def cmd_design(args):
     """`design` subcommand: Zc-vs-loss scatter, one point per (stack, width) - the
     synthesis view for picking a stack/width to hit a target impedance at least loss."""
-    e = _collect_design_chart(args.paths, args.freq, args.length_um,
-                              args.length1_um, args.length2_um)
+    e = _collect_design_chart(args.paths, args.freq, args.length_um, args.length1_um, args.length2_um)
     tag = f"{args.freq:g}GHz" if args.freq else "designfreq"
-    _plot_design_chart(e, f"Zc vs loss  @ {tag}   (point = stack + width, labels = w in um)",
-                       f"tline_design_{tag}.png", show=args.show)
+    _plot_design_chart(
+        e,
+        f"Zc vs loss  @ {tag}   (point = stack + width, labels = w in um)",
+        f"tline_design_{tag}.png",
+        show=args.show,
+    )
     _dump_csv(e, ["Zc", "loss"], f"tline_design_{tag}.csv")
 
 
@@ -763,16 +898,22 @@ def cmd_z0(args):
     different in-band frequency. When they differ, the output name/title carry the
     eval frequency plus a '_from<tag>' marker so a genuine <eval>GHz sweep's plot
     isn't clobbered."""
-    e = _collect_width_sweep(args.paths, args.freq, args.length_um,
-                             eval_freq_ghz=args.eval_freq)
+    e = _collect_width_sweep(args.paths, args.freq, args.length_um, eval_freq_ghz=args.eval_freq)
     eval_f = args.eval_freq if args.eval_freq is not None else args.freq
     tag = f"{eval_f:g}GHz" if eval_f else "designfreq"
     title = f"Characteristic impedance vs width  @ {tag}"
     if args.eval_freq is not None and args.freq and abs(args.eval_freq - args.freq) > 1e-6:
         tag += f"_from{args.freq:g}GHz"
         title += f"  (read from the {args.freq:g}GHz sweep)"
-    _plot_vs_width(e, "Zc", "characteristic impedance  Zc  (ohm)",
-                   title, f"tline_z0_{tag}.png", unit="ohm", show=args.show)
+    _plot_vs_width(
+        e,
+        "Zc",
+        "characteristic impedance  Zc  (ohm)",
+        title,
+        f"tline_z0_{tag}.png",
+        unit="ohm",
+        show=args.show,
+    )
     _dump_csv(e, "Zc", f"tline_z0_{tag}.csv")
 
 
@@ -787,8 +928,13 @@ def cmd_z0_3d(args):
     """`z0-3d` subcommand: 3D surface of Zc over (frequency, width) for one stack
     (default TopMetal2 / Metal5); interactive rotatable window if --show."""
     curves = _collect_z0_vs_freq(args.paths)
-    _plot_z0_surface(curves, args.signal, args.ground,
-                     f"tline_z0_3d_{args.signal}_over_{args.ground}.png", show=args.show)
+    _plot_z0_surface(
+        curves,
+        args.signal,
+        args.ground,
+        f"tline_z0_3d_{args.signal}_over_{args.ground}.png",
+        show=args.show,
+    )
 
 
 def cmd_loss(args):
@@ -796,9 +942,15 @@ def cmd_loss(args):
     the faceted PNG + CSV for the requested frequency."""
     e = _collect_loss_two_length(args.paths, args.freq, args.length1_um, args.length2_um)
     tag = f"{args.freq:g}GHz" if args.freq else "designfreq"
-    _plot_vs_width(e, "loss", "loss  (dB/mm)",
-                   f"Conductor+dielectric loss vs width  @ {tag}  (two-length de-embedded)",
-                   f"tline_loss_{tag}.png", unit="dB/mm", show=args.show)
+    _plot_vs_width(
+        e,
+        "loss",
+        "loss  (dB/mm)",
+        f"Conductor+dielectric loss vs width  @ {tag}  (two-length de-embedded)",
+        f"tline_loss_{tag}.png",
+        unit="dB/mm",
+        show=args.show,
+    )
     _dump_csv(e, "loss", f"tline_loss_{tag}.csv")
 
 
@@ -818,15 +970,30 @@ def cmd_sparams(args):
         fghz = ntwk.frequency.f / 1e9
         c = PALETTE[i % len(PALETTE)]
         label = (model_key(f) or os.path.basename(f)[: -len(".s2p")]).replace("tline_", "")
-        ax.plot(fghz, 20 * np.log10(np.abs(ntwk.s[:, 1, 0])), "-", color=c, label=f"{label}  S21")
-        ax.plot(fghz, 20 * np.log10(np.abs(ntwk.s[:, 0, 0])), "--", color=c, alpha=0.7, label=f"{label}  S11")
+        ax.plot(
+            fghz,
+            20 * np.log10(np.abs(ntwk.s[:, 1, 0])),
+            "-",
+            color=c,
+            label=f"{label}  S21",
+        )
+        ax.plot(
+            fghz,
+            20 * np.log10(np.abs(ntwk.s[:, 0, 0])),
+            "--",
+            color=c,
+            alpha=0.7,
+            label=f"{label}  S11",
+        )
     ax.set_xlabel("frequency  (GHz)")
     ax.set_ylabel("magnitude  (dB)")
     ax.set_title("S-parameters", fontsize=14, color=INK)
     ax.legend(fontsize=8, ncol=1)
     if len(files) > len(PALETTE):
-        print(f"warning: {len(files)} files but only {len(PALETTE)} distinct colours; "
-              "pass fewer files for a readable plot")
+        print(
+            f"warning: {len(files)} files but only {len(PALETTE)} distinct colours; "
+            "pass fewer files for a readable plot"
+        )
     fig.tight_layout()
     os.makedirs(OUT_DIR, exist_ok=True)
     out = os.path.join(OUT_DIR, "tline_sparams.png")
@@ -849,30 +1016,44 @@ def main():
     sp.add_argument("paths", nargs="+", help="Touchstone files or directories")
     # which frequency point to read from each swept .s2p file, in GHz. Files carry a
     # whole band; this picks the nearest sample. Must match a frequency you simulated.
-    sp.add_argument("--freq", type=float, default=200.0,
-                    help="design frequency (GHz): selects files by their _<N>GHz tag; "
-                         "required if the input mixes frequencies (default 200)")
+    sp.add_argument(
+        "--freq",
+        type=float,
+        default=200.0,
+        help="design frequency (GHz): selects files by their _<N>GHz tag; "
+        "required if the input mixes frequencies (default 200)",
+    )
     # each .s2p spans 0.5-1.5x its design tag, so the value can be read anywhere in
     # that band, not just at the tag itself. Defaults to the tag (--freq).
-    sp.add_argument("--eval-freq", type=float, default=None,
-                    help="in-band frequency (GHz) to read Zc at; defaults to --freq. "
-                         "Lets you plot e.g. Zc @ 150 GHz from the 200 GHz sweep")
+    sp.add_argument(
+        "--eval-freq",
+        type=float,
+        default=None,
+        help="in-band frequency (GHz) to read Zc at; defaults to --freq. "
+        "Lets you plot e.g. Zc @ 150 GHz from the 200 GHz sweep",
+    )
     # physical length of the simulated line in um; only used to normalise per-mm
     # figures, so it MUST equal the `length` used in generate_tline_z0.py (1000).
-    sp.add_argument("--length-um", type=float, default=1000.0,
-                    help="line length in um (must match the generator; default 1000)")
+    sp.add_argument(
+        "--length-um",
+        type=float,
+        default=1000.0,
+        help="line length in um (must match the generator; default 1000)",
+    )
     # open an interactive matplotlib window (in addition to writing the PNG) so you can
     # zoom/pan and click points to read exact values. Needs a display/GUI backend.
-    sp.add_argument("--show", action="store_true",
-                    help="also open the interactive plot window (click points to read values)")
+    sp.add_argument(
+        "--show",
+        action="store_true",
+        help="also open the interactive plot window (click points to read values)",
+    )
     sp.set_defaults(func=cmd_z0)  # cmd_z0 runs when this subcommand is selected
 
     # --- z0-freq: Zc vs FREQUENCY across the whole band, to see its dispersion ---
     sp = sub.add_parser("z0-freq", help="plot Zc vs frequency (per stack, curve per width)")
     sp.add_argument("paths", nargs="+", help="Touchstone files or directories")
     # no --freq here: this uses the entire band each file was simulated over.
-    sp.add_argument("--show", action="store_true",
-                    help="also open the interactive plot window")
+    sp.add_argument("--show", action="store_true", help="also open the interactive plot window")
     sp.set_defaults(func=cmd_z0_freq)
 
     # --- z0-3d: 3D surface Zc(frequency, width) for a single stack ---
@@ -882,42 +1063,80 @@ def main():
     # defaults to the TopMetal2/Metal5 microstrip.
     sp.add_argument("--signal", default="topmetal2", help="signal (top) layer, default topmetal2")
     sp.add_argument("--ground", default="metal5", help="ground (bottom) layer, default metal5")
-    sp.add_argument("--show", action="store_true",
-                    help="also open the interactive plot window (drag to rotate)")
+    sp.add_argument(
+        "--show",
+        action="store_true",
+        help="also open the interactive plot window (drag to rotate)",
+    )
     sp.set_defaults(func=cmd_z0_3d)
 
     # --- loss: loss(w)/mm via two-length de-embedding (needs two lengths per point) ---
-    sp = sub.add_parser("loss", help="plot loss(w)/mm faceted by ground layer, "
-                                     "via two-length de-embedding")
+    sp = sub.add_parser(
+        "loss",
+        help="plot loss(w)/mm faceted by ground layer, via two-length de-embedding",
+    )
     sp.add_argument("paths", nargs="+", help="Touchstone files or directories")
-    sp.add_argument("--freq", type=float, default=200.0,
-                    help="design frequency (GHz) to select/evaluate; required if the "
-                         "input mixes frequencies (default 200)")
+    sp.add_argument(
+        "--freq",
+        type=float,
+        default=200.0,
+        help="design frequency (GHz) to select/evaluate; required if the input mixes frequencies (default 200)",
+    )
     # the two line lengths (um) that form each de-embedding pair. The method subtracts
     # the shorter from the longer, so both MUST match length1/length2 in
     # generate_tline_loss.py, and dL = length2 - length1 is the segment loss is read over.
-    sp.add_argument("--length1-um", type=float, default=500.0,
-                    help="shorter line length in um (must match the generator; default 500)")
-    sp.add_argument("--length2-um", type=float, default=1000.0,
-                    help="longer line length in um (must match the generator; default 1000)")
-    sp.add_argument("--show", action="store_true",
-                    help="also open the interactive plot window (click points to read values)")
+    sp.add_argument(
+        "--length1-um",
+        type=float,
+        default=500.0,
+        help="shorter line length in um (must match the generator; default 500)",
+    )
+    sp.add_argument(
+        "--length2-um",
+        type=float,
+        default=1000.0,
+        help="longer line length in um (must match the generator; default 1000)",
+    )
+    sp.add_argument(
+        "--show",
+        action="store_true",
+        help="also open the interactive plot window (click points to read values)",
+    )
     sp.set_defaults(func=cmd_loss)  # cmd_loss runs when this subcommand is selected
 
     # --- design: Zc-vs-loss scatter joining the z0 and loss sweeps ---
     sp = sub.add_parser("design", help="Zc-vs-loss design chart, one point per (stack, width)")
     # needs BOTH sweep directories: Zc comes from tline_z0, loss from tline_loss.
     sp.add_argument("paths", nargs="+", help="both sweep dirs, e.g. gds/tline_z0 gds/tline_loss")
-    sp.add_argument("--freq", type=float, default=200.0,
-                    help="design frequency (GHz): selects files by their _<N>GHz tag (default 200)")
-    sp.add_argument("--length-um", type=float, default=1000.0,
-                    help="z0-sweep line length in um (must match generate_tline_z0.py; default 1000)")
-    sp.add_argument("--length1-um", type=float, default=500.0,
-                    help="shorter loss line length in um (must match generate_tline_loss.py; default 500)")
-    sp.add_argument("--length2-um", type=float, default=1000.0,
-                    help="longer loss line length in um (must match generate_tline_loss.py; default 1000)")
-    sp.add_argument("--show", action="store_true",
-                    help="also open the interactive plot window (click points to read values)")
+    sp.add_argument(
+        "--freq",
+        type=float,
+        default=200.0,
+        help="design frequency (GHz): selects files by their _<N>GHz tag (default 200)",
+    )
+    sp.add_argument(
+        "--length-um",
+        type=float,
+        default=1000.0,
+        help="z0-sweep line length in um (must match generate_tline_z0.py; default 1000)",
+    )
+    sp.add_argument(
+        "--length1-um",
+        type=float,
+        default=500.0,
+        help="shorter loss line length in um (must match generate_tline_loss.py; default 500)",
+    )
+    sp.add_argument(
+        "--length2-um",
+        type=float,
+        default=1000.0,
+        help="longer loss line length in um (must match generate_tline_loss.py; default 1000)",
+    )
+    sp.add_argument(
+        "--show",
+        action="store_true",
+        help="also open the interactive plot window (click points to read values)",
+    )
     sp.set_defaults(func=cmd_design)
 
     # --- sparams: raw S21/S11 vs frequency, no extraction ---
@@ -927,8 +1146,8 @@ def main():
     sp.add_argument("paths", nargs="+", help="Touchstone files or directories")
     sp.set_defaults(func=cmd_sparams)  # cmd_sparams runs when this subcommand is selected
 
-    args = p.parse_args()   # parse argv; argparse errors out here on bad/missing input
-    args.func(args)         # call the cmd_* handler wired up by set_defaults above
+    args = p.parse_args()  # parse argv; argparse errors out here on bad/missing input
+    args.func(args)  # call the cmd_* handler wired up by set_defaults above
 
 
 if __name__ == "__main__":

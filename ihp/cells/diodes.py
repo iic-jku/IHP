@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 import gdsfactory as gf
 from sg13g2_pycell_lib.ihp.schottky_code import schottky as schottkyIHP
@@ -46,9 +44,7 @@ def schottky(
         "m": 1,  # not read by IHP code
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="schottky", cell_params=params, function_name=schottkyIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="schottky", cell_params=params, function_name=schottkyIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(

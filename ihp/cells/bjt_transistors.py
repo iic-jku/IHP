@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 
 import gdsfactory as gf
@@ -68,8 +66,20 @@ def npn13G2(
     check_limits(
         "npn13G2",
         [
-            ("emitter_length", emitter_length, tech_num("npn13G2_minWE", 1e6), tech_num("npn13G2_maxWE", 1e6), "um"),
-            ("emitter_width", emitter_width, tech_num("npn13G2_minLE", 1e6), tech_num("npn13G2_maxLE", 1e6), "um"),
+            (
+                "emitter_length",
+                emitter_length,
+                tech_num("npn13G2_minWE", 1e6),
+                tech_num("npn13G2_maxWE", 1e6),
+                "um",
+            ),
+            (
+                "emitter_width",
+                emitter_width,
+                tech_num("npn13G2_minLE", 1e6),
+                tech_num("npn13G2_maxLE", 1e6),
+                "um",
+            ),
             ("Nx", Nx, tech_num("npn13G2_minNX"), tech_num("npn13G2_maxNX"), ""),
             ("Ny", Ny, tech_num("npn13G2_minNY"), tech_num("npn13G2_maxNY"), ""),
         ],
@@ -100,9 +110,7 @@ def npn13G2(
         "CMetY2": CMetY2 * 1e-6,  # hardcoded in IHP PyCell, not in techparams
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="npn13G2", cell_params=params, function_name=npn13G2IHP()
-    )
+    c = generate_gf_from_ihp(cell_name="npn13G2", cell_params=params, function_name=npn13G2IHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -171,9 +179,7 @@ def npn13G2L(
         "trise": "",  # not read by IHP code
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="npn13G2L", cell_params=params, function_name=npn13G2LIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="npn13G2L", cell_params=params, function_name=npn13G2LIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -242,9 +248,7 @@ def npn13G2V(
         "trise": "",  # not read by IHP code
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="npn13G2V", cell_params=params, function_name=npn13G2VIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="npn13G2V", cell_params=params, function_name=npn13G2VIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -288,8 +292,20 @@ def pnpMPA(
     check_limits(
         "pnpMPA",
         [
-            ("width", width, tech_num("pnpMPA_minW", 1e6), tech_num("pnpMPA_maxW", 1e6), "um"),
-            ("length", length, tech_num("pnpMPA_minL", 1e6), tech_num("pnpMPA_maxL", 1e6), "um"),
+            (
+                "width",
+                width,
+                tech_num("pnpMPA_minW", 1e6),
+                tech_num("pnpMPA_maxW", 1e6),
+                "um",
+            ),
+            (
+                "length",
+                length,
+                tech_num("pnpMPA_minL", 1e6),
+                tech_num("pnpMPA_maxL", 1e6),
+                "um",
+            ),
         ],
     )
 
@@ -311,9 +327,7 @@ def pnpMPA(
         "trise": "",  # not read by IHP code
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="pnpMPA", cell_params=params, function_name=pnpMPAIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="pnpMPA", cell_params=params, function_name=pnpMPAIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(

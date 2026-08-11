@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 from typing import Literal
 
@@ -18,7 +16,6 @@ from sg13g2_pycell_lib.ihp.rsil_code import rsil as rsilIHP
 from sg13g2_pycell_lib.ihp.utility_functions import (
     CbResCalc,
     CbResCurrent,
-    eng_string_to_float,
 )
 
 from .. import tech
@@ -53,9 +50,7 @@ def _resolve_res(cell, length, width, R, bends, polySpace):
             outside the technology limits.
     """
     if length is not None and width is not None and R is not None:
-        raise ValueError(
-            f"{cell}: give at most two of length, width, R - the third is derived"
-        )
+        raise ValueError(f"{cell}: give at most two of length, width, R - the third is derived")
 
     # CbResCalc signature: (calc, r, l, w, b, ps, cell); lengths in metres
     ps_m = polySpace * 1e-6
@@ -72,9 +67,27 @@ def _resolve_res(cell, length, width, R, bends, polySpace):
     check_limits(
         cell,
         [
-            ("width", width, tech_num(f"{cell}_minW", 1e6), tech_num(f"{cell}_maxW", 1e6), "um"),
-            ("length", length, tech_num(f"{cell}_minL", 1e6), tech_num(f"{cell}_maxL", 1e6), "um"),
-            ("polySpace", polySpace, tech_num(f"{cell}_minPS", 1e6), tech_num(f"{cell}_maxPS", 1e6), "um"),
+            (
+                "width",
+                width,
+                tech_num(f"{cell}_minW", 1e6),
+                tech_num(f"{cell}_maxW", 1e6),
+                "um",
+            ),
+            (
+                "length",
+                length,
+                tech_num(f"{cell}_minL", 1e6),
+                tech_num(f"{cell}_maxL", 1e6),
+                "um",
+            ),
+            (
+                "polySpace",
+                polySpace,
+                tech_num(f"{cell}_minPS", 1e6),
+                tech_num(f"{cell}_maxPS", 1e6),
+                "um",
+            ),
             ("bends", bends, tech_num(f"{cell}_minB"), tech_num(f"{cell}_maxB"), ""),
         ],
     )
@@ -148,13 +161,11 @@ def rhigh(
         "l": length * 1e-6,  # um to m
         "b": bends,
         "ps": polySpace * 1e-6,
-        "Imax": CbResCurrent(
-            width * 1e-6, tech.techParams["epsilon2"], "rhighG2"
-        ),  # only for GUI feedback
+        "Imax": CbResCurrent(width * 1e-6, tech.techParams["epsilon2"], "rhighG2"),  # only for GUI feedback
         "bn": "sub!",  # not read by IHP code
-        "Wmin": eng_string_to_float(tech.techParams["rhigh_minW"]) * 1e-6,  # not read by IHP code
-        "Lmin": eng_string_to_float(tech.techParams["rhigh_minL"]) * 1e-6,  # not read by IHP code
-        "PSmin": eng_string_to_float(tech.techParams["rhigh_minPS"]) * 1e-6,  # not read by IHP code
+        "Wmin": tech_num("rhigh_minW", 1e-6),  # not read by IHP code
+        "Lmin": tech_num("rhigh_minL", 1e-6),  # not read by IHP code
+        "PSmin": tech_num("rhigh_minPS", 1e-6),  # not read by IHP code
         "Rspec": tech.techParams["rhigh_rspec"],  # not read by IHP code
         "Rkspec": tech.techParams["rhigh_rkspec"],  # not read by IHP code
         "Rzspec": tech.techParams["rhigh_rzspec"],  # not read by IHP code
@@ -170,9 +181,7 @@ def rhigh(
         "guardRingDistance": guardRingDistance * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="rhigh", cell_params=params, function_name=rhighIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="rhigh", cell_params=params, function_name=rhighIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -248,13 +257,11 @@ def rppd(
         "l": length * 1e-6,  # um to m
         "b": bends,
         "ps": polySpace * 1e-6,
-        "Imax": CbResCurrent(
-            width * 1e-6, tech.techParams["epsilon2"], "rppdG2"
-        ),  # only for GUI feedback
+        "Imax": CbResCurrent(width * 1e-6, tech.techParams["epsilon2"], "rppdG2"),  # only for GUI feedback
         "bn": "sub!",  # not read by IHP code
-        "Wmin": eng_string_to_float(tech.techParams["rppd_minW"]) * 1e-6,  # not read by IHP code
-        "Lmin": eng_string_to_float(tech.techParams["rppd_minL"]) * 1e-6,  # not read by IHP code
-        "PSmin": eng_string_to_float(tech.techParams["rppd_minPS"]) * 1e-6,  # not read by IHP code
+        "Wmin": tech_num("rppd_minW", 1e-6),  # not read by IHP code
+        "Lmin": tech_num("rppd_minL", 1e-6),  # not read by IHP code
+        "PSmin": tech_num("rppd_minPS", 1e-6),  # not read by IHP code
         "Rspec": tech.techParams["rppd_rspec"],  # not read by IHP code
         "Rkspec": tech.techParams["rppd_rkspec"],  # not read by IHP code
         "Rzspec": tech.techParams["rppd_rzspec"],  # not read by IHP code
@@ -270,9 +277,7 @@ def rppd(
         "guardRingDistance": guardRingDistance * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="rppd", cell_params=params, function_name=rppdIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="rppd", cell_params=params, function_name=rppdIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -346,13 +351,11 @@ def rsil(
         "w": width * 1e-6,  # um to m
         "l": length * 1e-6,  # um to m
         "ps": polySpace * 1e-6,
-        "Imax": CbResCurrent(
-            width * 1e-6, tech.techParams["epsilon2"], "rsilG2"
-        ),  # only for GUI feedback
+        "Imax": CbResCurrent(width * 1e-6, tech.techParams["epsilon2"], "rsilG2"),  # only for GUI feedback
         "bn": "sub!",  # not read by IHP code
-        "Wmin": eng_string_to_float(tech.techParams["rsil_minW"]) * 1e-6,  # not read by IHP code
-        "Lmin": eng_string_to_float(tech.techParams["rsil_minL"]) * 1e-6,  # not read by IHP code
-        "PSmin": eng_string_to_float(tech.techParams["rsil_minPS"]) * 1e-6,  # not read by IHP code
+        "Wmin": tech_num("rsil_minW", 1e-6),  # not read by IHP code
+        "Lmin": tech_num("rsil_minL", 1e-6),  # not read by IHP code
+        "PSmin": tech_num("rsil_minPS", 1e-6),  # not read by IHP code
         "Rspec": tech.techParams["rsil_rspec"],  # not read by IHP code
         "Rkspec": tech.techParams["rsil_rkspec"],  # not read by IHP code
         "Rzspec": tech.techParams["rsil_rzspec"],  # not read by IHP code
@@ -368,9 +371,7 @@ def rsil(
         "guardRingDistance": guardRingDistance * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="rsil", cell_params=params, function_name=rsilIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="rsil", cell_params=params, function_name=rsilIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(

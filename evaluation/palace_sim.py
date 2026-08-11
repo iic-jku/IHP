@@ -1,9 +1,9 @@
 import os
 import re
 import sys
-import subprocess
-from gds2palace import *
+
 import gdspy
+from gds2palace import *
 
 
 def _get_number_of_ports(gds_filename):
@@ -25,6 +25,7 @@ def _get_ghz_from_filename(gds_filename):
     if not ghz_value.is_integer():
         raise ValueError(f"GHz value must be an integer: {gds_filename}")
     return int(ghz_value)
+
 
 def _get_layers(cell, layers=None):
     """Recursively collect every (layer, datatype) pair used in a cell and its
@@ -51,7 +52,9 @@ def _get_ground_and_signal_layernames(gds_filename, metals_list):
     layers = _get_layers(cell)
     metal_layernums = sorted({layer for layer, _ in layers if layer <= 200})
     if len(metal_layernums) < 2:
-        raise ValueError(f"Expected at least 2 metal layers (ground and signal) in GDSII file, found: {metal_layernums}")
+        raise ValueError(
+            f"Expected at least 2 metal layers (ground and signal) in GDSII file, found: {metal_layernums}"
+        )
 
     ground_layernum = metal_layernums[0]
     signal_layernum = metal_layernums[-1]
@@ -64,8 +67,8 @@ def _get_ground_and_signal_layernames(gds_filename, metals_list):
 
 # ===================== input files and path settings =======================
 
-gds_filename = sys.argv[1]   # geometries
-XML_filename = "SG13G2_nosub.xml"          # stackup
+gds_filename = sys.argv[1]  # geometries
+XML_filename = "SG13G2_nosub.xml"  # stackup
 
 # preprocess GDSII for safe handling of cutouts/holes?
 preprocess_gds = False
@@ -83,12 +86,12 @@ script_path = utilities.get_script_path(__file__)
 model_basename = utilities.get_basename(gds_filename)
 
 # set and create directory for simulation output
-sim_path = utilities.create_sim_path (script_path,model_basename, dirname=os.path.splitext(gds_filename)[0])
-print('Simulation data directory: ', sim_path)
+sim_path = utilities.create_sim_path(script_path, model_basename, dirname=os.path.splitext(gds_filename)[0])
+print("Simulation data directory: ", sim_path)
 
 f_center = _get_ghz_from_filename(gds_filename) * 1e9
-# f_center = 150e9 
-#print(f"Extracted center frequency from filename: {f_center/1e9:.0f} GHz")
+# f_center = 150e9
+# print(f"Extracted center frequency from filename: {f_center/1e9:.0f} GHz")
 
 # change path to models script path
 modelDir = os.path.dirname(os.path.abspath(__file__))
@@ -98,28 +101,28 @@ os.chdir(modelDir)
 
 settings = {}
 
-settings['unit']   = 1e-6  # geometry is in microns
-settings['margin'] = 50    # distance in microns from GDSII geometry boundary to simulation boundary 
+settings["unit"] = 1e-6  # geometry is in microns
+settings["margin"] = 50  # distance in microns from GDSII geometry boundary to simulation boundary
 
-settings['fstart']  = f_center * 0.5
-settings['fstop']   = f_center * 1.5
+settings["fstart"] = f_center * 0.5
+settings["fstop"] = f_center * 1.5
 
 # settings['fstart']  = 0
 # settings['fstop']   = 500e9
 
-settings['fstep']   = f_center / 100
+settings["fstep"] = f_center / 100
 
-settings['refined_cellsize'] = 2  # mesh cell size in conductor region
-settings['cells_per_wavelength'] = 10   # how many mesh cells per wavelength, must be 10 or more
+settings["refined_cellsize"] = 2  # mesh cell size in conductor region
+settings["cells_per_wavelength"] = 10  # how many mesh cells per wavelength, must be 10 or more
 
-settings['meshsize_max'] = 70  # microns, override cells_per_wavelength 
-settings['adaptive_mesh_iterations'] = 0
+settings["meshsize_max"] = 70  # microns, override cells_per_wavelength
+settings["adaptive_mesh_iterations"] = 0
 
-settings['no_gui'] = True # create files without showing 3D model
+settings["no_gui"] = True  # create files without showing 3D model
 # settings['no_gui'] = ('nogui' in sys.argv)  # check if nogui specified on command line, then create files without showing 3D model
 
 # get technology stackup data (needed early to resolve ground/signal layer names)
-materials_list, dielectrics_list, metals_list = stackup_reader.read_substrate (XML_filename)
+materials_list, dielectrics_list, metals_list = stackup_reader.read_substrate(XML_filename)
 
 # Ports from GDSII Data, polygon geometry from specified special layer
 # Excitations can be switched off by voltage=0, those S-parameter will be incomplete then
@@ -148,14 +151,14 @@ for portnumber in range(1, num_ports + 1):
             source_layernum=200 + portnumber,
             from_layername=signal_layername,
             to_layername=ground_layername,
-            direction='z'
+            direction="z",
         )
     )
- 
+
 # print(simulation_ports)
 # instead of in-plane port specified with target_layername, we here use via port specified with from_layername and to_layername
-#simulation_ports.add_port(simulation_setup.simulation_port(portnumber=1, voltage=1, port_Z0=50, source_layernum=201, from_layername='Metal5', to_layername='TopMetal2', direction='z'))
-#simulation_ports.add_port(simulation_setup.simulation_port(portnumber=2, voltage=1, port_Z0=50, source_layernum=202, from_layername='Metal5', to_layername='TopMetal2', direction='z'))
+# simulation_ports.add_port(simulation_setup.simulation_port(portnumber=1, voltage=1, port_Z0=50, source_layernum=201, from_layername='Metal5', to_layername='TopMetal2', direction='z'))
+# simulation_ports.add_port(simulation_setup.simulation_port(portnumber=2, voltage=1, port_Z0=50, source_layernum=202, from_layername='Metal5', to_layername='TopMetal2', direction='z'))
 # simulation_ports.add_port(simulation_setup.simulation_port(portnumber=3, voltage=1, port_Z0=50, source_layernum=203, from_layername='Metal5', to_layername='TopMetal2', direction='z'))
 # simulation_ports.add_port(simulation_setup.simulation_port(portnumber=4, voltage=1, port_Z0=50, source_layernum=204, from_layername='Metal5', to_layername='TopMetal2', direction='z'))
 
@@ -167,21 +170,28 @@ layernumbers = metals_list.getlayernumbers()
 layernumbers.extend(simulation_ports.portlayers)
 
 # read geometries from GDSII, only purpose 0
-allpolygons = gds_reader.read_gds(gds_filename, layernumbers, purposelist=[0], metals_list=metals_list, preprocess=preprocess_gds, merge_polygon_size=merge_polygon_size)
+allpolygons = gds_reader.read_gds(
+    gds_filename,
+    layernumbers,
+    purposelist=[0],
+    metals_list=metals_list,
+    preprocess=preprocess_gds,
+    merge_polygon_size=merge_polygon_size,
+)
 
 
 ########### create model ###########
 
-settings['simulation_ports'] = simulation_ports
-settings['materials_list'] = materials_list
-settings['dielectrics_list'] = dielectrics_list
-settings['metals_list'] = metals_list
-settings['layernumbers'] = layernumbers
-settings['allpolygons'] = allpolygons
-settings['sim_path'] = sim_path
-settings['model_basename'] = model_basename
+settings["simulation_ports"] = simulation_ports
+settings["materials_list"] = materials_list
+settings["dielectrics_list"] = dielectrics_list
+settings["metals_list"] = metals_list
+settings["layernumbers"] = layernumbers
+settings["allpolygons"] = allpolygons
+settings["sim_path"] = sim_path
+settings["model_basename"] = model_basename
 
 
 # list of ports that are excited (set voltage to zero in port excitation to skip an excitation!)
 excite_ports = simulation_ports.all_active_excitations()
-config_name, data_dir = simulation_setup.create_palace (excite_ports, settings)
+config_name, data_dir = simulation_setup.create_palace(excite_ports, settings)

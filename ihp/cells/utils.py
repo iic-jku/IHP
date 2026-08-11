@@ -49,13 +49,9 @@ def check_limits(cell: str, checks) -> None:
     eps = tech_num("epsilon1")  # same relative tolerance as the Tcl Less/Greater
     for name, value, low, high, unit in checks:
         if low is not None and value < low - abs(low) * eps:
-            raise ValueError(
-                f"{cell}: {name}={value:g}{unit} is below the minimum {low:g}{unit}"
-            )
+            raise ValueError(f"{cell}: {name}={value:g}{unit} is below the minimum {low:g}{unit}")
         if high is not None and value > high + abs(high) * eps:
-            raise ValueError(
-                f"{cell}: {name}={value:g}{unit} is above the maximum {high:g}{unit}"
-            )
+            raise ValueError(f"{cell}: {name}={value:g}{unit} is above the maximum {high:g}{unit}")
 
 
 def generate_gf_from_ihp(cell_name, cell_params, function_name) -> gf.Component:

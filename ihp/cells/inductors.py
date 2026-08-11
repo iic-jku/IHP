@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 from typing import Literal
 
@@ -81,9 +79,7 @@ def inductor2(
         "guardRingDistance": guardRingDistance * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="inductor2", cell_params=params, function_name=inductor2IHP()
-    )
+    c = generate_gf_from_ihp(cell_name="inductor2", cell_params=params, function_name=inductor2IHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -163,9 +159,7 @@ def inductor3(
         "guardRingDistance": guardRingDistance * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="inductor3", cell_params=params, function_name=inductor3IHP()
-    )
+    c = generate_gf_from_ihp(cell_name="inductor3", cell_params=params, function_name=inductor3IHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(

@@ -1,7 +1,14 @@
 import os
 
+from tline_common import (
+    MIN_WIDTH,
+    RF_METAL_STACKS,
+    fmt_width,
+    short_name,
+    write_tline_gds,
+)
+
 import ihp
-from tline_common import MIN_WIDTH, RF_METAL_STACKS, fmt_width, short_name, write_tline_gds
 
 # structures for a Zc(w) plot per metal stack.
 # Zc is roughly frequency-independent, so a single frequency point is enough,

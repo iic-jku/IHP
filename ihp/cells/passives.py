@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 from typing import Literal
 
@@ -17,7 +15,7 @@ from sg13g2_pycell_lib.ihp.guard_ring_code import guard_ring as guardringIHP
 from sg13g2_pycell_lib.ihp.ntap1_code import ntap1 as ntap1IHP
 from sg13g2_pycell_lib.ihp.ptap1_code import ptap1 as ptap1IHP
 from sg13g2_pycell_lib.ihp.sealring_code import sealring as sealringIHP
-from sg13g2_pycell_lib.ihp.utility_functions import CbTapCalc, eng_string_to_float
+from sg13g2_pycell_lib.ihp.utility_functions import CbTapCalc
 
 from .. import tech
 from .utils import *
@@ -43,9 +41,7 @@ def _resolve_tap(cell, width, length, R):
             is outside the technology limits.
     """
     if width is not None and length is not None and R is not None:
-        raise ValueError(
-            f"{cell}: give at most two of width, length, R - the third is derived"
-        )
+        raise ValueError(f"{cell}: give at most two of width, length, R - the third is derived")
 
     # CbTapCalc signature: (calc, r, l, w, cell); lengths in metres
     if R is None:
@@ -101,9 +97,7 @@ def esd(
         "model": model,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="esd", cell_params=params, function_name=esdIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="esd", cell_params=params, function_name=esdIHP())
 
     # add ports to the component
     # default direction should be away from the device center
@@ -154,11 +148,7 @@ def esd(
             # its own Metal2 pin box (the box whose center is not taken by the
             # Metal2 port that did register).
             lay = gf.get_layer(tech.LAYER.Metal2pin)
-            taken = [
-                tuple(round(v, 3) for v in pt.center)
-                for pt in c.ports
-                if pt.name in ("e1", "e2")
-            ]
+            taken = [tuple(round(v, 3) for v in pt.center) for pt in c.ports if pt.name in ("e1", "e2")]
             missing = "e1" if any(pt.name == "e2" for pt in c.ports) else "e2"
             for box in c.get_boxes(layer=lay):
                 bb = box.bbox()
@@ -255,14 +245,12 @@ def ptap1(
         "A": area,  # not read by IHP code
         "Perim": perimeter,  # not read by IHP code
         "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell, not read by IHP code
-        "Wmin": eng_string_to_float(tech.techParams["ptap1_minLW"]),  # not declared in KLayout, ignored
-        "Lmin": eng_string_to_float(tech.techParams["ptap1_minLW"]),  # not declared in KLayout, ignored
+        "Wmin": tech_num("ptap1_minLW"),  # not declared in KLayout, ignored
+        "Lmin": tech_num("ptap1_minLW"),  # not declared in KLayout, ignored
         "m": 1,  # not declared in KLayout, ignored
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="ptap1", cell_params=params, function_name=ptap1IHP()
-    )
+    c = generate_gf_from_ihp(cell_name="ptap1", cell_params=params, function_name=ptap1IHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -310,14 +298,12 @@ def ntap1(
         "A": area,  # not read by IHP code
         "Perim": perimeter,  # not read by IHP code
         "Rspec": 0.980 * 1e-9,  # hardcoded in the PCell, not read by IHP code
-        "Wmin": eng_string_to_float(tech.techParams["ntap1_minLW"]),  # not declared in KLayout, ignored
-        "Lmin": eng_string_to_float(tech.techParams["ntap1_minLW"]),  # not declared in KLayout, ignored
+        "Wmin": tech_num("ntap1_minLW"),  # not declared in KLayout, ignored
+        "Lmin": tech_num("ntap1_minLW"),  # not declared in KLayout, ignored
         "m": 1,  # not declared in KLayout, ignored
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="ntap1", cell_params=params, function_name=ntap1IHP()
-    )
+    c = generate_gf_from_ihp(cell_name="ntap1", cell_params=params, function_name=ntap1IHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -372,14 +358,12 @@ def sealring(
         "w": height * 1e-6,  # um to m
         "addLabel": addLabel,
         "addSlit": addSlit,
-        "Wmin": eng_string_to_float(tech.techParams["sealring_complete_minW"]),
-        "Lmin": eng_string_to_float(tech.techParams["sealring_complete_minL"]),
+        "Wmin": tech_num("sealring_complete_minW"),
+        "Lmin": tech_num("sealring_complete_minL"),
         "edgeBox": edgeBox * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="sealring", cell_params=params, function_name=sealringIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="sealring", cell_params=params, function_name=sealringIHP())
 
     # add ports to the component
     # ports should be added manually if needed
@@ -415,9 +399,7 @@ def guard_ring(
         "type": guardRingType,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="guardring", cell_params=params, function_name=guardringIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="guardring", cell_params=params, function_name=guardringIHP())
 
     # add ports to the component
     # ports should be added manually if needed

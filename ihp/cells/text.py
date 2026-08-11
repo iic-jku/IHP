@@ -21,9 +21,7 @@ def text_rectangular(
         justify: left, right or center.
         layer: for text.
     """
-    return gf.c.text_rectangular(
-        text=text, size=size, justify=justify, position=(0.0, 0.0), layer=layer
-    )
+    return gf.c.text_rectangular(text=text, size=size, justify=justify, position=(0.0, 0.0), layer=layer)
 
 
 @gf.cell

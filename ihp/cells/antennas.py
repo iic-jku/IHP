@@ -5,9 +5,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 from typing import Literal
 
@@ -40,9 +38,7 @@ def _resolve_diode(cell, width, length, area):
             is outside the technology limits.
     """
     if width is not None and length is not None and area is not None:
-        raise ValueError(
-            f"{cell}: give at most two of width, length, area - the third is derived"
-        )
+        raise ValueError(f"{cell}: give at most two of width, length, area - the third is derived")
 
     # CbDiodeCalc signature: (calc, a, l, w, cell); lengths in metres, area in m^2
     if area is None:
@@ -59,8 +55,20 @@ def _resolve_diode(cell, width, length, area):
     check_limits(
         cell,
         [
-            ("width", width, tech_num(f"{cell}_minW", 1e6), tech_num(f"{cell}_maxW", 1e6), "um"),
-            ("length", length, tech_num(f"{cell}_minL", 1e6), tech_num(f"{cell}_maxL", 1e6), "um"),
+            (
+                "width",
+                width,
+                tech_num(f"{cell}_minW", 1e6),
+                tech_num(f"{cell}_maxW", 1e6),
+                "um",
+            ),
+            (
+                "length",
+                length,
+                tech_num(f"{cell}_minL", 1e6),
+                tech_num(f"{cell}_maxL", 1e6),
+                "um",
+            ),
         ],
     )
     perimeter = CbDiodeCalc("p", 0, length * 1e-6, width * 1e-6, cell)
@@ -130,9 +138,7 @@ def dantenna(
         "guardRingDistance": guardRingDistance * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="dantenna", cell_params=params, function_name=dantennaIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="dantenna", cell_params=params, function_name=dantennaIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(
@@ -212,9 +218,7 @@ def dpantenna(
         "guardRingDistance": guardRingDistance * 1e-6,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="dpantenna", cell_params=params, function_name=dpantennaIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="dpantenna", cell_params=params, function_name=dpantennaIHP())
 
     # add ports to the component
     gf.add_ports.add_ports_from_boxes(

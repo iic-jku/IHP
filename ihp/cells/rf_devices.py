@@ -19,9 +19,7 @@ from .. import tech
 @gf.cell
 def _slit_ground() -> gf.Component:
     c = gf.Component()
-    c.add_polygon(
-        layer=tech.LAYER.Metal5slit, points=[(1.1, 1.1), (4, 1.1), (4, 5), (1.1, 5)]
-    )
+    c.add_polygon(layer=tech.LAYER.Metal5slit, points=[(1.1, 1.1), (4, 1.1), (4, 5), (1.1, 5)])
     return c
 
 
@@ -72,9 +70,7 @@ def branch_line_coupler(
     )
 
     quarter_wave_length = wave_length / 4 / sqrt(e_eff)
-    quarter_wave_length = quarter_wave_length - quarter_wave_length % (
-        tech.nm
-    )  # truncate to 5 nm
+    quarter_wave_length = quarter_wave_length - quarter_wave_length % (tech.nm)  # truncate to 5 nm
 
     # create corner component for the 4 corners of the coupler
     corner.add_polygon(
@@ -174,9 +170,7 @@ def branch_line_coupler(
     tline_bottom.connect("e1", corner_sw.ports["e2"])
 
     # create and connect the bottom right corner
-    corner_se = (
-        c.add_ref(corner).mirror(p1=(0, 0), p2=(1, 0)).mirror(p1=(0, 0), p2=(0, 1))
-    )
+    corner_se = c.add_ref(corner).mirror(p1=(0, 0), p2=(1, 0)).mirror(p1=(0, 0), p2=(0, 1))
 
     corner_se.connect("e2", tline_bottom.ports["e2"])
 
@@ -316,9 +310,7 @@ def wilkinson_power_divider(
     )
     wave_length = scipy.constants.c / frequency * 1e6 / sqrt(e_eff)  # in um
     quarter_wave_length = wave_length / 4
-    quarter_wave_length = quarter_wave_length - quarter_wave_length % (
-        tech.nm
-    )  # truncate to 5 nm
+    quarter_wave_length = quarter_wave_length - quarter_wave_length % (tech.nm)  # truncate to 5 nm
 
     # isolation resistor dimensions. The resistor itself is not placed yet
     # (see the commented block at the end), but its length is accounted for
@@ -509,9 +501,7 @@ def wilkinson_power_divider(
             )
         )
 
-        connection_out_p2.connect(
-            "e1", corner_output_p2.ports["e2"], allow_width_mismatch=True
-        )
+        connection_out_p2.connect("e1", corner_output_p2.ports["e2"], allow_width_mismatch=True)
         connection_out_p2.movey(width_Z0 / 2 - width_Z0_sqrt2 / 2)
 
         connection_out_p3 = c.add_ref(
@@ -523,9 +513,7 @@ def wilkinson_power_divider(
             )
         )
 
-        connection_out_p3.connect(
-            "e1", corner_output_p3.ports["e1"], allow_width_mismatch=True
-        )
+        connection_out_p3.connect("e1", corner_output_p3.ports["e1"], allow_width_mismatch=True)
         connection_out_p3.movey(-(width_Z0 / 2 - width_Z0_sqrt2 / 2))
 
         c.add_port(name="e1", port=connection_in.ports["e1"])
@@ -626,9 +614,7 @@ def wilkinson_power_divider(
             )
         )
 
-        connection_out_p2.connect(
-            "e1", corner_output_p2.ports["e2"], allow_width_mismatch=True
-        )
+        connection_out_p2.connect("e1", corner_output_p2.ports["e2"], allow_width_mismatch=True)
         connection_out_p2.movex(-width_Z0 / 2 + width_Z0_sqrt2 / 2)
 
         connection_out_p3 = c.add_ref(
@@ -640,9 +626,7 @@ def wilkinson_power_divider(
             )
         )
 
-        connection_out_p3.connect(
-            "e1", corner_output_p3.ports["e1"], allow_width_mismatch=True
-        )
+        connection_out_p3.connect("e1", corner_output_p3.ports["e1"], allow_width_mismatch=True)
         connection_out_p3.movex(-width_Z0 / 2 + width_Z0_sqrt2 / 2)
 
         c.add_port(name="e1", port=connection_in.ports["e1"])
@@ -697,15 +681,11 @@ def directional_coupler(
     )
 
     quarter_wave_length = wave_length / 4 / sqrt(e_eff)
-    quarter_wave_length = quarter_wave_length - quarter_wave_length % (
-        tech.nm
-    )  # truncate to 5 nm
+    quarter_wave_length = quarter_wave_length - quarter_wave_length % (tech.nm)  # truncate to 5 nm
 
     # coupling factor must be negative
     if coupling_factor > 0:
-        coupling_factor = (
-            -coupling_factor
-        )  # enforce negative coupling factor for the formula below
+        coupling_factor = -coupling_factor  # enforce negative coupling factor for the formula below
 
     coupling_factor_linear = 10 ** (coupling_factor / 20)
 
@@ -822,9 +802,7 @@ def quarter_wave_transformer(
     )
 
     quarter_wave_length = wave_length / 4 / sqrt(e_eff)
-    quarter_wave_length = quarter_wave_length - quarter_wave_length % (
-        tech.nm
-    )  # truncate to 5 nm
+    quarter_wave_length = quarter_wave_length - quarter_wave_length % (tech.nm)  # truncate to 5 nm
 
     Z0_transformer = sqrt(Z_in * Z_L)
 
@@ -846,9 +824,7 @@ def quarter_wave_transformer(
         )
     )
 
-    connection_port1.connect(
-        "e1", transformer_line.ports["e1"], allow_width_mismatch=True
-    )
+    connection_port1.connect("e1", transformer_line.ports["e1"], allow_width_mismatch=True)
 
     connection_port2 = c.add_ref(
         tline(
@@ -859,9 +835,7 @@ def quarter_wave_transformer(
         )
     )
 
-    connection_port2.connect(
-        "e1", transformer_line.ports["e2"], allow_width_mismatch=True
-    )
+    connection_port2.connect("e1", transformer_line.ports["e2"], allow_width_mismatch=True)
 
     c.add_port(name="e1", port=connection_port1.ports["e2"])
     c.add_port(name="e2", port=connection_port2.ports["e2"])
@@ -1038,9 +1012,7 @@ def coupled_line_bandpass_filter(
         section_i.connect("e4", previous_section.ports["e2"], allow_width_mismatch=True)
         previous_section = section_i
 
-    connection_out.connect(
-        "e1", previous_section.ports["e2"], allow_width_mismatch=True
-    )
+    connection_out.connect("e1", previous_section.ports["e2"], allow_width_mismatch=True)
 
     c.add_port(name="e1", port=connection_in.ports["e1"])
     c.add_port(name="e2", port=connection_out.ports["e2"])
@@ -1233,8 +1205,7 @@ def hairpin_coupled_line_bandpass_filter(
     )
 
     first_vertical_line = tline(
-        length=segment_length
-        - 10 * width_Z0,  # adjust length to account for the port at the end
+        length=segment_length - 10 * width_Z0,  # adjust length to account for the port at the end
         signal_cross_section=signal_cross_section,
         ground_cross_section=ground_cross_section,
         Z0=Z0,
@@ -1242,12 +1213,7 @@ def hairpin_coupled_line_bandpass_filter(
     # copy to be able to add port
 
     # from Microstrip Filters for RF/Microwave Applications by Jia-Sheng Hong, M. J. Lancaster
-    t = (
-        2
-        * segment_length
-        / scipy.constants.pi
-        * asin(sqrt((fractional_bandwidth) / (g[1])))
-    )
+    t = 2 * segment_length / scipy.constants.pi * asin(sqrt((fractional_bandwidth) / (g[1])))
     t = t - t % tech.nm  # snap to grid
 
     first_vertical_line.add_port(
@@ -1270,8 +1236,7 @@ def hairpin_coupled_line_bandpass_filter(
             coupler_tline(
                 Z0e=Z0e[i],
                 Z0o=Z0o[i],
-                length=segment_length
-                - 1 * width_Z0,  # adjust length to account for the port at the end
+                length=segment_length - 1 * width_Z0,  # adjust length to account for the port at the end
                 signal_cross_section=signal_cross_section,
                 ground_cross_section=ground_cross_section,
             )

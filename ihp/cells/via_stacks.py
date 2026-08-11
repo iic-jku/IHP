@@ -6,9 +6,7 @@ import sys
 
 pdk_root = os.environ.get("PDK_ROOT", "/foss/pdks")
 sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python")
-sys.path.append(
-    f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/"
-)
+sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-api/source/python/")
 
 from typing import Literal
 
@@ -84,9 +82,7 @@ def via_stack(
         "vt2_rows": vt2_rows,
     }
 
-    c = generate_gf_from_ihp(
-        cell_name="via_stack", cell_params=params, function_name=via_stackIHP()
-    )
+    c = generate_gf_from_ihp(cell_name="via_stack", cell_params=params, function_name=via_stackIHP())
 
     # add ports to the component
     layer_map = {  # necessary for mapping layer names to tech layers
