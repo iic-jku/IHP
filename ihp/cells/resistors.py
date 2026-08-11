@@ -150,7 +150,7 @@ def rhigh(
         "ps": polySpace * 1e-6,
         "Imax": CbResCurrent(
             width * 1e-6, tech.techParams["epsilon2"], "rhighG2"
-        ),  # TODO Is this used?
+        ),  # only for GUI feedback
         "bn": "sub!",  # not read by IHP code
         "Wmin": eng_string_to_float(tech.techParams["rhigh_minW"]) * 1e-6,  # not read by IHP code
         "Lmin": eng_string_to_float(tech.techParams["rhigh_minL"]) * 1e-6,  # not read by IHP code
@@ -250,7 +250,7 @@ def rppd(
         "ps": polySpace * 1e-6,
         "Imax": CbResCurrent(
             width * 1e-6, tech.techParams["epsilon2"], "rppdG2"
-        ),  # TODO Is this used?
+        ),  # only for GUI feedback
         "bn": "sub!",  # not read by IHP code
         "Wmin": eng_string_to_float(tech.techParams["rppd_minW"]) * 1e-6,  # not read by IHP code
         "Lmin": eng_string_to_float(tech.techParams["rppd_minL"]) * 1e-6,  # not read by IHP code
@@ -348,7 +348,7 @@ def rsil(
         "ps": polySpace * 1e-6,
         "Imax": CbResCurrent(
             width * 1e-6, tech.techParams["epsilon2"], "rsilG2"
-        ),  # TODO Is this used?
+        ),  # only for GUI feedback
         "bn": "sub!",  # not read by IHP code
         "Wmin": eng_string_to_float(tech.techParams["rsil_minW"]) * 1e-6,  # not read by IHP code
         "Lmin": eng_string_to_float(tech.techParams["rsil_minL"]) * 1e-6,  # not read by IHP code
