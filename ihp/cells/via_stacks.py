@@ -1,6 +1,5 @@
-"""Via stack components for IHP PDK. Also includes NoFillerStack."""
+"""Via stack components for IHP PDK."""
 
-# TODO probably not the right place for NoFillerStack
 import os
 import sys
 
@@ -11,7 +10,6 @@ sys.path.append(f"{pdk_root}/ihp-sg13g2/libs.tech/klayout/python/pycell4klayout-
 from typing import Literal
 
 import gdsfactory as gf
-from sg13g2_pycell_lib.ihp.NoFillerStack_code import NoFillerStack as no_filler_stackIHP
 from sg13g2_pycell_lib.ihp.via_stack_code import via_stack as via_stackIHP
 
 from .. import tech
@@ -130,68 +128,6 @@ def via_stack(
             port_type="electrical",
         )
 
-    return c
-
-
-@gf.cell
-def no_filler_stack(
-    width: float = 10,
-    length: float = 10,
-    noAct: Literal["Yes", "No"] = "Yes",  # no active filler
-    noGP: Literal["Yes", "No"] = "Yes",  # no GatePoly filler
-    noM1: Literal["Yes", "No"] = "Yes",  # no M1 filler
-    noM2: Literal["Yes", "No"] = "Yes",  # no M2 filler
-    noM3: Literal["Yes", "No"] = "Yes",  # no M3 filler
-    noM4: Literal["Yes", "No"] = "Yes",  # no M4 filler
-    noM5: Literal["Yes", "No"] = "Yes",  # no M5 filler
-    noTM1: Literal["Yes", "No"] = "Yes",  # no TM1 filler
-    noTM2: Literal["Yes", "No"] = "Yes",  # no TM2 filler
-) -> gf.Component:
-    """Create a filler exclusion (NoFillerStack) component.
-
-    This function generates exclusion boxes that block dummy filler
-    insertion on the selected layers over a width x length region. Each
-    layer can be individually excluded using Yes/No flags.
-
-    Args:
-        width: Width of the exclusion region in micrometers.
-        length: Length of the exclusion region in micrometers.
-        noAct: Exclude filler for the active layer. Options: 'Yes', 'No'.
-        noGP: Exclude filler for the GatePoly layer. Options: 'Yes', 'No'.
-        noM1: Exclude filler for Metal1. Options: 'Yes', 'No'.
-        noM2: Exclude filler for Metal2. Options: 'Yes', 'No'.
-        noM3: Exclude filler for Metal3. Options: 'Yes', 'No'.
-        noM4: Exclude filler for Metal4. Options: 'Yes', 'No'.
-        noM5: Exclude filler for Metal5. Options: 'Yes', 'No'.
-        noTM1: Exclude filler for TopMetal1. Options: 'Yes', 'No'.
-        noTM2: Exclude filler for TopMetal2. Options: 'Yes', 'No'.
-
-    Returns:
-        gdsfactory.Component: The generated NoFiller via stack layout.
-    """
-
-    params = {
-        "cdf_version": tech.techParams["CDFVersion"],  # not declared in KLayout, ignored
-        "Display": "Selected",  # not declared in KLayout, ignored
-        "w": width * 1e-6,
-        "l": length * 1e-6,
-        "minLW": 10e-9,  # hardcoded not in tech file, not read by IHP code
-        "noAct": noAct,
-        "noGP": noGP,
-        "noM1": noM1,
-        "noM2": noM2,
-        "noM3": noM3,
-        "noM4": noM4,
-        "noM5": noM5,
-        "noTM1": noTM1,
-        "noTM2": noTM2,
-    }
-
-    c = generate_gf_from_ihp(
-        cell_name="no_filler_stack",
-        cell_params=params,
-        function_name=no_filler_stackIHP(),
-    )
     return c
 
 

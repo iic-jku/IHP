@@ -330,7 +330,7 @@ ihp.PDK.activate()
 # c.add_ports(vs1.ports, prefix="vs1_")
 
 # c.move((5,15))
-# c.add_ref(ihp.cells.via_stacks.no_filler_stack())
+# c.add_ref(ihp.cells.passives.no_filler_stack())
 
 # c.draw_ports()
 # c.pprint_ports()
