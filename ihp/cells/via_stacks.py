@@ -68,8 +68,8 @@ def via_stack(
     """
 
     params = {
-        # "cdf_version": tech.techParams["CDFVersion"],
-        # "Display": "Selected",
+        "cdf_version": tech.techParams["CDFVersion"],
+        "Display": "Selected",
         "b_layer": bottom_layer,
         "t_layer": top_layer,
         "vn_columns": vn_columns,
