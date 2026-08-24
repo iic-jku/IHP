@@ -35,7 +35,7 @@ Usage:
     python plot_tline.py z0      gds/tline_z0    [--freq 200] [--eval-freq 150]
     python plot_tline.py z0-freq gds/tline_z0
     python plot_tline.py z0-3d   gds/tline_z0    [--signal topmetal2 --ground metal5]
-    python plot_tline.py loss    gds/tline_loss  --freq 200  [--length1-um 500] [--length2-um 1000]
+    python plot_tline.py loss    gds/tline_loss  --freq 200  [--eval-freq 160] [--length1-um 500] [--length2-um 1000]
     python plot_tline.py design  gds/tline_z0 gds/tline_loss  [--freq 200]
     python plot_tline.py sparams file1.s2p file2.s2p ...
 
@@ -783,7 +783,7 @@ def _collect_z0_vs_freq(paths):
     return curves
 
 
-def _collect_loss_two_length(paths, freq_ghz, length1_um, length2_um):
+def _collect_loss_two_length(paths, freq_ghz, length1_um, length2_um, eval_freq_ghz=None):
     """Group .s2p files by (signal, ground, width, freq) and extract loss from the
     length1/length2 pair via two-length de-embedding (see module docstring)."""
     files = find_touchstone(paths, ".s2p")
@@ -802,12 +802,21 @@ def _collect_loss_two_length(paths, freq_ghz, length1_um, length2_um):
 
     entries = []
     missing = 0
-    for (signal, ground, width, fghz), lengths in by_key.items():
+    warned_outside_band = False
+    for (signal, ground, width, tag_fghz), lengths in by_key.items():
         if length1_um not in lengths or length2_um not in lengths:
             missing += 1
             continue
         n1 = rf.Network(lengths[length1_um])
         n2 = rf.Network(lengths[length2_um])
+        fghz = eval_freq_ghz if eval_freq_ghz is not None else tag_fghz
+        band = n1.frequency.f / 1e9
+        if not warned_outside_band and not (band.min() <= fghz <= band.max()):
+            print(
+                f"warning: eval frequency {fghz:g} GHz is outside the simulated band "
+                f"({band.min():g}-{band.max():g} GHz); using the nearest band edge"
+            )
+            warned_outside_band = True
         loss = loss_at_two_length(n1, n2, length2_um - length1_um, fghz)
         entries.append(
             {
@@ -940,13 +949,20 @@ def cmd_z0_3d(args):
 def cmd_loss(args):
     """`loss` subcommand: extract loss(w)/mm via two-length de-embedding and write
     the faceted PNG + CSV for the requested frequency."""
-    e = _collect_loss_two_length(args.paths, args.freq, args.length1_um, args.length2_um)
-    tag = f"{args.freq:g}GHz" if args.freq else "designfreq"
+    e = _collect_loss_two_length(
+        args.paths, args.freq, args.length1_um, args.length2_um, eval_freq_ghz=args.eval_freq
+    )
+    eval_f = args.eval_freq if args.eval_freq is not None else args.freq
+    tag = f"{eval_f:g}GHz" if eval_f else "designfreq"
+    title = f"Conductor+dielectric loss vs width  @ {tag}  (two-length de-embedded)"
+    if args.eval_freq is not None and args.freq and abs(args.eval_freq - args.freq) > 1e-6:
+        tag += f"_from{args.freq:g}GHz"
+        title += f"  (read from the {args.freq:g}GHz sweep)"
     _plot_vs_width(
         e,
         "loss",
         "loss  (dB/mm)",
-        f"Conductor+dielectric loss vs width  @ {tag}  (two-length de-embedded)",
+        title,
         f"tline_loss_{tag}.png",
         unit="dB/mm",
         show=args.show,
@@ -1081,6 +1097,13 @@ def main():
         type=float,
         default=200.0,
         help="design frequency (GHz) to select/evaluate; required if the input mixes frequencies (default 200)",
+    )
+    sp.add_argument(
+        "--eval-freq",
+        type=float,
+        default=None,
+        help="in-band frequency (GHz) to read loss at; defaults to --freq. "
+        "Lets you plot e.g. loss @ 160 GHz from the 200 GHz sweep",
     )
     # the two line lengths (um) that form each de-embedding pair. The method subtracts
     # the shorter from the longer, so both MUST match length1/length2 in

@@ -93,8 +93,8 @@ plot-tline-z0-3d: ## 3D surface of Zc over (freq, width) for one stack (SIGNAL=/
 .PHONY: plot-tline-z0-3d
 
 plot-tline-loss: ## Plot loss(w)/mm faceted by ground layer, for every simulated frequency (two-length de-embedded)
-	cd $(MAKEFILE_DIR) && for f in $$(ls -d $(GDS_DIR)/tline_loss/*GHz 2>/dev/null | sed -E 's/.*_([0-9.]+)GHz$$/\1/' | sort -n -u); do \
-		$(PYTHON) plot_tline.py loss $(GDS_DIR)/tline_loss --freq $$f --length1-um 500 --length2-um 1000; \
+	cd $(MAKEFILE_DIR) && for f in $(if $(FREQ),$(FREQ),$$(ls -d $(GDS_DIR)/tline_loss/*GHz 2>/dev/null | sed -E 's/.*_([0-9.]+)GHz$$/\1/' | sort -n -u)); do \
+		$(PYTHON) plot_tline.py loss $(GDS_DIR)/tline_loss --freq $$f $(if $(EVAL_FREQ),--eval-freq $(EVAL_FREQ)) --length1-um 500 --length2-um 1000; \
 	done
 .PHONY: plot-tline-loss
 

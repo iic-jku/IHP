@@ -190,6 +190,17 @@ make plot-tline-z0 EVAL_FREQ=150      # Zc(w) @ 150 GHz, read from the 200 GHz s
 make plot-tline-z0 FREQ=200           # restrict to one design tag (if several exist)
 ```
 
+`plot-tline-loss` takes the same `EVAL_FREQ`/`FREQ` knobs — the loss sims span the
+same 0.5–1.5× band, so loss can be read at any in-band frequency without re-simulating:
+
+```bash
+make plot-tline-loss EVAL_FREQ=160    # loss(w) @ 160 GHz, read from the 200 GHz sweep
+```
+
+When `EVAL_FREQ` differs from the design tag the PNG/CSV are named
+`tline_loss_<eval>GHz_from<tag>GHz` (e.g. `tline_loss_160GHz_from200GHz.png`), so they
+don't clobber a genuine `<eval>GHz` sweep's output.
+
 `plot-tline-z0`, `plot-tline-z0-freq`, `plot-tline-z0-3d` and `plot-tline-design` open
 an interactive matplotlib window by default (they still write the PNG too). Pass an
 empty `Z0_SHOW=` for a non-blocking batch run — the aggregate `plot-tline` target sets
