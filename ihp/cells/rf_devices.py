@@ -527,7 +527,7 @@ def wilkinson_power_divider(
         # create and connect upper branch line
         branch_left_up = c.add_ref(
             tline(
-                length=circumference / 6 - width_Z0_sqrt2 - width_Z0 / 2,
+                length=round(circumference / 6 - width_Z0_sqrt2 - width_Z0 / 2, 2),
                 signal_cross_section=signal_cross_section,
                 ground_cross_section=ground_cross_section,
                 width=width_Z0_sqrt2,
@@ -547,7 +547,7 @@ def wilkinson_power_divider(
 
         branch_left_down = c.add_ref(
             tline(
-                length=circumference / 6 - width_Z0_sqrt2 - width_Z0 / 2,
+                length=round(circumference / 6 - width_Z0_sqrt2 - width_Z0 / 2, 2),
                 signal_cross_section=signal_cross_section,
                 ground_cross_section=ground_cross_section,
                 width=width_Z0_sqrt2,
@@ -567,7 +567,7 @@ def wilkinson_power_divider(
 
         branch_top = c.add_ref(
             tline(
-                length=circumference / 3 - width_Z0_sqrt2 * 2,
+                length=round(circumference / 3 - width_Z0_sqrt2 * 2, 2),
                 signal_cross_section=signal_cross_section,
                 ground_cross_section=ground_cross_section,
                 width=width_Z0_sqrt2,
@@ -578,7 +578,7 @@ def wilkinson_power_divider(
 
         branch_bottom = c.add_ref(
             tline(
-                length=circumference / 3 - width_Z0_sqrt2 * 2,
+                length=round(circumference / 3 - width_Z0_sqrt2 * 2, 2),
                 signal_cross_section=signal_cross_section,
                 ground_cross_section=ground_cross_section,
                 width=width_Z0_sqrt2,
