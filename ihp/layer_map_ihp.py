@@ -281,6 +281,7 @@ class LayerMapIHP(LayerMap):
     Recogesd: Layer = (99, 30)
     Recogiprobe: Layer = (99, 33)
     Recogmom: Layer = (99, 39)
+    Recogmomf: Layer = (99, 40)
     Recogotp: Layer = (99, 37)
     Recogpcm: Layer = (99, 100)
     Recogpdiode: Layer = (99, 38)
