@@ -28,6 +28,7 @@ GDS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gds", "tline
 
 # signal widths to sweep (um)
 widths = [0.5, 1, 2, 3, 5, 7, 10, 15, 20]
+widths = [2.5,8, 9, 12.5]  
 
 # two line lengths (um) for two-length de-embedding; dL = length2 - length1
 length1 = 500
