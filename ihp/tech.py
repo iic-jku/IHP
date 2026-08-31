@@ -489,7 +489,7 @@ cross_sections = get_cross_sections(sys.modules[__name__])
 # Routing functions
 ############################
 
-route_bundle = partial(gf.routing.route_bundle, cross_section="strip")
+route_bundle = partial(gf.routing.route_bundle, cross_section="strip", bend="wire_corner")
 route_bundle_rib = partial(
     route_bundle,
     cross_section="rib",
@@ -497,7 +497,7 @@ route_bundle_rib = partial(
 route_bundle_metal = partial(
     route_bundle,
     straight="straight_metal",
-    bend="bend_metal",
+    bend="wire_corner",
     taper=None,
     cross_section="metal_routing",
     port_type="electrical",
@@ -514,7 +514,7 @@ route_bundle_metal_corner = partial(
 route_astar = partial(
     add_bundle_astar,
     layers=["TOPMETAL2"],
-    bend="bend_euler",
+    bend="wire_corner",
     straight="straight",
     grid_unit=500,
     spacing=3,
