@@ -949,9 +949,7 @@ def cmd_z0_3d(args):
 def cmd_loss(args):
     """`loss` subcommand: extract loss(w)/mm via two-length de-embedding and write
     the faceted PNG + CSV for the requested frequency."""
-    e = _collect_loss_two_length(
-        args.paths, args.freq, args.length1_um, args.length2_um, eval_freq_ghz=args.eval_freq
-    )
+    e = _collect_loss_two_length(args.paths, args.freq, args.length1_um, args.length2_um, eval_freq_ghz=args.eval_freq)
     eval_f = args.eval_freq if args.eval_freq is not None else args.freq
     tag = f"{eval_f:g}GHz" if eval_f else "designfreq"
     title = f"Conductor+dielectric loss vs width  @ {tag}  (two-length de-embedded)"
