@@ -197,6 +197,60 @@ ihp.PDK.activate()
 
 
 # -----------------------------------------------------------------
+# MoM capacitor test (cmomf vs cmomi)
+
+# Both sit on the Metal1..Metal5 thin metal stack and take length -> X and
+# width -> Y, but they are different devices: cmomf is a cross-fingered fringe
+# cap and is continuous in w/l, cmomi is interdigitated on a 0.84 x 0.89 um
+# unit cell so it floors the request, and its feed is part of the model.
+# The same 5x5 um on M1..M5 gives ~39.8 fF as cmomf but ~26.2 fF as cmomi.
+
+# c = gf.Component()
+
+# cmomf1 = c.add_ref(ihp.cells.cmomf())
+# c.move((30, 0))
+# cmomf2 = c.add_ref(ihp.cells.cmomf(width=10, length=20))
+# c.move((40, 0))
+# cmomf3 = c.add_ref(ihp.cells.cmomf(mmin=2, mmax=4))
+# c.move((30, 0))
+# cmomf4 = c.add_ref(ihp.cells.cmomf(mmin=3, mmax=3))
+# c.add_ports(cmomf1.ports, prefix="cmomf1_")
+# c.add_ports(cmomf2.ports, prefix="cmomf2_")
+# c.add_ports(cmomf3.ports, prefix="cmomf3_")
+# c.add_ports(cmomf4.ports, prefix="cmomf4_")
+
+# # 'double' and 'same' are complete 2 terminal caps ('same' has the larger feed
+# # capacitance), 'none' is a bare array and not a standalone device
+# c.move((-100, 40))
+# cmomi1 = c.add_ref(ihp.cells.cmomi(feed="double"))
+# c.move((30, 0))
+# cmomi2 = c.add_ref(ihp.cells.cmomi(feed="same"))
+# c.move((30, 0))
+# cmomi3 = c.add_ref(ihp.cells.cmomi(feed="none"))
+# c.move((30, 0))
+# cmomi4 = c.add_ref(ihp.cells.cmomi(width=10, length=20))
+# c.move((40, 0))
+# cmomi5 = c.add_ref(ihp.cells.cmomi(mmin=2, mmax=4, feed="same"))
+# c.add_ports(cmomi1.ports, prefix="cmomi1_")
+# c.add_ports(cmomi2.ports, prefix="cmomi2_")
+# c.add_ports(cmomi3.ports, prefix="cmomi3_")
+# c.add_ports(cmomi4.ports, prefix="cmomi4_")
+# c.add_ports(cmomi5.ports, prefix="cmomi5_")
+# c.draw_ports()
+# c.pprint_ports()
+# c.show()
+
+# # same footprint, different device
+# print("cmomf 5x5   M1-M5:", ihp.cells.cmomf().info["C"] * 1e15, "fF")
+# print("cmomi 5x5   M1-M5:", ihp.cells.cmomi().info["C"] * 1e15, "fF")
+# print("cmomf 10x20 M1-M5:", ihp.cells.cmomf(width=10, length=20).info["C"] * 1e15, "fF")
+# print("cmomi 10x20 M1-M5:", ihp.cells.cmomi(width=10, length=20).info["C"] * 1e15, "fF")
+
+# # cmomi floors the request to its unit cell, so ask for the drawn size
+# print("cmomi 10x20 drawn:", ihp.cells.cmomi(width=10, length=20).dbbox())
+
+
+# -----------------------------------------------------------------
 # diode test
 
 # c = gf.Component()
