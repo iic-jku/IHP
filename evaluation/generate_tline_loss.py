@@ -27,9 +27,7 @@ import ihp
 GDS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gds", "tline_loss")
 
 # signal widths to sweep (um)
-widths = [0.5, 1, 2, 3, 5, 7, 10, 15, 20]
-widths = [2.5, 8, 9, 12.5]
-
+widths = [1.64, 2, 2.5, 3, 5, 7, 7.2, 7.5, 8, 8.5, 9, 10, 12.5, 15, 20]
 # two line lengths (um) for two-length de-embedding; dL = length2 - length1
 length1 = 500
 length2 = 1000

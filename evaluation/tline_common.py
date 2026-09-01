@@ -25,7 +25,7 @@ MIN_WIDTH = {
     "metal3_routing": 0.20,
     "metal4_routing": 0.20,
     "metal5_routing": 0.20,
-    "topmetal1_routing": 1.0,
+    "topmetal1_routing": 1.64,
     "topmetal2_routing": 2.0,
 }
 

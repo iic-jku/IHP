@@ -21,8 +21,7 @@ import ihp
 GDS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gds", "tline_z0")
 
 # signal widths to sweep (um)
-widths = [0.5, 1, 2, 3, 5, 7, 7.2, 7.5, 8, 8.5, 9, 10, 15, 20]
-widths = [2.5, 12.5]
+widths = [1.64, 2, 2.5, 3, 5, 7, 7.2, 7.5, 8, 8.5, 9, 10, 12.5, 15, 20]
 
 # fixed line length (um)
 length = 1000
