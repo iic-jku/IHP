@@ -104,105 +104,31 @@ def esd(
     # default direction should be away from the device center
     # set port names and orientations based on model
 
-    if model == "diodevdd_2kv":
-        gf.add_ports.add_ports_from_boxes(
+    def add_pins(layer, prefix):
+        gf.add_ports.add_ports_from_markers_center(
             c,
-            pin_layer=(tech.LAYER.Metal1pin),
+            pin_layer=layer,
             port_type="electrical",
-            ports_on_short_side=True,
-        )
-        c.ports["e1"].orientation = 270
-        c.ports["e1"].name = "VSS"
-        gf.add_ports.add_ports_from_boxes(
-            c,
-            pin_layer=(tech.LAYER.Metal2pin),
-            port_type="electrical",
-            ports_on_short_side=True,
+            inside=True,
             auto_rename_ports=False,
+            port_name_prefix=prefix,
         )
-        c.ports["e1"].orientation = 180
-        c.ports["e1"].name = "PAD"
-        c.ports["e2"].orientation = 0
-        c.ports["e2"].name = "VDD"
+        return [port for port in c.ports if port.name.startswith(prefix)]
 
-    elif model == "diodevdd_4kv":
-        gf.add_ports.add_ports_from_boxes(
-            c,
-            pin_layer=(tech.LAYER.Metal1pin),
-            port_type="electrical",
-            ports_on_short_side=True,
-        )
-        c.ports["e1"].orientation = 270
-        c.ports["e1"].name = "VSS"
-        try:
-            gf.add_ports.add_ports_from_boxes(
-                c,
-                pin_layer=(tech.LAYER.Metal2pin),
-                port_type="electrical",
-                ports_on_short_side=True,
-                auto_rename_ports=False,
-            )
-        except ValueError:
-            # gdsfactory >= 9.45 refuses to register a port that geometrically
-            # coincides with an existing one. One Metal2 pin of this model sits
-            # exactly on the Metal1 VSS pin, so recreate the rejected port from
-            # its own Metal2 pin box (the box whose center is not taken by the
-            # Metal2 port that did register).
-            lay = gf.get_layer(tech.LAYER.Metal2pin)
-            taken = [tuple(round(v, 3) for v in pt.center) for pt in c.ports if pt.name in ("e1", "e2")]
-            missing = "e1" if any(pt.name == "e2" for pt in c.ports) else "e2"
-            for box in c.get_boxes(layer=lay):
-                bb = box.bbox()
-                ctr = ((bb.left + bb.right) / 2, (bb.bottom + bb.top) / 2)
-                if tuple(round(v, 3) for v in ctr) not in taken:
-                    snap = 2 * gf.kcl.dbu  # port widths must be even DBU multiples
-                    w = round(min(bb.right - bb.left, bb.top - bb.bottom) / snap) * snap
-                    c.add_port(
-                        name=missing,
-                        center=ctr,
-                        width=w,
-                        orientation=c.ports["VSS"].orientation,
-                        layer=lay,
-                        port_type="electrical",
-                    )
-                    break
-        c.ports["e1"].orientation = 0
-        c.ports["e1"].name = "VDD"
-        c.ports["e2"].orientation = 180
-        c.ports["e2"].name = "PAD"
-
-    elif model in ["diodevss_2kv", "diodevss_4kv"]:
-        gf.add_ports.add_ports_from_boxes(
-            c,
-            pin_layer=(tech.LAYER.Metal1pin),
-            port_type="electrical",
-            ports_on_short_side=True,
-        )
-        c.ports["e1"].orientation = 90
-        c.ports["e1"].name = "VDD"
-        gf.add_ports.add_ports_from_boxes(
-            c,
-            pin_layer=(tech.LAYER.Metal2pin),
-            port_type="electrical",
-            ports_on_short_side=True,
-            auto_rename_ports=False,
-        )
-        c.ports["e1"].orientation = 180
-        c.ports["e1"].name = "PAD"
-        c.ports["e2"].orientation = 0
-        c.ports["e2"].name = "VSS"
-
-    else:  # NMOS clamp
-        gf.add_ports.add_ports_from_boxes(
-            c,
-            pin_layer=(tech.LAYER.Metal3pin),
-            port_type="electrical",
-            ports_on_short_side=True,
-        )
-        c.ports["e1"].orientation = 270
-        c.ports["e1"].name = "VSS"
-        c.ports["e2"].orientation = 90
-        c.ports["e2"].name = "VDD"
+    if model.startswith("nmoscl"):
+        bottom, top = sorted(add_pins(tech.LAYER.Metal3pin, "_m3"), key=lambda port: port.center[1])
+        bottom.name, bottom.orientation = "VSS", 270
+        top.name, top.orientation = "VDD", 90
+    else:
+        (supply,) = add_pins(tech.LAYER.Metal1pin, "_m1")
+        left, right = sorted(add_pins(tech.LAYER.Metal2pin, "_m2"), key=lambda port: port.center[0])
+        left.name, left.orientation = "PAD", 180
+        if model.startswith("diodevdd"):
+            supply.name, supply.orientation = "VSS", 270
+            right.name, right.orientation = "VDD", 0
+        else:
+            supply.name, supply.orientation = "VDD", 90
+            right.name, right.orientation = "VSS", 0
 
     return c
 

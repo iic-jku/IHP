@@ -1,10 +1,6 @@
 import gdsfactory as gf
-import scipy
-from numpy import sqrt
 
 import ihp
-from ihp import tech
-from ihp.cells.rf_devices import _butterworth_prototype, _chebyshev_prototype
 
 # paths_to_remove = [
 #     "/foss/pdks/ihp-sg13g2/libs.tech/klayout/python",
@@ -325,26 +321,46 @@ ihp.PDK.activate()
 # -----------------------------------------------------------------
 # passives test
 
-# c = gf.Component()
+c = gf.Component()
 
-# esd = c.add_ref(ihp.cells.esd(model="diodevss_4kv"))
-# c.add_ports(esd.ports, prefix="esd_")
+esd1 = c.add_ref(ihp.cells.esd(model="diodevdd_2kv"))
+c.add_ports(esd1.ports, prefix="esd1_")
 
-# c.move((0,5))
-# ptap1 = c.add_ref(ihp.cells.ptap1())
-# c.add_ports(ptap1.ports, prefix="ptap1_")
+c.move((80, 0))
+esd2 = c.add_ref(ihp.cells.esd(model="diodevss_2kv"))
+c.add_ports(esd2.ports, prefix="esd2_")
 
-# c.move((0,5))
-# ntap1 = c.add_ref(ihp.cells.ntap1())
-# c.add_ports(ntap1.ports, prefix="ntap1_")
+c.move((80, 0))
+esd3 = c.add_ref(ihp.cells.esd(model="diodevdd_4kv"))
+c.add_ports(esd3.ports, prefix="esd3_")
 
-# c.move((200,200))
-# sealring = c.add_ref(ihp.cells.sealring())
-# c.add_ports(sealring.ports, prefix="sealring_")
+c.move((80, 0))
+esd4 = c.add_ref(ihp.cells.esd(model="diodevss_4kv"))
+c.add_ports(esd4.ports, prefix="esd4_")
 
-# c.draw_ports()
-# c.pprint_ports()
-# c.show()
+c.move((80, 0))
+esd5 = c.add_ref(ihp.cells.esd(model="nmoscl_2"))
+c.add_ports(esd5.ports, prefix="esd5_")
+
+c.move((110, 0))
+esd6 = c.add_ref(ihp.cells.esd(model="nmoscl_4"))
+c.add_ports(esd6.ports, prefix="esd6_")
+
+c.move((0, 5))
+ptap1 = c.add_ref(ihp.cells.ptap1())
+c.add_ports(ptap1.ports, prefix="ptap1_")
+
+c.move((0, 5))
+ntap1 = c.add_ref(ihp.cells.ntap1())
+c.add_ports(ntap1.ports, prefix="ntap1_")
+
+c.move((200, 200))
+sealring = c.add_ref(ihp.cells.sealring())
+c.add_ports(sealring.ports, prefix="sealring_")
+
+c.draw_ports()
+c.pprint_ports()
+c.show()
 
 # -----------------------------------------------------------------
 # resistor test
@@ -403,12 +419,12 @@ ihp.PDK.activate()
 # ------------------------------------------------------
 # waveguide test
 
-frequency = 160e9  # 50 GHz
-wavelength = scipy.constants.c / frequency * 1e6 / sqrt(3.85)
-quater_wavelength = wavelength / 4
-quater_wavelength = quater_wavelength - quater_wavelength % (tech.nm)  # round to DBU
+# frequency = 160e9  # 50 GHz
+# wavelength = scipy.constants.c / frequency * 1e6 / sqrt(3.85)
+# quater_wavelength = wavelength / 4
+# quater_wavelength = quater_wavelength - quater_wavelength % (tech.nm)  # round to DBU
 
-print(f"Calculated quarter wave length for {frequency / 1e9:.0f} GHz is {quater_wavelength} um")
+# print(f"Calculated quarter wave length for {frequency / 1e9:.0f} GHz is {quater_wavelength} um")
 # c = gf.Component()
 
 # e_eff = ihp.cells.waveguides._calculate_effective_dielectric_constant(
@@ -606,7 +622,7 @@ print(f"Calculated quarter wave length for {frequency / 1e9:.0f} GHz is {quater_
 # -------------------------------------------------------
 # coupled line bandpass filter test
 
-c = gf.Component()
+# c = gf.Component()
 
 # bp = c.add_ref(ihp.cells.coupled_line_bandpass_filter(
 #     order=4,
@@ -622,22 +638,22 @@ c = gf.Component()
 # c.move((0, 1000))
 
 
-hairpin_bp = c.add_ref(
-    ihp.cells.hairpin_coupled_line_bandpass_filter(
-        order=4,
-        connection_length=50,
-        frequency=160e9,
-        bandwidth=10e9,
-        filter_type="butter",
-        signal_cross_section="topmetal2_routing",
-        ground_cross_section="metal5_routing",
-        Z0=50,
-    )
-)
-# c.add_ports(bp.ports, prefix="bp_")
-c.add_ports(hairpin_bp.ports, prefix="hairpin_")
-c.draw_ports()
-c.show()
+# hairpin_bp = c.add_ref(
+#     ihp.cells.hairpin_coupled_line_bandpass_filter(
+#         order=4,
+#         connection_length=50,
+#         frequency=160e9,
+#         bandwidth=10e9,
+#         filter_type="butter",
+#         signal_cross_section="topmetal2_routing",
+#         ground_cross_section="metal5_routing",
+#         Z0=50,
+#     )
+# )
+# # c.add_ports(bp.ports, prefix="bp_")
+# c.add_ports(hairpin_bp.ports, prefix="hairpin_")
+# c.draw_ports()
+# c.show()
 
 
 # ----------------------------------------
@@ -674,9 +690,9 @@ c.show()
 
 ## -------------------------------------------------------
 
-print(_chebyshev_prototype(N=5, ripple_dB=0.1))
+# print(_chebyshev_prototype(N=5, ripple_dB=0.1))
 
-print(_butterworth_prototype(N=3))
+# print(_butterworth_prototype(N=3))
 
 
 ## ---------------------------------------
@@ -687,17 +703,17 @@ print(_butterworth_prototype(N=3))
 # c.show()
 
 
-c = gf.Component()
-pad = c.add_ref(
-    ihp.cells.bondpad_array(
-        config="GSG",
-        pitch=[100, 150],
-        shape=["square", "square", "square"],
-        width_signal=100,
-        width_ground=50,
-        length_ground=150,
-        ground_connection="psub",
-        ground_cross_section="metal1_routing",
-    )
-)
-c.show()
+# c = gf.Component()
+# pad = c.add_ref(
+#     ihp.cells.bondpad_array(
+#         config="GSG",
+#         pitch=[100, 150],
+#         shape=["square", "square", "square"],
+#         width_signal=100,
+#         width_ground=50,
+#         length_ground=150,
+#         ground_connection="psub",
+#         ground_cross_section="metal1_routing",
+#     )
+# )
+# c.show()
