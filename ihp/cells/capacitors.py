@@ -310,12 +310,3 @@ def svaricap(
     c.ports["e3"].orientation = 180
 
     return c
-
-
-if __name__ == "__main__":
-    # Test the components
-    c1 = cmim(width=10, length=10)
-    c1.show()
-
-    c2 = rfcmim(width=20, length=20)
-    c2.show()

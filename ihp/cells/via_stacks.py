@@ -129,9 +129,3 @@ def via_stack(
         )
 
     return c
-
-
-if __name__ == "__main__":
-    # Test the components
-    c = via_stack(bottom_layer="Metal1", top_layer="Metal5")
-    c.show()

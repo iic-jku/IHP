@@ -383,15 +383,3 @@ def rsil(
     c.info["R"] = R
 
     return c
-
-
-if __name__ == "__main__":
-    # Test the components
-    c1 = rsil(width=1.0, length=10.0)
-    c1.show()
-
-    c2 = rppd(width=0.8, length=20.0)
-    c2.show()
-
-    c3 = rhigh(width=1.4, length=50.0)
-    c3.show()

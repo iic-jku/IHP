@@ -468,15 +468,3 @@ def no_filler_stack(
         function_name=no_filler_stackIHP(),
     )
     return c
-
-
-if __name__ == "__main__":
-    # Test the components
-    c2 = esd(model="diodevdd_2kv")
-    c2.show()
-
-    c3 = ptap1(width=2.0, length=2.0)
-    c3.show()
-
-    c4 = sealring(width=500, height=500)
-    c4.show()

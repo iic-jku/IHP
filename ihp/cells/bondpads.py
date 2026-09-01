@@ -211,15 +211,3 @@ def bondpad_array(
             port.center[1] - length_signal / 2,
         )  # move the port from the pad center to the lower pad edge
     return c
-
-
-if __name__ == "__main__":
-    # Test the components
-    c1 = bondpad(shape="octagon")
-    c1.show()
-
-    c2 = bondpad(shape="square", flipChip="yes")
-    c2.show()
-
-    c3 = bondpad_array(config="GSGSG")
-    c3.show()
