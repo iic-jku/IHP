@@ -26,7 +26,7 @@ def _slit_ground() -> gf.Component:
 @gf.cell
 def branch_line_coupler(
     connection_length: float = 100,
-    frequency: float = 10e9,
+    frequency: float = 160e9,
     signal_cross_section: CrossSectionSpec = "topmetal2_routing",
     ground_cross_section: CrossSectionSpec = "metal5_routing",
     Z0: float = 50,
@@ -243,7 +243,7 @@ def branch_line_coupler(
 @gf.cell
 def wilkinson_power_divider(
     connection_length: float = 50,
-    frequency: float = 30e9,
+    frequency: float = 160e9,
     Z0: float = 50,
     signal_cross_section: CrossSectionSpec = "topmetal2_routing",
     ground_cross_section: CrossSectionSpec | list[CrossSectionSpec] = "metal5_routing",
@@ -650,7 +650,7 @@ def wilkinson_power_divider(
 @gf.cell
 def directional_coupler(
     connection_length: float = 100,
-    frequency: float = 10e9,
+    frequency: float = 160e9,
     coupling_factor: float = 3,
     signal_cross_section: CrossSectionSpec = "topmetal2_routing",
     ground_cross_section: CrossSectionSpec = "metal5_routing",
@@ -770,7 +770,7 @@ def directional_coupler(
 @gf.cell
 def quarter_wave_transformer(
     connection_length: float = 100,
-    frequency: float = 50e9,
+    frequency: float = 160e9,
     Z_in: float = 50,
     Z_L: float = 75,
     signal_cross_section: CrossSectionSpec = "topmetal2_routing",
@@ -889,7 +889,7 @@ def _chebyshev_prototype(N: int, ripple_dB: float) -> list[float]:
 @gf.cell
 def coupled_line_bandpass_filter(
     order: int = 3,
-    frequency: float = 10e9,
+    frequency: float = 160e9,
     bandwidth: float = 1e9,
     connection_length: float = 50,
     Z0: float = 50,
@@ -1096,7 +1096,7 @@ def _corner_rectangle(
 @gf.cell
 def hairpin_coupled_line_bandpass_filter(
     order: int = 3,
-    frequency: float = 10e9,
+    frequency: float = 160e9,
     bandwidth: float = 1e9,
     connection_length: float = 50,
     Z0: float = 50,
